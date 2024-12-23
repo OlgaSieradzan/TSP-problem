@@ -27,9 +27,7 @@ library(psych)
 # Solver
 wyniki benchmark, statystyki
 
-# Analiza algorytmu Najbliższego Sąsiada (NN)
-
-## Algorytm NN
+# Algorytmu Najbliższego Sąsiada (NN)
 
 Tutaj opisać algorytm jak działa
 
@@ -37,9 +35,13 @@ Tutaj opisać algorytm jak działa
 
 Tutaj opisać jakie mamy parametry
 
+## Rodzaje ruchów
+
+Tutaj opisać jakie mamy
+
 ## Zestawienie wyników
 
-Restart 30, pointy w kolumny, wypisanie czasu wykonania danego algorytmu, co z solverem
+Restart 30, wypisanie czasu wykonania danego algorytmu
 
 ```{r, echo=FALSE, include=FALSE}
 porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
@@ -294,4 +296,31 @@ pt_st <- pt_st[ ,c("min", "max", "mean")]
 rownames(pt_st) <- c("TSP_48", "TSP_76", "TSP_127")
 pt_st
 ```
+
+# Algorytm wspinaczki z multistartem (IHC)
+
+# ALgorytm symulowanego wyżarzania (SA)
+
+# Algorytm Tabu
+
+# Algorytm genetyczny
+
+# Algorytm zachłanny
+
+Tutaj opisać
+
+```{r}
+zachlany_klasyka <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
+    sheet = "Klasyka")
+zachlany_wszystkie <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
+    sheet = "Wszytskie")
+```
+
+```{r}
+zachlany_klasyka
+rownames(zachlany_klasyka) <- c("TSP_48", "TSP_76", "TSP_127")
+zachlany_klasyka
+```
+
+
 
