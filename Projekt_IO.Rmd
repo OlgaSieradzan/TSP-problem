@@ -1,0 +1,326 @@
+---
+title: "Projekt Inteligencja Obliczeniowa"
+author: "Justyna Sarkowicz, Olga Sieradzan, Weronika Duda, Amelia Madej, Aleksandra Węgrzyn"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: 
+      collapsed: true
+      smooth_scroll: true
+    toc_font: "Arial"
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, include=FALSE, message=FALSE, warning=FALSE}
+library(readxl)
+library(ggplot2)
+library(gridExtra)
+library(psych)
+```
+
+# Solver
+wyniki benchmark, statystyki
+
+# Algorytmu Najbliższego Sąsiada (NN)
+
+Tutaj opisać algorytm jak działa
+
+## Parametry
+
+Tutaj opisać jakie mamy parametry
+
+## Rodzaje ruchów
+
+Tutaj opisać jakie mamy
+
+## Zestawienie wyników
+
+Restart 30, wypisanie czasu wykonania danego algorytmu
+
+```{r, echo=FALSE, include=FALSE}
+porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Porównanie_metod+1")
+max_iteration_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "max_iterations_1")
+restart_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Restart_1")
+point_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Point_1")
+
+porownanie_metod_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Porównanie_metod_2")
+max_iteration_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "max_iterations_2")
+restart_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Restart_2")
+point_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Point_2")
+
+porownanie_metod_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Porównanie_metod_3")
+max_iteration_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "max_iterations_3")
+restart_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Restart_3")
+point_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "Point_3")
+```
+
+
+
+```{r, echo=FALSE}
+p1 <- ggplot(porownanie_metod_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = `Długość ścieżki`), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Indywidualne długości ścieżek dla różnych metod",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+p2 <- ggplot(porownanie_metod_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`,2)), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Indywidualne długości ścieżek dla różnych metod",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+p3 <- ggplot(porownanie_metod_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`,2)), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Indywidualne długości ścieżek dla różnych metod",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+```{r, echo=FALSE}
+p1
+```
+
+```{r, echo=FALSE}
+p2
+```
+
+```{r, echo=FALSE}
+p3
+```
+
+```{r, echo=FALSE}
+por_st48 <- describe(porownanie_metod_tsp48$`Długość ścieżki`)
+por_st76 <- describe(porownanie_metod_tsp76$`Długość ścieżki`)
+por_st127 <- describe(porownanie_metod_tsp127$`Długość ścieżki`)
+por_st <- rbind(por_st48)
+por_st <- rbind(por_st, por_st76)
+por_st <- rbind(por_st, por_st127)
+por_st <- por_st[ ,c("min", "max", "mean")]
+rownames(por_st) <- c("TSP_48", "TSP_76", "TSP_127")
+por_st
+```
+
+
+```{r, echo=FALSE, warning=FALSE}
+m1 <- ggplot(max_iteration_tsp48, aes(x = PARAMETR, y = WYNIK)) +
+  geom_line(colour = "pink", size = 1) +
+  labs(
+    title = "Długości ścieżek w zależności od liczby iteracji",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  xlim(0,100)
+
+m2 <- ggplot(max_iteration_tsp76, aes(x = PARAMETR, y = WYNIK)) +
+  geom_line(colour = "pink", size = 1) +
+  labs(
+    title = "Długości ścieżek w zależności od liczby iteracji",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  xlim(0,100)
+
+m3 <- ggplot(max_iteration_tsp127, aes(x = PARAMETR, y = WYNIK)) +
+  geom_line(colour = "pink", size = 1) +
+  labs(
+    title = "Długości ścieżek w zależności od liczby iteracji",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  xlim(0,100)
+```
+
+```{r, echo=FALSE, warning=FALSE}
+m1
+```
+
+```{r, echo=FALSE, warning=FALSE}
+m2
+```
+
+```{r, echo=FALSE, warning=FALSE}
+m3
+```
+
+```{r, echo=FALSE}
+mi_st48 <- describe(max_iteration_tsp48$WYNIK)
+mi_st76 <- describe(max_iteration_tsp76$WYNIK)
+mi_st127 <- describe(max_iteration_tsp127$WYNIK)
+mi_st <- rbind(mi_st48)
+mi_st <- rbind(mi_st, mi_st76)
+mi_st <- rbind(mi_st, mi_st127)
+mi_st <- mi_st[ ,c("min", "max", "mean", "sd")]
+rownames(mi_st) <- c("TSP_48", "TSP_76", "TSP_127")
+mi_st
+```
+
+
+```{r, echo=FALSE}
+r1 <- ggplot(restart_tsp48, aes(x = PARAMETR, y = WYNIK)) +
+  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  labs(
+    title = "Długości ścieżek w zależności od liczby restartów",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+r2 <- ggplot(restart_tsp76, aes(x = PARAMETR, y = WYNIK)) +
+  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  labs(
+    title = "Długości ścieżek w zależności od liczby restartów",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+r3 <- ggplot(restart_tsp127, aes(x = PARAMETR, y = WYNIK)) +
+  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  labs(
+    title = "Długości ścieżek w zależności od liczby restartów",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+```{r, echo=FALSE}
+r1
+```
+
+```{r, echo=FALSE}
+r2
+```
+
+```{r, echo=FALSE}
+r3
+```
+
+
+
+```{r, echo=FALSE}
+r_st48 <- describe(restart_tsp48$WYNIK)
+r_st76 <- describe(restart_tsp76$WYNIK)
+r_st127 <- describe(restart_tsp127$WYNIK)
+r_st <- rbind(r_st48)
+r_st <- rbind(r_st, r_st76)
+r_st <- rbind(r_st, r_st127)
+r_st <- r_st[ ,c("min", "max", "mean", "sd")]
+rownames(r_st) <- c("TSP_48", "TSP_76", "TSP_127")
+r_st
+```
+
+```{r, echo=FALSE}
+pt1 <- ggplot(point_tsp48, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+  geom_col() +
+  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Długości ścieżek w zależności od punktu początkowego",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+pt2 <- ggplot(point_tsp76, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+  geom_col() +
+  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Długości ścieżek w zależności od punktu początkowego",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+
+pt3 <- ggplot(point_tsp127, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+  geom_col() +
+  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+  labs(
+    title = "Długości ścieżek w zależności od punktu początkowego",
+    x = "Liczba restartów",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+```{r, echo=FALSE}
+pt1
+```
+```{r,echo=FALSE}
+pt2
+```
+```{r, echo=FALSE}
+pt3
+```
+
+```{r, echo=FALSE}
+pt_st48 <- describe(point_tsp48$WYNIK)
+pt_st76 <- describe(point_tsp76$WYNIK)
+pt_st127 <- describe(point_tsp127$WYNIK)
+pt_st <- rbind(pt_st48)
+pt_st <- rbind(pt_st, r_st76)
+pt_st <- rbind(pt_st, r_st127)
+pt_st <- pt_st[ ,c("min", "max", "mean")]
+rownames(pt_st) <- c("TSP_48", "TSP_76", "TSP_127")
+pt_st
+```
+
+# Algorytm wspinaczki z multistartem (IHC)
+
+# ALgorytm symulowanego wyżarzania (SA)
+
+# Algorytm Tabu
+
+# Algorytm genetyczny
+
+# Algorytm zachłanny
+
+Tutaj opisać
+
+```{r}
+zachlany_klasyka <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
+    sheet = "Klasyka")
+zachlany_wszystkie <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
+    sheet = "Wszytskie")
+```
+
+```{r}
+zachlany_klasyka
+rownames(zachlany_klasyka) <- c("TSP_48", "TSP_76", "TSP_127")
+zachlany_klasyka
+```
+
+
+
