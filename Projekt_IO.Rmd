@@ -24,8 +24,43 @@ library(gridExtra)
 library(psych)
 ```
 
+# Wprowadzenie
+
+Problem komiwojażera (Travelling Salesman Problem, TSP) to jedno z najbardziej znanych i intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
+
+TSP jest problemem należącym do klasy NP-trudnych, co oznacza, że wraz ze wzrostem liczby punktów (miast) liczba możliwych tras rośnie w sposób wykładniczy, a dokładne rozwiązanie staje się coraz trudniejsze do obliczenia w rozsądnym czasie. Z tego powodu opracowanie efektywnych algorytmów heurystycznych i metaheurystycznych, które pozwalają na znalezienie bliskich optymalnym rozwiązań w akceptowalnym czasie.
+
+Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera
+
 # Solver
-wyniki benchmark, statystyki
+
+Wyniki uzyskane za pomocą zaimplementowanych algorytmów zostaną porównane z tymi uzyskanymi w Solverze. Będzie to nasz benchmark.
+
+```{r, echo=FALSE, include=FALSE}
+solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solver.xlsx")
+```
+
+```{r, echo=FALSE}
+solver[,c(2,4,6)]
+```
+
+W przypadku danych TSP_48 czasy są tutaj dość zbliżone. Najniższy z nich to 117.375 s. Natomiast dla TSP_76 mamy dwie wartości znacząco odstające od pozostałych. Dla TSP_127 czasy są zdecydowanie najdłuższe w stosunku do pozostałych. Nie ma tam tak rozbieżnych wyników jak dla TSP_76. 
+
+## Statystyki
+
+W statystykach poniżej przedstawiono najmniejszą oraz największą długość ścieżki uzyskaną przez Solver. Mamy również wyciągniętą średnią ze wszystkich wyników.
+
+```{r, echo=FALSE}
+sol_tsp48 <- describe(solver$TSP_48)
+sol_tsp76 <- describe(solver$TSP_76)
+sol_tsp127 <- describe(solver$TSP_127)
+sol <- rbind(sol_tsp48)
+sol <- rbind(sol, sol_tsp76)
+sol <- rbind(sol, sol_tsp127)
+sol <- sol[ ,c("min", "max", "mean")]
+rownames(sol) <- c("TSP_48", "TSP_76", "TSP_127")
+sol
+```
 
 # Algorytmu Najbliższego Sąsiada (NN)
 
@@ -41,8 +76,9 @@ Tutaj opisać jakie mamy
 
 ## Zestawienie wyników
 
-Restart 30, wypisanie czasu wykonania danego algorytmu
+wypisanie czasu wykonania danego algorytmu
 
+### Porównanie metod
 ```{r, echo=FALSE, include=FALSE}
 porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
     sheet = "Porównanie_metod+1")
@@ -130,12 +166,21 @@ rownames(por_st) <- c("TSP_48", "TSP_76", "TSP_127")
 por_st
 ```
 
+### Liczba iteracji
+
+Stałe parametry:
+
+* start_point = 0
+
+* max_time = 500
+
+* random_restart = 1
 
 ```{r, echo=FALSE, warning=FALSE}
 m1 <- ggplot(max_iteration_tsp48, aes(x = PARAMETR, y = WYNIK)) +
   geom_line(colour = "pink", size = 1) +
   labs(
-    title = "Długości ścieżek w zależności od liczby iteracji",
+    title = "TSP_48",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
@@ -145,7 +190,7 @@ m1 <- ggplot(max_iteration_tsp48, aes(x = PARAMETR, y = WYNIK)) +
 m2 <- ggplot(max_iteration_tsp76, aes(x = PARAMETR, y = WYNIK)) +
   geom_line(colour = "pink", size = 1) +
   labs(
-    title = "Długości ścieżek w zależności od liczby iteracji",
+    title = "TSP_76",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
@@ -155,25 +200,17 @@ m2 <- ggplot(max_iteration_tsp76, aes(x = PARAMETR, y = WYNIK)) +
 m3 <- ggplot(max_iteration_tsp127, aes(x = PARAMETR, y = WYNIK)) +
   geom_line(colour = "pink", size = 1) +
   labs(
-    title = "Długości ścieżek w zależności od liczby iteracji",
+    title = "TSP_127",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
   theme_minimal() +
   xlim(0,100)
+
+grid.arrange(m1,m2,m3, ncol = 2)
 ```
 
-```{r, echo=FALSE, warning=FALSE}
-m1
-```
-
-```{r, echo=FALSE, warning=FALSE}
-m2
-```
-
-```{r, echo=FALSE, warning=FALSE}
-m3
-```
+Na powyższych wykresach widzimy zależność długości ścieżki od liczby iteracji. Od razu widzimy, że w każdym przypadku wraz ze wzrostem iteracji, maleje długość ścieżki. Jednak w pewnym momencie dla każdego TSP pojawia się wartość, poniżej której już algorytm nie schodzi. Liczba iteracji, po której dany algorytm nie schodzi poniżej pewnej długości ścieżki, jest różna w zależności od TSP. Dla TSP_48 jest to ok. 20 iteracji, dla TSP_76 - ok. 65 iteracji, a dla TSP_127 - ok. 45 iteracji.
 
 ```{r, echo=FALSE}
 mi_st48 <- describe(max_iteration_tsp48$WYNIK)
@@ -187,6 +224,10 @@ rownames(mi_st) <- c("TSP_48", "TSP_76", "TSP_127")
 mi_st
 ```
 
+
+
+
+### Liczba restartów
 
 ```{r, echo=FALSE}
 r1 <- ggplot(restart_tsp48, aes(x = PARAMETR, y = WYNIK)) +
@@ -250,7 +291,8 @@ pt1 <- ggplot(point_tsp48, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK,
   labs(
     title = "Długości ścieżek w zależności od punktu początkowego",
     x = "Liczba restartów",
-    y = "Długość ścieżki"
+    y = "Długość ścieżki",
+    fill = "Punkt początkowy"
   ) +
   theme_minimal()
 
@@ -260,7 +302,8 @@ pt2 <- ggplot(point_tsp76, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK,
   labs(
     title = "Długości ścieżek w zależności od punktu początkowego",
     x = "Liczba restartów",
-    y = "Długość ścieżki"
+    y = "Długość ścieżki",
+    fill = "Punkt początkowy"
   ) +
   theme_minimal()
 
@@ -270,7 +313,8 @@ pt3 <- ggplot(point_tsp127, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK
   labs(
     title = "Długości ścieżek w zależności od punktu początkowego",
     x = "Liczba restartów",
-    y = "Długość ścieżki"
+    y = "Długość ścieżki",
+    fill = "Punkt początkowy"
   ) +
   theme_minimal()
 ```
