@@ -44,11 +44,11 @@ solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solve
 solver[,c(2,4,6)]
 ```
 
-W przypadku danych TSP_48 czasy są tutaj dość zbliżone. Najniższy z nich to 117.375 s. Natomiast dla TSP_76 mamy dwie wartości znacząco odstające od pozostałych. Dla TSP_127 czasy są zdecydowanie najdłuższe w stosunku do pozostałych. Nie ma tam tak rozbieżnych wyników jak dla TSP_76. 
+W przypadku danych TSP_48 czasy są tutaj dość zbliżone. Najniższy z nich to 92.625 s. Natomiast dla TSP_76 mamy dwie wartości znacząco odstające od pozostałych. Dla TSP_127 czasy są zdecydowanie najdłuższe w stosunku do pozostałych. Nie ma tam tak rozbieżnych wyników jak dla TSP_76. 
 
 ## Statystyki
 
-W statystykach poniżej przedstawiono najmniejszą oraz największą długość ścieżki uzyskaną przez Solver. Mamy również wyciągniętą średnią ze wszystkich wyników.
+W statystykach poniżej przedstawiono najkrótszą oraz najdłuższą długość ścieżki uzyskaną przez Solver. Mamy również wyciągniętą średnią ze wszystkich wyników.
 
 ```{r, echo=FALSE}
 sol_tsp48 <- describe(solver$TSP_48)
@@ -61,6 +61,8 @@ sol <- sol[ ,c("min", "max", "mean")]
 rownames(sol) <- c("TSP_48", "TSP_76", "TSP_127")
 sol
 ```
+
+Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez pozostałe algorytmy.
 
 # Algorytmu Najbliższego Sąsiada (NN)
 
