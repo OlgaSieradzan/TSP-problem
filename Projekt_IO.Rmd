@@ -22,6 +22,7 @@ library(readxl)
 library(ggplot2)
 library(gridExtra)
 library(psych)
+library(patchwork)
 ```
 
 # Wprowadzenie
@@ -81,6 +82,7 @@ Tutaj opisać jakie mamy
 wypisanie czasu wykonania danego algorytmu
 
 ### Porównanie metod
+
 ```{r, echo=FALSE, include=FALSE}
 porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
     sheet = "Porównanie_metod+1")
@@ -110,14 +112,22 @@ point_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem
     sheet = "Point_3")
 ```
 
+Stałe parametry:
 
+* start_point = 0
+
+* max_time = 500
+
+* random_restart = 1
+
+* max_iteration = 150
 
 ```{r, echo=FALSE}
 p1 <- ggplot(porownanie_metod_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
   geom_col() +
-  geom_text(aes(label = `Długość ścieżki`), vjust = 2, color = "black", size = 4) + 
+  geom_text(aes(label = `Długość ścieżki`), vjust = 2, color = "black", size = 3.2) + 
   labs(
-    title = "Indywidualne długości ścieżek dla różnych metod",
+    title = "TSP_48",
     x = "Metoda",
     y = "Długość ścieżki"
   ) +
@@ -125,9 +135,9 @@ p1 <- ggplot(porownanie_metod_tsp48, aes(x = reorder(Metoda, -`Długość ście�
 
 p2 <- ggplot(porownanie_metod_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
   geom_col() +
-  geom_text(aes(label = round(`Długość ścieżki`,2)), vjust = 2, color = "black", size = 4) + 
+  geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
   labs(
-    title = "Indywidualne długości ścieżek dla różnych metod",
+    title = "TSP_76",
     x = "Metoda",
     y = "Długość ścieżki"
   ) +
@@ -135,26 +145,20 @@ p2 <- ggplot(porownanie_metod_tsp76, aes(x = reorder(Metoda, -`Długość ście�
 
 p3 <- ggplot(porownanie_metod_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
   geom_col() +
-  geom_text(aes(label = round(`Długość ścieżki`,2)), vjust = 2, color = "black", size = 4) + 
+  geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
   labs(
-    title = "Indywidualne długości ścieżek dla różnych metod",
+    title = "TSP_127",
     x = "Metoda",
     y = "Długość ścieżki"
   ) +
   theme_minimal()
+
+(p1 + p2 + p3) +
+  plot_layout(guides = "collect", ncol = 2) +  # Wspólna legenda, układ 2 kolumny
+  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu")
 ```
 
-```{r, echo=FALSE}
-p1
-```
-
-```{r, echo=FALSE}
-p2
-```
-
-```{r, echo=FALSE}
-p3
-```
+Na wykresach możemy zobaczyć jak w zależności od metody zmieniała się długość ścieżki. Dla każdego TSP najwyższe wartości są otrzymywane przy użyciu klasycznego algorytmu. Natomiast w dwóch przypadkach najlepszy wynik został uzyskany gdy algorytm skorzystał z ruchu 2-opt. Dla TSP_48 i TSP_76 widać, że znacząco dobrze wypadł w odniesieniu do pozostałych. Wykorzystanie ruchu insertion dobrze się sprawdziło w szczegółności dla TSP_127. Jednak jest nie wielka różnica pomiędzy obiema metodami.
 
 ```{r, echo=FALSE}
 por_st48 <- describe(porownanie_metod_tsp48$`Długość ścieżki`)
@@ -167,6 +171,8 @@ por_st <- por_st[ ,c("min", "max", "mean")]
 rownames(por_st) <- c("TSP_48", "TSP_76", "TSP_127")
 por_st
 ```
+
+W odniesieniu do Solvera, możemy zobaczyć, że dla TSP_76 i TSP_127 uzyskane wyniki są niższe. Natomiast dla TSP_48 wynik jest delikatnie wyższy. Średnie nie różnią się znacząco od tych z Solvera.
 
 ### Liczba iteracji
 
@@ -209,10 +215,14 @@ m3 <- ggplot(max_iteration_tsp127, aes(x = PARAMETR, y = WYNIK)) +
   theme_minimal() +
   xlim(0,100)
 
-grid.arrange(m1,m2,m3, ncol = 2)
+
+
+(m1 + m2 + m3) +
+  plot_layout(guides = "collect", ncol = 2) +  
+  plot_annotation(title = "Długość ścieżki w zależności od liczby iteracji")
 ```
 
-Na powyższych wykresach widzimy zależność długości ścieżki od liczby iteracji. Od razu widzimy, że w każdym przypadku wraz ze wzrostem iteracji, maleje długość ścieżki. Jednak w pewnym momencie dla każdego TSP pojawia się wartość, poniżej której już algorytm nie schodzi. Liczba iteracji, po której dany algorytm nie schodzi poniżej pewnej długości ścieżki, jest różna w zależności od TSP. Dla TSP_48 jest to ok. 20 iteracji, dla TSP_76 - ok. 65 iteracji, a dla TSP_127 - ok. 45 iteracji.
+Na powyższych wykresach widzimy zależność długości ścieżki od liczby iteracji. Od razu widzimy, że w każdym przypadku wraz ze wzrostem iteracji, maleje długość ścieżki. Jednak w pewnym momencie dla każdego TSP pojawia się stała wartość, poniżej której algorytm już nie schodzi. Jest to logiczne, ponieważ algorytm nie jest w stanie bez końca szukać lepszego rozwiązania. Jest ich skończona ilość. Liczba iteracji jest różna w zależności od TSP. Dla TSP_48 jest to ok. 20 iteracji, dla TSP_76 - ok. 65 iteracji, a dla TSP_127 - ok. 45 iteracji. Zatem liczba miast nie wpływa na to po jakiej liczbie iteracji otrzymamy najlepszy wynik.
 
 ```{r, echo=FALSE}
 mi_st48 <- describe(max_iteration_tsp48$WYNIK)
@@ -221,57 +231,63 @@ mi_st127 <- describe(max_iteration_tsp127$WYNIK)
 mi_st <- rbind(mi_st48)
 mi_st <- rbind(mi_st, mi_st76)
 mi_st <- rbind(mi_st, mi_st127)
-mi_st <- mi_st[ ,c("min", "max", "mean", "sd")]
+mi_st <- mi_st[ ,c("min", "max", "mean")]
 rownames(mi_st) <- c("TSP_48", "TSP_76", "TSP_127")
 mi_st
 ```
 
 
+Zmiana parametru `liczba iteracji` sprawiła, że wyniki są zdecydowanie lepsze w odróżnieniu do solvera i też lepsze niż gdy próbowaliśmy różnego rodzaju ruchy. Uzyskane wyniki są jak narazie najlepsze dla każdego TSP. Średnie są niższe od tych otrzymanych przez solver.
 
 
 ### Liczba restartów
 
+Stałe parametry:
+
+* start_point = 0
+
+* max_time = 500
+
+* max_iteration = 150
+
 ```{r, echo=FALSE}
 r1 <- ggplot(restart_tsp48, aes(x = PARAMETR, y = WYNIK)) +
-  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  geom_line(colour = "lightblue", size = 1) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
   labs(
-    title = "Długości ścieżek w zależności od liczby restartów",
+    title = "TSP_48",
     x = "Liczba restartów",
     y = "Długość ścieżki"
   ) +
   theme_minimal()
 
 r2 <- ggplot(restart_tsp76, aes(x = PARAMETR, y = WYNIK)) +
-  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  geom_line(colour = "lightblue", size = 1) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
   labs(
-    title = "Długości ścieżek w zależności od liczby restartów",
+    title = "TSP_76",
     x = "Liczba restartów",
     y = "Długość ścieżki"
   ) +
   theme_minimal()
 
 r3 <- ggplot(restart_tsp127, aes(x = PARAMETR, y = WYNIK)) +
-  geom_point(size = 3, position = position_jitter(width = 0.2), colour = "pink") +
+  geom_line(colour = "lightblue", size = 1) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
   labs(
-    title = "Długości ścieżek w zależności od liczby restartów",
+    title = "TSP_127",
     x = "Liczba restartów",
     y = "Długość ścieżki"
   ) +
   theme_minimal()
+
+
+(r1 + r2 + r3) +
+  plot_layout(guides = "collect", ncol = 2) +  
+  plot_annotation(title = "Długość ścieżki w zależności od liczby restartów")
 ```
 
-```{r, echo=FALSE}
-r1
-```
-
-```{r, echo=FALSE}
-r2
-```
-
-```{r, echo=FALSE}
-r3
-```
-
+Można zauważyć, że na każdym z wykresów pojawia się tendencja spadkowa długości ścieżki. W różnym stopniu ją widać w zależności od liczby miast, ponieważ wyniki wahają się w dużym stopniu w zależności od liczby restartów. Wahania te zdają się maleć wraz z liczbą restartów, jednak aby to sprawdzić należałoby sprawdzić większą liczbę restartów.
 
 
 ```{r, echo=FALSE}
@@ -286,15 +302,27 @@ rownames(r_st) <- c("TSP_48", "TSP_76", "TSP_127")
 r_st
 ```
 
+Ten parametr zdecydowanie polepszył wyniki. Są one lepsze niż w przypadku `liczby iteracji`. Średnie też są niższe. Wartość odchylenia mówi nam, że jednak wartości te bardzo nie odbiegają od średniej.
+
+### Punkt początkowy
+
+Stałe parametry:
+
+* max_time = 500
+
+* random_restart = 1
+
+* max_iteration = 150
+
 ```{r, echo=FALSE}
 pt1 <- ggplot(point_tsp48, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
   geom_col() +
   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
   labs(
-    title = "Długości ścieżek w zależności od punktu początkowego",
-    x = "Liczba restartów",
+    title = "TSP_48",
+    x = "Punkt początkowy",
     y = "Długość ścieżki",
-    fill = "Punkt początkowy"
+    fill = "Punkt pocz."
   ) +
   theme_minimal()
 
@@ -302,10 +330,10 @@ pt2 <- ggplot(point_tsp76, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK,
   geom_col() +
   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
   labs(
-    title = "Długości ścieżek w zależności od punktu początkowego",
-    x = "Liczba restartów",
+    title = "TSP_76",
+    x = "Punkt początkowy",
     y = "Długość ścieżki",
-    fill = "Punkt początkowy"
+    fill = "Punkt pocz."
   ) +
   theme_minimal()
 
@@ -313,10 +341,10 @@ pt3 <- ggplot(point_tsp127, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK
   geom_col() +
   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
   labs(
-    title = "Długości ścieżek w zależności od punktu początkowego",
-    x = "Liczba restartów",
+    title = "TSP_127",
+    x = "Punkt początkowy",
     y = "Długość ścieżki",
-    fill = "Punkt początkowy"
+    fill = "Punkt pocz."
   ) +
   theme_minimal()
 ```
@@ -331,6 +359,8 @@ pt2
 pt3
 ```
 
+Wylosowany punkt początkowy nie wpływa znacząco na długość ścieżki. Jeżeli punkt został dobrze trafiony to długość jest mniejsza jak dla TSP_48 i punktu startowego 11.
+
 ```{r, echo=FALSE}
 pt_st48 <- describe(point_tsp48$WYNIK)
 pt_st76 <- describe(point_tsp76$WYNIK)
@@ -342,6 +372,22 @@ pt_st <- pt_st[ ,c("min", "max", "mean")]
 rownames(pt_st) <- c("TSP_48", "TSP_76", "TSP_127")
 pt_st
 ```
+
+Uzyskana długość ścieżki jest najniższa dla TSP_48. Widocznie wylosowany punkt został dobrze trafiony. Dla pozostałych TSP minimalna długość ścieżki jest taka sama jak ta osiągnięta przy zmianie wartości parametru restartu.
+
+## Podsumowanie
+
+Wyniki otrzymane poprzez zmianę poszczególnych parametrów są zdecydowanie lepsze niż te uzyskane przez Solver. Szczególnie zmiana parametru `liczba restartów` zaprezentowała ciekawe wyniki. Przy stałych pozostałych parametrach: start_point = 0, max_time = 500s, max_iteration = 150 osiągnieto przy jego zmianie najlepsze wyniki równe:
+
+```{r, echo=FALSE}
+r_st[,c(1,3)]
+```
+
+* Dla TSP_48 najniższy wynik został uzyskany pierwszy raz przy 5 restartach i wyniósł on: **10749**.
+
+* Dla TSP_76 najniższy wynik został uzyskany pierwszy raz przy 5 restartach i wyniósł on: **109401.8**
+
+* Dla TSP_127 najniższy wynik został uzyskany pierwszy raz przy 12 restartach i wyniósł on: **119375.3**
 
 # Algorytm wspinaczki z multistartem (IHC)
 
