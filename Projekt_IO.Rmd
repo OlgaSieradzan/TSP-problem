@@ -77,17 +77,86 @@ Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez 
 Algorytm najbliższego sąsiada (ang, nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
 </div>
 
-## Parametry
+## Badany parametr
 
-Tutaj opisać jakie mamy parametry
+```{r, echo=FALSE, include=FALSE}
+NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "TSP_48")
+NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "TSP_76")
+NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+    sheet = "TSP_127")
+```
 
-## Rodzaje ruchów
+```{r, echo=FALSE}
+w_tsp48 <- ggplot(NN_tsp48, aes(x = Punkt, y = Wynik)) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+  labs(
+    title = "TSP_48",
+    x = "Punkt początkowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 
-Tutaj opisać jakie mamy
+w_tsp76 <- ggplot(NN_tsp76, aes(x = Punkt, y = Wynik)) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+  labs(
+    title = "TSP_76",
+    x = "Punkt początkowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 
-## Zestawienie wyników
+w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
+  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+  labs(
+    title = "TSP_127",
+    x = "Punkt początkowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 
-wypisanie czasu wykonania danego algorytmu
+(w_tsp48 + w_tsp76 + w_tsp127) +
+  plot_layout(guides = "collect", ncol = 2) +  
+  plot_annotation(title = "Długość ścieżki w zależności od punktu startowego")
+```
+
+Na wykresach widzimy długość tracy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
+
+```{r echo=FALSE, include=FALSE}
+stat_NN_tsp48 <- describe(NN_tsp48$Wynik)
+stat_NN_tsp76 <- describe(NN_tsp76$Wynik)
+stat_NN_tsp127 <- describe(NN_tsp127$Wynik)
+stat_NN <- rbind(stat_NN_tsp48)
+stat_NN <- rbind(stat_NN, stat_NN_tsp76)
+stat_NN <- rbind(stat_NN, stat_NN_tsp127)
+stat_NN <- stat_NN[ ,c("min", "max", "mean")]
+rownames(stat_NN) <- c("TSP_48", "TSP_76", "TSP_127")
+stat_NN
+```
+
+W tabelce w tablce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
+
+* **TSP_48**
+
+Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorsz.
+
+* **TSP_76**
+
+Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorsz.
+
+* **TSP_127**
+
+Długość ścieżki wyniosła **133970.6** i jest to gorszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy.
+
+Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver dla TSP_48 i TSP_76.
+
+# Algorytm wspinaczki z multistartem (IHC)
+
+<div style='text-align: justify'>
+Algorytm iteracyjnej wspinaczki z multistartem to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
+rozwiązania bliskiego globalnemu optimum.
+</div>
 
 ### Porównanie metod
 
@@ -409,16 +478,7 @@ r_st[,c(1,3)]
 
 * Dla TSP_127 najniższy wynik został uzyskany pierwszy raz przy 12 restartach i wyniósł on: **119375.3**
 
-# Algorytm wspinaczki z multistartem (IHC)
 
-<div style='text-align: justify'>
-Algorytm iteracyjnej wspinaczki z multistartem to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
-rozwiązania bliskiego globalnemu optimum.
-</div>
-
-```{r echo=FALSE, include=FALSE}
-
-```
 
 # Algorytm symulowanego wyżarzania (SA)
 
