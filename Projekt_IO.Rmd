@@ -13,6 +13,13 @@ output:
     df_print: paged
 ---
 
+<style>
+  img {
+    width: 100%;
+    height: auto;
+  }
+</style>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -29,11 +36,11 @@ library(dplyr)
 # Wprowadzenie
 
 <div style='text-align: justify'>
-Problem komiwojażera (ang. Travelling Salesman Problem, TSP) to jedno z najbardziej znanych oraz intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
+**Problem komiwojażera** (ang. Travelling Salesman Problem, TSP) to jedno z najbardziej znanych oraz intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
 
 TSP jest problemem należącym do klasy NP-trudnych, co oznacza, że wraz ze wzrostem liczby punktów (miast) liczba możliwych tras rośnie w sposób wykładniczy, a dokładne rozwiązanie staje się coraz trudniejsze do obliczenia w rozsądnym czasie. Z tego powodu opracowanie efektywnych algorytmów heurystycznych i metaheurystycznych, które pozwalają na znalezienie bliskich optymalnym rozwiązań w akceptowalnym czasie.
 
-Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera
+Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera.
 </div>
 
 # Solver
@@ -75,11 +82,14 @@ Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez 
 # Algorytmu Najbliższego Sąsiada (NN)
 
 <div style='text-align: justify'>
-Algorytm najbliższego sąsiada (ang, nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
+**Algorytm najbliższego sąsiada** (ang. nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
 </div>
 
-## Badany parametr
+## Badane parametry
 
+W ramach algorytmu nalbliższego sąsiada badaniu poddano wpływ różnych wartości parametru `miasto startowe`.
+
+<br>
 ```{r, echo=FALSE, include=FALSE}
 NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
     sheet = "TSP_48")
@@ -97,7 +107,9 @@ w_tsp48 <- ggplot(NN_tsp48, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
 w_tsp76 <- ggplot(NN_tsp76, aes(x = Punkt, y = Wynik)) +
   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
@@ -106,7 +118,9 @@ w_tsp76 <- ggplot(NN_tsp76, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
 w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
@@ -115,14 +129,18 @@ w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
-(w_tsp48 + w_tsp76 + w_tsp127) +
-  plot_layout(guides = "collect", ncol = 2) +  
-  plot_annotation(title = "Długość ścieżki w zależności od punktu startowego")
+(w_tsp48 + w_tsp76 + w_tsp127 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności punktu startowego",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
 ```
 
-Na wykresach widzimy długość tracy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
+Na wykresach widzimy długość trasy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
 
 ```{r echo=FALSE, include=FALSE}
 stat_NN_tsp48 <- describe(NN_tsp48$Wynik)
@@ -136,7 +154,7 @@ rownames(stat_NN) <- c("TSP_48", "TSP_76", "TSP_127")
 stat_NN
 ```
 
-W tabelce w tablce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
+W tabelce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
 
 * **TSP_48**
 
@@ -170,7 +188,7 @@ Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver
 # Algorytm wspinaczki z multistartem (IHC)
 
 <div style='text-align: justify'>
-Algorytm iteracyjnej wspinaczki z multistartem to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
+**Algorytm iteracyjnej wspinaczki** to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
 rozwiązania bliskiego globalnemu optimum.
 </div>
 
@@ -178,10 +196,34 @@ rozwiązania bliskiego globalnemu optimum.
 # Algorytm symulowanego wyżarzania (SA)
 
 <div style='text-align: justify'>
-Algorytm symulowanego wyżarzania (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest 
+**Algorytm symulowanego wyżarzania** (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest 
 parametryzowana w danej implementacji. 
 </div>
 
+## Badane parametry
+
+W ramach algorytmu symulowanego wyżarzania badane są następujące parametry:
+
+ - **`temperatura początkowa`** -  wartość temperatury, od której rozpoczyna się proces chłodzenia w algorytmie
+ 
+ - **`temperatura końcowa`** - wartość temperatury, do której algorytm będzie dążył w trakcie działania
+ 
+ - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+  
+    <p style="margin-top: 10px;">
+ - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+ 
+ - **`prędkość chłodzenia`** -  szybkość, z jaką zmniejszana jest temperatura w trakcie działania algorytmu
+ 
+ - **`temperatura minimalna`** - wartość temperatury, poniżej której algorytm nie będzie już kontynuował poszukiwań
+    </p>
+ 
 ```{r echo=FALSE, include=FALSE}
 
 ```
@@ -189,10 +231,30 @@ parametryzowana w danej implementacji.
 # Algorytm przeszukiwania tabu
 
 <div style='text-align: justify'>
-Algorytm przeszukiwania tabu (ang. Tabu Search, TS) to algorytm, który opiera się na stopniowym ulepszaniu początkowego, losowego rozwiązania. W przypadku problemu komiwojażera algorytm stara się skrócić trasę w taki sposób, aby odwiedzić wszystkie punkty. TS działa w sposób iteracyjny – w każdej iteracji obecne rozwiązanie jest modyfikowane poprzez wybór jednego z ruchów zdefiniowanych w sąsiedztwie. Charakterystyczną cechą algorytmu TS jest lista tabu, która 
+**Algorytm przeszukiwania tabu** (ang. Tabu Search, TS) to algorytm, który opiera się na stopniowym ulepszaniu początkowego, losowego rozwiązania. W przypadku problemu komiwojażera algorytm stara się skrócić trasę w taki sposób, aby odwiedzić wszystkie punkty. TS działa w sposób iteracyjny – w każdej iteracji obecne rozwiązanie jest modyfikowane poprzez wybór jednego z ruchów zdefiniowanych w sąsiedztwie. Charakterystyczną cechą algorytmu TS jest lista tabu, która 
 przechowuje ruchy wykonane w ostatnich iteracjach. Ruchy te są czasowo zakazane, co zapobiega zapętleniu się algorytmu i ponownemu odwiedzaniu tych samych rozwiązań. Algorytm pozwala również na wykonanie ruchu, który chwilowo pogarsza rozwiązanie. Taki mechanizm umożliwia ucieczkę z lokalnych ekstremów i zwiększa szansę na znalezienie rozwiązania globalnie optymalnego lub bliskiego optymalnemu. Dodatkowo TS może korzystać z kryterium zakończenia działania, 
 które przerywa algorytm, jeśli przez dłuższy czas nie nastąpi poprawa wyniku.
 </div>
+
+## Badane parametry
+
+W ramach algorytmu przeszukiwania tabu badane są następujące parametry:
+
+ - **`długość listy tabu`** - liczba wykonanych ruchów, które nie mogą być ponownie wykorzystanie przez określoną liczbę iteracji
+ 
+ - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
+ 
+ - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+  
+    <p style="margin-top: 10px;">
+ - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+    </p>
 
 ```{r echo=FALSE, include=FALSE}
 
@@ -201,14 +263,53 @@ które przerywa algorytm, jeśli przez dłuższy czas nie nastąpi poprawa wynik
 # Algorytm genetyczny
 
 <div style='text-align: justify'>
-Algorytm genetyczny (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, 
+**Algorytm genetyczny** (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, 
 aż do osiągnięcia określonej liczby iteracji lub spełnienia innych warunków stopu. 
 </div>
 
+## Badane parametry
+
+W ramach algorytmu genetycznego badane są następujące parametry:
+
+ - **`wielkość populacji`** - liczba osobników w populacji, które będą brane pod uwagę w danej iteracji algorytmu
+ 
+ - **`prawdopodobieństwo mutacji`** - prawdopodobieństwo z jakim nastąpi mutacja genów w osobnikach
+ 
+ - **`prawdopodobieństwo krzyżowania`** - prawdopodobieństwo z jakim nastąpi krzyżowanie osobników w populacji
+ 
+ - **`metoda doboru rodziców`** - sposób wyboru najlepszych osobników do reprodukcji:
+ 
+   - `turniejowy` - losowana jest grupa osobników stanowiąca 10% populacji, a jako rodzic wybierany jest osobnik z najkrótszą trasą
+   
+   - `rankingowy` - wybór rodzica odbywa się na podstawie rankingu osobników, przy czym zwracana jest tylko jedna ścieżka
+   
+   <p style="margin-top: 10px;">
+ - **`metoda krzyżowania`** - sposób łączenia genów (tras) rodziców w celu stworzenia potomków:
+ 
+   - `order crossover (OX)` - z pierwszego rodzica wybierany jest losowy segment miast, który jest kopiowany do potomka w to samo miejsce, pozostałe miasta są uzupełniane w potomku zgodnie z ich kolejnością wystąpienia w drugim rodzicu
+   
+   - `partially matched crossover (pmx)` - dziedziczenie części trasy od każdego z rodziców przy zachowaniu oryginalnej kolejności odwiedzonych miast, jednocześnie eliminując duplikaty w nowo powstałym rozwiązaniu 
+   </p>
+   
+   <p style="margin-top: 10px;">
+ - **`metoda mutacji`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `inversion` odwrócenie kolejności odwiedzanych miast w wybranym segmencie trasy
+    </p>
+    
+    <p style="margin-top: 10px;">
+ - **`liczba pokoleń`** - liczba iteracji algorytmu 
+    </p>
+    
 ```{r echo=FALSE, include=FALSE}
 
 ```
 
+# Algorytm mrówkowy
 # Algorytm mrówkowy
 
 <div style='text-align: justify'>
