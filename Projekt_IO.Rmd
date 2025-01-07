@@ -31,7 +31,10 @@ library(gridExtra)
 library(psych)
 library(patchwork)
 library(dplyr)
+<<<<<<< HEAD
 library(tidyr)
+=======
+>>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
 ```
 
 # Wprowadzenie
@@ -167,15 +170,30 @@ W tabelce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
 
 * **TSP_48**
 
-Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorszy.
+```{r}
+NN_tsp48$Punkt[NN_tsp48$Wynik == min(NN_tsp48$Wynik)]
+NN_tsp48[c(10,35),]
+```
+
+Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorszy. Ten wynik został uzyskany dla 2 punktów początkowych: 10 i 35.
 
 * **TSP_76**
 
-Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorszy.
+```{r}
+NN_tsp76$Punkt[NN_tsp76$Wynik == min(NN_tsp76$Wynik)]
+NN_tsp76[16,]
+```
+
+Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 16.
 
 * **TSP_127**
 
-Długość ścieżki wyniosła **133970.6** i jest to gorszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy.
+```{r}
+NN_tsp127$Punkt[NN_tsp127$Wynik == min(NN_tsp127$Wynik)]
+NN_tsp127[117,]
+```
+
+Długość ścieżki wyniosła **133970.6** i jest to lepszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 117.
 
 Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver dla TSP_48 i TSP_76.
 
@@ -186,6 +204,7 @@ Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver
 rozwiązania bliskiego globalnemu optimum.
 </div>
 
+<<<<<<< HEAD
 ## Badane parametry
 
 
@@ -585,6 +604,8 @@ Wyniki otrzymane poprzez zmianę poszczególnych parametrów są zdecydowanie le
 * Dla TSP_127 najniższy wynik został uzyskany pierwszy raz przy 12 restartach i wyniósł on: **119375.3**
 
 
+=======
+>>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
 
 # Algorytm symulowanego wyżarzania (SA)
 
@@ -777,29 +798,647 @@ W ramach algorytmu genetycznego badane są następujące parametry:
 ```
 
 # Algorytm mrówkowy
+# Algorytm mrówkowy
 
 <div style='text-align: justify'>
-**Algorytm mrówkowy** (ang. Ant Colony Optimisation, ACO) jest inspirowany zachowaniem mrówek w poszukiwaniu najkrótszej drogi do źródła pożywienia. W ramach tego algorytmu sztuczne mrówki eksplorują przestrzeń rozwiązań, tworząc różne trasy między miastami. Każda mrówka rozpoczyna swoją wędrówkę od losowo wybranego miasta, a następnie porusza się do kolejnych miast, wybierając je na podstawie prawdopodobieństwa, które zależy od ilości feromonu na krawędziach oraz odległości między miastami. Po zakończeniu każdej trasy mrówki aktualizują ilość feromonu na krawędziach, wzmacniając te, które były częścią krótszych tras, a jednocześnie zmniejszając ilość feromonu na krawędziach mniej efektywnych. Proces ten powtarza się przez wiele iteracji, co pozwala na stopniowe poprawianie jakości rozwiązań. 
+ Algorytm mrówkowy został stworzony na podstawie obserwacji życia mrówek podczas szukania optymalnej drogi między mrowiskiem a źródłem pożywienia. Mrówki w środowisku naturalnym poruszają się losowo, ale zostawiają na swojej drodze feromony, które pomagają innym mrówkom znaleźć najkrótszą ścieżkę. Z czasem feromony parują (ich wpływ maleje), co pozwala wyeliminować nieoptymalne ścieżki. Algorytm ten dobrze sprawdza się w rozwiązywaniu problemu komiwojażera.
 </div>
 
-## Badane parametry
+Zasada działania algorytmu do rozwiązania problemu komiwojażera wygląda następująco:
 
-W ramach algorytmu mrówkowego badane są następujące parametry:
+1. Połączenie między miastami inicjowane są niewielką ilością feromonu.
 
- - **`liczba mrówek`** - liczba osobników (mrówek), które będą eksplorować przestrzeń rozwiązań w danej iteracji algorytmu
- 
- - **`liczba iteracji`** - liczba iteracji, po której algorytm kończy działanie
- 
- - **`parametr alfa`** - kontroluje wpływ ilości feromonu na wybór kolejnego miasta przez mrówki. Wyższa wartość alfa sprawia, że mrówki bardziej kierują się feromonami
- 
- - **`parametr beta`** - wpływ heurystyki na decyzje mrówek. Wyższa wartość beta sprawia, że mrówki bardziej zwracają uwagę na odległość między miastami
- 
- - **`parametr rho`** - współczynnik parowania feromonów, który określa tempo znikania feromonów na krawędziach. Wyższa wartość rho oznacza szybsze parowanie feromonów
+2. Każda mrówka umieszczana jest losowo w wybranym mieście, z którego przemieszcza się do kolejnego z prawdopodobieństwem P, będącym funkcją odległości do celu oraz wielkości śladu feromonowego pozostawionego na krawędzi łączącej je z tym miastem.
 
-```{r}
+3. Mrówka poruszając się z miasta i do miasta j pozostawia za sobą ślad feromonowy odwrotnie proporcjonalny do długości trasy, którą przebyła .
 
+4. Sztuczna mrówka wyposażona jest w pamięć w celu zapamiętania, które miasto już odwiedziła, aby uwzględnić je tylko jeden raz w swojej trasie (pamięć jest czyszczona przy rozpoczęciu każdego kolejnego cyklu przechodzenia).
+
+5. Dla odwzorowania parowania feromonu występującego w naturze, w algorytmie feromon jest pomniejszany o określoną wartość po każdej iteracji, tak aby uniknąć zjawiska przedwczesnej zbieżności algorytmu.
+
+## Parametry
+
+* num_ants - liczba mrówek, która bierze udział w szukaniu optymalnej trasy. Jest ona zależna od liczby miast i wybierana z przedziału (0.5 * liczba miast, 2 * liczba miast)
+
+* num_iterations - liczba iteracji
+
+* alpha - parametr sterujący ważnością intensywności śladu feromonowego
+
+* beta - parametr sterujący ważnością widoczności następnego
+miasta
+
+* rho - prędkość odparowywania feromonu
+
+## Klasyczne 
+
+Za podstawowe wartości parametrów przyjmujemy:
+
+* num_ants = 10
+
+* num_iterations = 100
+
+* alpha = 1
+
+* beta = 2
+
+* rho = 0.5
+
+```{r, echo=FALSE, include=FALSE}
+klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "Klasyk_wyniki")
+num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "num_ants")
+max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "max_it")
+alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "alpha")
+beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "beta")
+rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "rho")
+```
+
+```{r, echo=FALSE}
+klasyk_mrowki_tsp48 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA1") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk_mrowki_tsp76 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA2") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk_mrowki_tsp127 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA3") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk <- cbind(klasyk_mrowki_tsp48)
+klasyk <- cbind(klasyk, klasyk_mrowki_tsp76)
+klasyk <- cbind(klasyk, klasyk_mrowki_tsp127)
+
+colnames(klasyk) <- c("TSP_48", "TSP_76", "TSP_127")
+klasyk
+```
+
+```{r, echo=FALSE}
+klasyk_stat <- klasyk_wyniki %>%
+  group_by(DATASET) %>%
+  summarise(
+    Mean = mean(WYNIK),
+    Min = min(WYNIK),
+    Max = max(WYNIK)
+  ) %>%
+  as.data.frame()              
+
+rownames(klasyk_stat) <- c("TSP_48", "TSP_76", "TSP_127")
+
+klasyk_stat[,c("Min", "Max", "Mean")]
+```
+
+W tabelce widzimy statystyki uzyskane dla podstawowych wartości parametrów dla algorytmu mrówkowego. Dla TSP_48 i TSP_76 wartości minimalne są wyższe niż uzyskane przez Solver. Jedynie dla TSP_127 otrzymany wynik jest lepszy. Natomiast średnie są dość podobne.
+
+## Liczba mrówek
+
+Poniżej zbadany został wpływ liczby mrówek na długość ścieżki:
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp48 <- num_ants %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+num_ants_mrowki_tsp76 <- num_ants %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+num_ants_mrowki_tsp127 <- num_ants %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_48 możemy zobaczyć zobaczyć z wykresów pudełkowcyh, że wraz ze wzrostem liczby mrówek, która bierze udział w poszukiwaniu optymalnej trasy, mediana długości ścieżki zdecydowanie się obniża. Średnia również widocznie maleje. Najniższa jest dla liczby mrówek równej 84. 
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 pojawia nam się podobna zależność. Mediana długości ścieżki widocznie się obniża i największe różnice widać na początku. Później te różnice nie są już takie znaczące. Uzyskane średnie dla wszystkich wartości parametrów są niższe niż średnia z Solvera (139999,45).
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 nie możemy już zobaczyć, tej zależności, że mediana i średnia długości ścieżki maleje wraz ze wzrostem liczby mrówek. Widzimy tutaj, że raz rośnie raz maleje. Średnia długość ścieżki co prawda zmalała od wartości parametru 123, jednak później wraz ze wzrostem jego wartości waha się i nie zmniejsza się znacząco. 
+
+W 2/3 przypadki wskazały, że wraz ze wzrostem liczby mrówek mediana i średnia długości ścieżki maleje. Warto też dodać, że średnie wyniki są lepsze w każdym z przypadków niż te otrzymane dla klasycznych wyników, gdzie liczba mrówek wynosiła 10.
+
+## Liczba iteracji
+
+Poniżej został zbadany wpływ liczby iteracji na długość ścieżki:
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp48 <- max_it %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+max_it_mrowki_tsp76 <- max_it %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+max_it_mrowki_tsp127 <- max_it %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+W przypadku zmian liczby iteracji, nie widać tutaj żadnej zależności. Mediana długości ścieżki raz rośnie raz maleje. Jedyny duży spadek widać na początku. Dla parametrów powyżej wartości 100, mediany już są niższe i średnia również. Poza tym liczba iteracji nie wpływa znacząco na wyniki. 
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 pojawia się już bardziej widoczna zależność. Mediana i średnia długości ścieżki maleje wraz z liczbą iteracji. Jednak nie w bardzo znaczącym stopniu. Różnice są niewielkie. Pojawia się nam też jeden wyjątek od tej zależności dla liczby iteracji równej 150, gdzie mediana i średnia znacząco spadły. Otrzymane średnie sa niższe niż te otrzymane przez Solver.
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 spadek mediany i średniej wraz z wzrostem iteracji jest już bardziej widoczny. Jednak pojawiają się też pewne wahania. W odróżnieniu od poprzednich TSP, widać tutaj, że wraz z wzrostem iteracji maleje również minimalna wartość.
+
+Wpływ liczby iteracji wydaje się być częsciowo uzależniony od liczby miast. Gdy wynosiła ona 48 nie widać było zależności. Wraz z zwiększeniem liczby miast stawała się ona bardziej wyraźna. Jednak pojawiały się wtedy pewne wahania.
+
+## Alpha
+
+Poniżej został zbadany wpływ alphy na długość ścieżki:
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp48 <- alpha %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+alpha_mrowki_tsp76 <- alpha %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+alpha_mrowki_tsp127 <- alpha %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
 ```
 
 
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
 
+**TSP_48**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla wartości alpha równej 0 widać znaczną różnicę w medianie i średniej długości ścieżki w porównaniu do pozostałych wartości. Wynika to z faktu, że alpha odpowiada za wpływ intensywności śladu feromonowego na wybory mrówek. Gdy alpha wynosi 0, ślad feromonowy nie ma żadnego wpływu na ich decyzje. W rezultacie, pomimo istnienia informacji o jakości trasy (beta = 2), brak znaczenia intensywności feromonów sprawia, że mrówki nie są w stanie z niej skorzystać.
+
+W przypadku alpha = 1, wyniki są najniższe. Jest to zapewne z wiązane z tym, że stosunek intensywności do widoczności feromonów jest najlepszy. Natomiast wraz ze wzrostem alpha, długość ścieżki rośnie, ponieważ gdy wartość alpha jest za duża w porównaniu do parametru beta, populacja mrówek traci różnorodność. Różnica mediany i średniej między alpha 3 i 4 jest znikoma. Różnica alphy w stosunku do bety jest na tyle wysoka, że zwiększanie alphy nie wpływa na poprawę, badź pogorszenie długości ścieżki.
+
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj sytuacja jest praktycznie identyczna. Dla alpha = 0 wyniki są najgorsze. Natomiast wraz ze wzrostem parametru (alpha > beta) wyniki się pogarszają do momentu gdzie nie ma już znaczącej różnicy w wynikach.
+
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 analogiczna sytuacja.
+
+Wartość parametru alpha istotnie wpływa na długość ścieżki, a tak naprawdę to jego różnica w stosunku do bety. Gdy jest ona odpowiednia, wyniki są najlepsze (średnia i mediana długości ścieżki sa najniższe). W każdym z przypadku najlepsze wyniki uzyskano dla alpha = 1 (beta = 2). Natomiast wyniki nie są lepsze od tych uzsykanych przez Solver. Średnie są porównywalne bądź gorsze.
+
+## Beta
+
+Poniżej został zbadany wpływ bety na długość ścieżki:
+
+```{r, echo=FALSE}
+beta_mrowki_tsp48 <- beta %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+beta_mrowki_tsp76 <- beta %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+beta_mrowki_tsp127 <- beta %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Największa różnica w wynikach (długościach ścieżek) jest widoczna pomiędzy wartościami beta = 1 i beta = 2. Powodem tego jest fakt, że przy beta = 1 i alpha = 1 wpływ obu parametrów – feromonów (alpha) i heurystyki (beta) – jest równoważny. W takiej sytuacji różnica pomiędzy wpływem tych dwóch czynników jest zerowa, co prowadzi do najgorszych wyników. W przypadku bardziej zróżnicowanych wartości alpha i beta (np. beta = 2), jedna z tych strategii ma większy wpływ, co pozwala mrówkom na bardziej skoncentrowane działania i prowadzi do lepszych wyników. Natomiast gdy wartość bety wzrasta, tylko na początku widać delikatną poprawę w wynikach. Później median i średnia długości ścieżki już są bardzo podobne. Wyniki się nie poprawiają.
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj mamy analogiczną sytuację do poprzedniej. Dla bety = 0 wyniki są najgorsze. Następnie już tylko nieznacznie się wahają. 
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 wzrost wartości paramaetru powoduje poprawę w wynikach. Średnia i mediana długości ścieżki maleją, aż do momentu gdzie już nie uzyskujemy poprawy i wyniki się tylko nieznacznie wahają wokół podobnej wartości. W tym przypadku wzrost wartości bety spowodował największą poprawę.
+
+Współczynnik bety znacząco wpływa na długość ścieżki. Jednak tak jak było wspomniane przy parametrze alpha, największe znaczenie ma różnica między tymi dwoma parametrami.
+
+## Rho
+
+Poniżej został zbadany wpływ rho na długość ścieżki:
+
+```{r, echo=FALSE}
+rho_mrowki_tsp48 <- rho %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+rho_mrowki_tsp76 <- rho %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+rho_mrowki_tsp127 <- rho %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Wyniki średniej i mediany długości ścieżki wahają się wokół podobnych wartości niezależnie od wartości rho. Jedynie znacząca różnica jest dla rho = 0.9, Średnia i mediana są zdecydowanie wyższe. Uzyskane średnie są zdecydowanie wyższe niż te otrzyamne przez Solver.
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 widzimy natomiast, że różnice w średniej i medianie długości ścieżki są zdecydowanie największe w przypadku skrajnych wartości rho. Bardzo niskie wartości tego parametru oznaczają długotrwałe utrzymywanie się feromonów (bardzo wolne odparowywanie) co prowadzi do nadmiernej eksploatacji jednej trasy, co ogranicza zdolność algorytmu do eksploracji nowych, potencjalnie lepszych tras. Natomiast zbyt wysokie wartościpowodują bardzo szybkie odparowywanie feromonów co sprawia, że ślady na trasach szybko zanikają. W tej sytuacji algorytm prawie w ogóle nie korzysta z informacji zgromadzonych przez inne mrówki, ponieważ ślady feromonowe znikają zanim inne mrówki zdążą je wykorzystać. W związku z tym dla wartości rho, które oscylują wokół 0.5 wyniki są lepsze, ale jednocześnie zbliżone do siebie.
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 jest podobna sytuacja ze skrajnymi wartościami. Jednak lepsze są wyniki dla wartości rho trochę niższych niż.
+
+Najbardziej optymalne wyniki są uzyskiwane gdy rho przyjmuję wartości bliższe 0.5 niż skrajne (0.1 czy 0.9). Jednak wyniki nie są lepsze niż te uzyskane przez Solver. Jedynie w przypadku TSP_127 udało się otrzymać krótsze długości ścieżki.
+
+## Podsumowanie
+
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 11540.0	
+
+* Liczba mrówek - 11181 (liczba mrówek - 44)
+
+* Liczba iteracji - 11128	(liczba iteracji - 400)
+
+* Alpha - 11414	(alpha - 1)
+
+* Beta - 11313 (beta - 6)
+
+* Rho - 11246	(rho - 0.7)
+
+Dla TSP_48 przy użyciu algorytmu mrówkowego nie udało się uzyskać lepszego wyniku niż ten uzyskany przez Solver (10868)
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 124560.0		
+
+* Liczba mrówek - 117472.3 (liczba mrówek - 78)
+
+* Liczba iteracji - 117711.1	(liczba iteracji - 150)
+
+* Alpha - 125278.5	(alpha - 1)
+
+* Beta - 117716.2 (beta - 4)
+
+* Rho - 122202.6	(rho - 0.2)
+
+Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać dwa lepsze wyniki niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 134426.3			
+
+* Liczba mrówek - 123471.0 (liczba mrówek - 203)
+
+* Liczba iteracji - 128085.5	(liczba iteracji - 450)
+
+* Alpha - 136597.7	(alpha - 1)
+
+* Beta - 125936.3 (beta - 7)
+
+* Rho - 131834.5	(rho - 0.5)
+
+Dla TSP_127 przy użyciu algorytmu mrówkowego  udało się uzyskać lepsze wyniku niż ten uzyskany przez Solver (140217.6)
 
