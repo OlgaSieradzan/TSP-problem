@@ -753,7 +753,9 @@ rownames(TS_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 TS_clasic_stat[,c("Min", "Max", "Mean")]
 ```
 
-```{r, echo=FALSE}
+Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla podstawowych wartości parametrów dla algorytmu przeszukiwania tabu oraz minimalną, maksymalną i średnią wartość. Średnie dla TSP_48 i TSP_76 są zbliżone do tych uzyskanych przez Solver. Natomiast dla TSP_127 wyniki oraz średnia są zdecydowanie wyższe.
+
+```{r, echo=FALSE,warning=FALSE, message=FALSE}
 TS_clasic_time <- TS_clasic %>%
   group_by(DATASET) %>%
   select(CZAS) %>%
@@ -768,6 +770,8 @@ rownames(TS_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
 
 TS_clasic_time[,2:4]
 ```
+
+Średnie czasy są bardzo niskie, zwłaszcza w porównaniu do Solvera.
 
 ## Rodzaje ruchów
 
@@ -811,6 +815,8 @@ TS_move_generator_tsp48 %>%
   as.data.frame() 
 ```
 
+Pojawiła nam się tutaj również zależność pomiędzy rodzajem ruchów, a medianą i średnią długością ścieżki. Najlepsze wyniki uzyskiwane są dla rodzaju ruchu `2-opt`, a najgorsze dla `swap`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek. 
+
 ```{r, echo=FALSE}
 ggplot(TS_move_generator_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -834,6 +840,8 @@ TS_move_generator_tsp76 %>%
   ) %>%
   as.data.frame() 
 ```
+
+Dla TSP_76 mamy podobną sytuację. Wyniki są najlepsze dla `2-opt`, najgorsze dla `swap`. Podobna jest też sytuacja z wariancją dla `2-opt`. Nie ma tam takiej różnorodności jak w pozostałych.
 
 ```{r, echo=FALSE}
 ggplot(TS_move_generator_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -859,6 +867,107 @@ TS_move_generator_tsp127 %>%
   as.data.frame() 
 ```
 
+Dla TSP_127 analogiczna sytuacja. Jednak pomimo różnych rodzjaów ruchów, wyniki nadal są zdecydowanie gorsze.
+
+Na podstawie analizy widać dużą zależność długości ścieżki od rodzju ruchów. W każdym z przypadków, najlepsze wyniki uzyskano dla `2-opt`, a najgorsze dla `swap`. Ponadto rozkłady wyników dla `2-opt` charakteryzują się małą wariancją w odróżnieniu do pozostałych.
+
+## Długość listy tabu
+
+Poniżej zbadany został wpływ długości listy tabu na długość ścieżki:
+
+```{r, echo=FALSE}
+TS_list_length_tsp48 <- TS_list_length %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+TS_list_length_tsp76 <- TS_list_length %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+TS_list_length_tsp127 <- TS_list_length %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(TS_list_length_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Długośc listy tabu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+TS_list_length_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Mediana i średnia długości ścieżki na początku maleje, ale później znowu rośnie. W przypadku TSP_48 liczaba miast jest stosunkowo mała, więc przy zbyt długiej liście tabu algorytm  może zabraniać zbyt wiele rozwiązań. Dlatego w w przypadku długości listy tabu = 15 i 20, średnie i mediana są wyższe niż dla długości listy = 10. Natomiast 5 może być zbyt małą liczbą i algorytm nie zapamiętuje wystarczającej liczby ostatnich ruchów, co oznacza, że łatwo może powrócić do wcześniej odwiedzonych rozwiązań.
+
+```{r, echo=FALSE}
+ggplot(TS_list_length_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Długośc listy tabu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+TS_list_length_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 ciężko wyciągnąć jakąś zależność z wykresów. Mediana i średnia się wahają. Nie sprawdzają się tutaj poprzednie wyjaśnienia. Może należałoby sprawdzić więcej wartości tego parametru w tym przypadku.
+
+```{r, echo=FALSE}
+ggplot(TS_list_length_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Długośc listy tabu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+TS_list_length_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Natomiast dla TSP_127 widać dobrze, że wraz ze wzrostem długości listy, maleje śrenia i mediana długości ścieżki. Przy tak dużej liczbie miast (127), mała lista tabu nie spełnia dobrze swojej roli i często algorytm wraca do rozwiązań już odwiedzonych. 
+
+Pojawia się tu pewna zależnośc między długością listy tabu, a długością ścieżki. Jednak duży też zależy od liczby miast w problemie komiwojażera. Od niego powinna być uzależniona długośc listy tabu. Dla TSP_48 można byłby sprawdzić więcej wartości tego parametru, może wtedy ta zależność byłaby tam bardziej widoczna. Natomiast ciekawy przypadek jest dla TSP_76. Ciężko tam stwierdzić, aby jakakolwiek zależność istaniała.
 
 ## Liczba iteracji
 
@@ -902,6 +1011,8 @@ TS_max_iterations_tsp48 %>%
   as.data.frame() 
 ```
 
+W przypadku liczby iteracji pojawiła się ciekawa sytuacja. Mediana długości ścieżki rośnie wraz z liczbą iteracji. Średnia natomiast wzrosła w odniesieniu do liczby iteracji = 500. Spodziewalibyśmy się raczej odwrotnej sytuacji Niezależnie od wartości parametru, w każdym przypadku minimalna wartość jest niższa od tej uzyskanej przez Solver (10868). Średnie są natomiast zbliżone.
+
 ```{r, echo=FALSE}
 ggplot(TS_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -926,6 +1037,8 @@ TS_max_iterations_tsp76 %>%
   as.data.frame() 
 ```
 
+W tym przypadku natomiast średnia zmalała i mediana również w odniesieniu do liczby iteracji = 500. Pojawiła się odwrotna sytuacja niż dla TSP_48. Wyniki są zdecydowanie lepsze niż te uzyskane przez Solver (118293.5). Średnia również zdecydowanie zmalała.
+
 ```{r, echo=FALSE}
 ggplot(TS_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -949,6 +1062,10 @@ TS_max_iterations_tsp127 %>%
   ) %>%
   as.data.frame() 
 ```
+
+Tutaj pojawia się podobna zależnośc co w przypadku TSP_48. Średnia i mediana rosną w porównaniu do tych uzyskanych dla liczby iteracji = 500. Jednak wyniki również w tym przypadku są zdecydowanie lepsze niż te uzyskane przez Solver(140217.6).
+
+Ciężko więc stwierdzić czy jest tu jakaś zależność. W 2/3 przypadki wzrost liczby iteracji powodowaj wzrost średniej i mediana.
 
 ## Liczba iteracji bez poprawy
 
@@ -992,6 +1109,8 @@ TS_max_no_improve_tsp48 %>%
   as.data.frame() 
 ```
 
+Na początku widać, że mediana i średnia długości ścieżki maleją znacząco. Później jednak następuję wzrost tych statystyk. Przy zwiększaniu liczby iteracji bez poprawy, algorytm ma więcej czasu na eksplorację, co pozwala mu unikać lokalnych minimów i znajdować lepsze rozwiązania. Jednak zbyt duże wartości powodują, że algorytm zaczyna eksplorować przestrzeń rozwiązań zbyt długo, nawet w sytuacjach, gdy lepsze rozwiązania już się nie pojawiają, stąd wzrost średniej i mediany.
+
 ```{r, echo=FALSE}
 ggplot(TS_max_no_improve_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -1016,6 +1135,8 @@ TS_max_no_improve_tsp76 %>%
   as.data.frame() 
 ```
 
+Sytaucja jest tutaj podobna. Jednak już przy liczbie iteracji bez poprawy = 150 mamy wzrost mediany i średniej. Dla TSP_76 już od tej wartości algorytm może zbyt długo poszukiwać lepszego rozwiązania. Natomiast otrzymane wyniki są bardzo.
+
 ```{r, echo=FALSE}
 ggplot(TS_max_no_improve_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -1030,7 +1151,7 @@ ggplot(TS_max_no_improve_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
 **TSP_127**
 
 ```{r, echo=FALSE}
-TS_max_no_improve_tsp76 %>%
+TS_max_no_improve_tsp127 %>%
   group_by(PARAMETR) %>%
   summarise(
     Min = min(WYNIK_1),
@@ -1039,6 +1160,10 @@ TS_max_no_improve_tsp76 %>%
   ) %>%
   as.data.frame() 
 ```
+
+Tutaj sytuacja jest cięższa do zdefiniowania. Mediana raz maleje raz rośnie. Natomiast średnia utrzymuje się na podobnym poziomie. Otrzymane wyniki są zdecydowanie lepsze.
+
+Można więc powiedzieć, że trzeba odpowiednio dostosować liczbę iteracji bez poprawy. Zbyt mała liczba może spowodować, że algorytm nie będzie eksplorował dostatecznie głęboko przestrzeni rozwiązań i szybko zatrzyma się na minimach lokalnych. Natomiast zbyt duża liczba iteracji bez poprawy może spowodować, że algorytm przejdzie przez wiele słabszych rozwiązań i poświęci zbyt dużo czasu na mniej obiecujące rozwiązania.
 
 ## Limit czasowy
 
@@ -1082,6 +1207,8 @@ TS_time_limit_tsp48 %>%
   as.data.frame() 
 ```
 
+Mediana oraz średnia się wahają. Nie widać tu zależności limitu czasu od długości ścieżki. Wyniki natomiast są zbliżone do tych z Solvera.
+
 ```{r, echo=FALSE}
 ggplot(TS_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -1105,6 +1232,8 @@ TS_time_limit_tsp76 %>%
   ) %>%
   as.data.frame() 
 ```
+
+Tutaj podobna sytuacja. Średnia i mediana raz rosną, raz maleją.
 
 ```{r, echo=FALSE}
 ggplot(TS_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -1130,9 +1259,59 @@ TS_time_limit_tsp127 %>%
   as.data.frame() 
 ```
 
+Dla TSP_127 na początku widać duży spadek wartości mediany i średniej. Nie było to w widoczne w poprzenich TSP w takim stopniu. Może to się wiązać z tym, że TSP_127 ma największą liczbę miast, więc limit czasowy = 60s był zbyt mały dla niego.
+
+Nie widać tutaj żadnej zależności długości ścieżki od limitu czasu. Jedynie dla TSP_127 pojawiła się bardziej znacząca różnica w odniesieniu do początkowego limitu.
+
 ## Podsumowanie
 
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
+* Klasyk - 10851.0	
+
+* Rodzaje ruchów - 10941 (rodzaj ruchu - 2-opt)
+
+* Długość listy tabu - 10837 (długość listy tabu - 10)
+
+* Liczba iteracji - 10788	(liczba iteracji - 2500)
+
+* Liczba iteracji bez poprawy - 10827	(liczba iteracji bez poprawy - 150)
+
+* Limit czasu - 10854	(limit czasu - 1000)
+
+Dla TSP_48 przy użyciu algorytmu tabu search udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 129754.0	
+
+* Rodzaje ruchów - 128558.9 (rodzaj ruchu - 2-opt)
+
+* Długość listy tabu - 109983.6 (długość listy tabu - 10)
+
+* Liczba iteracji - 110137.5 (liczba iteracji - 1500)
+
+* Liczba iteracji bez poprawy - 109939.4 (liczba iteracji bez poprawy - 150)
+
+* Limit czasu - 110041.2	(limit czasu - 240)
+
+Dla TSP_76 przy użyciu algorytmu tabu search również udało się uzyskać kilka lepszych wyników niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 204850.2	
+
+* Rodzaje ruchów - 200281.5 (rodzaj ruchu - 2-opt)
+
+* Długość listy tabu - 121462.2 (długość listy tabu - 20)
+
+* Liczba iteracji - 121398.3 (liczba iteracji - 1000)
+
+* Liczba iteracji bez poprawy - 120791.7	(liczba iteracji bez poprawy - 10)
+
+* Limit czasu - 121926.2	(limit czasu - 1000)
+
+Dla TSP_127 przy użyciu algorytmu tabu search udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6)
 
 # Algorytm genetyczny
 
