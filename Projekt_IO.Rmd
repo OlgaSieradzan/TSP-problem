@@ -13,6 +13,13 @@ output:
     df_print: paged
 ---
 
+<style>
+  img {
+    width: 100%;
+    height: auto;
+  }
+</style>
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
@@ -23,16 +30,21 @@ library(ggplot2)
 library(gridExtra)
 library(psych)
 library(patchwork)
+library(dplyr)
+<<<<<<< HEAD
+library(tidyr)
+=======
+>>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
 ```
 
 # Wprowadzenie
 
 <div style='text-align: justify'>
-Problem komiwojażera (ang. Travelling Salesman Problem, TSP) to jedno z najbardziej znanych oraz intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
+**Problem komiwojażera** (ang. Travelling Salesman Problem, TSP) to jedno z najbardziej znanych oraz intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
 
 TSP jest problemem należącym do klasy NP-trudnych, co oznacza, że wraz ze wzrostem liczby punktów (miast) liczba możliwych tras rośnie w sposób wykładniczy, a dokładne rozwiązanie staje się coraz trudniejsze do obliczenia w rozsądnym czasie. Z tego powodu opracowanie efektywnych algorytmów heurystycznych i metaheurystycznych, które pozwalają na znalezienie bliskich optymalnym rozwiązań w akceptowalnym czasie.
 
-Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera
+Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera.
 </div>
 
 # Solver
@@ -43,6 +55,7 @@ Wyniki uzyskane za pomocą zaimplementowanych algorytmów zostaną porównane z 
 
 ```{r, echo=FALSE, include=FALSE}
 solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solver.xlsx")
+#solver <- read_excel("C:/Users/user/Downloads/Solver.xlsx")
 ```
 
 ```{r, echo=FALSE}
@@ -74,18 +87,28 @@ Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez 
 # Algorytmu Najbliższego Sąsiada (NN)
 
 <div style='text-align: justify'>
-Algorytm najbliższego sąsiada (ang, nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
+**Algorytm najbliższego sąsiada** (ang. nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
 </div>
 
-## Badany parametr
+## Badane parametry
 
+W ramach algorytmu nalbliższego sąsiada badaniu poddano wpływ różnych wartości parametru `miasto startowe`.
+
+<br>
 ```{r, echo=FALSE, include=FALSE}
-NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_48")
-NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_76")
-NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_127")
+ NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_48")
+ NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_76")
+ NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_127")
+
+# NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_48")
+# NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_76")
+# NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_127")
 ```
 
 ```{r, echo=FALSE}
@@ -96,7 +119,9 @@ w_tsp48 <- ggplot(NN_tsp48, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
 w_tsp76 <- ggplot(NN_tsp76, aes(x = Punkt, y = Wynik)) +
   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
@@ -105,7 +130,9 @@ w_tsp76 <- ggplot(NN_tsp76, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
 w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
@@ -114,14 +141,18 @@ w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
     x = "Punkt początkowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
 
-(w_tsp48 + w_tsp76 + w_tsp127) +
-  plot_layout(guides = "collect", ncol = 2) +  
-  plot_annotation(title = "Długość ścieżki w zależności od punktu startowego")
+(w_tsp48 + w_tsp76 + w_tsp127 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności od punktu startowego",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
 ```
 
-Na wykresach widzimy długość tracy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
+Na wykresach widzimy długość trasy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
 
 ```{r echo=FALSE, include=FALSE}
 stat_NN_tsp48 <- describe(NN_tsp48$Wynik)
@@ -135,59 +166,163 @@ rownames(stat_NN) <- c("TSP_48", "TSP_76", "TSP_127")
 stat_NN
 ```
 
-W tabelce w tablce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
+W tabelce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
 
 * **TSP_48**
 
-Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorsz.
+```{r}
+NN_tsp48$Punkt[NN_tsp48$Wynik == min(NN_tsp48$Wynik)]
+NN_tsp48[c(10,35),]
+```
+
+Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorszy. Ten wynik został uzyskany dla 2 punktów początkowych: 10 i 35.
 
 * **TSP_76**
 
-Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorsz.
+```{r}
+NN_tsp76$Punkt[NN_tsp76$Wynik == min(NN_tsp76$Wynik)]
+NN_tsp76[16,]
+```
+
+Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 16.
 
 * **TSP_127**
 
-Długość ścieżki wyniosła **133970.6** i jest to gorszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy.
+```{r}
+NN_tsp127$Punkt[NN_tsp127$Wynik == min(NN_tsp127$Wynik)]
+NN_tsp127[117,]
+```
+
+Długość ścieżki wyniosła **133970.6** i jest to lepszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 117.
 
 Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver dla TSP_48 i TSP_76.
 
 # Algorytm wspinaczki z multistartem (IHC)
 
 <div style='text-align: justify'>
-Algorytm iteracyjnej wspinaczki z multistartem to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
+**Algorytm iteracyjnej wspinaczki** to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
 rozwiązania bliskiego globalnemu optimum.
 </div>
+
+<<<<<<< HEAD
+## Badane parametry
+
+
+W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
+
+ - **`liczba punktów początkowych`** - maksymalna liczba losowych punktów początkowych, z których algorytm rozpoczyna wspinaczkę
+ 
+ - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - **`swap`** nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - **`insertion`** polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - **`2-opt`** wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+  
+    <p style="margin-top: 10px;">
+ - **`czas działania`** - czas, jaki posiada algorytm na znalezienie rozwiązania
+ 
+ - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
+ 
+ - **`liczba iteracji wspinaczki`** - liczba iteracji, jaką algorytm może wykonać w jednej próbie wspinaczki
+    </p>
+    
+```{r echo=FALSE, include=FALSE}
+# IHC_compare_methods <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
+#     sheet = "Porównanie_metod")
+# IHC_max_iterations <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
+#     sheet = "max_iterations")
+
+IHC_compare_methods <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "Porównanie_metod")
+IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "max_iterations")
+```
+
+### Rodzaj sasiedztwa
+
+```{r echo=FALSE}
+IHC_compare_methods$Dataset <- c("TSP_48", "TSP_76", "TSP_127")
+
+compare_metods_tsp48 <- IHC_compare_methods[1, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp76 <- IHC_compare_methods[2, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp127 <- IHC_compare_methods[3, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+
+p1 <- ggplot(compare_metods_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_48",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+p2 <- ggplot(compare_metods_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_76",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+# Wykres dla TSP_127
+p3 <- ggplot(compare_metods_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_127",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+(p1 + p2 + p3 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
+```
 
 ### Porównanie metod
 
 ```{r, echo=FALSE, include=FALSE}
-porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Porównanie_metod+1")
-max_iteration_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "max_iterations_1")
-restart_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Restart_1")
-point_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Point_1")
+#porownanie_metod_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Porównanie_metod+1")
+#max_iteration_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "max_iterations_1")
+#restart_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Restart_1")
+#point_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Point_1")
 
-porownanie_metod_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Porównanie_metod_2")
-max_iteration_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx"
-                                  , 
-    sheet = "max_iterations_2")
-restart_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Restart_2")
-point_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Point_2")
+#porownanie_metod_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Porównanie_metod_2")
+#max_iteration_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx"
+#                                  , 
+#    sheet = "max_iterations_2")
+#restart_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Restart_2")
+#point_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Point_2")
 
-porownanie_metod_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Porównanie_metod_3")
-max_iteration_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "max_iterations_3")
-restart_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Restart_3")
-point_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "Point_3")
+#porownanie_metod_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Porównanie_metod_3")
+#max_iteration_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "max_iterations_3")
+#restart_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Restart_3")
+#point_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+#    sheet = "Point_3")
 ```
 
 Stałe parametry:
@@ -201,39 +336,39 @@ Stałe parametry:
 * max_iteration = 150
 
 ```{r, echo=FALSE}
-p1 <- ggplot(porownanie_metod_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
-  geom_col() +
-  geom_text(aes(label = `Długość ścieżki`), vjust = 2, color = "black", size = 3.2) + 
-  labs(
-    title = "TSP_48",
-    x = "Metoda",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
+#p1 <- ggplot(porownanie_metod_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+#  geom_col() +
+#  geom_text(aes(label = `Długość ścieżki`), vjust = 2, color = "black", size = 3.2) + 
+#  labs(
+#    title = "TSP_48",
+#    x = "Metoda",
+#    y = "Długość ścieżki"
+#  ) +
+#  theme_minimal()
 
-p2 <- ggplot(porownanie_metod_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
-  geom_col() +
-  geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
-  labs(
-    title = "TSP_76",
-    x = "Metoda",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
+# p2 <- ggplot(porownanie_metod_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+#   geom_col() +
+#   geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
+#   labs(
+#     title = "TSP_76",
+#     x = "Metoda",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
 
-p3 <- ggplot(porownanie_metod_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
-  geom_col() +
-  geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
-  labs(
-    title = "TSP_127",
-    x = "Metoda",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
-
-(p1 + p2 + p3) +
-  plot_layout(guides = "collect", ncol = 2) +  # Wspólna legenda, układ 2 kolumny
-  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu")
+# p3 <- ggplot(porownanie_metod_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+#   geom_col() +
+#   geom_text(aes(label = round(`Długość ścieżki`,1)), vjust = 2, color = "black", size = 3.2) + 
+#   labs(
+#     title = "TSP_127",
+#     x = "Metoda",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+# 
+# (p1 + p2 + p3) +
+#   plot_layout(guides = "collect", ncol = 2) +  # Wspólna legenda, układ 2 kolumny
+#   plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu")
 ```
 
 <div style='text-align: justify'>
@@ -241,15 +376,15 @@ Na wykresach możemy zobaczyć jak w zależności od metody zmieniała się dłu
 </div>
 
 ```{r, echo=FALSE}
-por_st48 <- describe(porownanie_metod_tsp48$`Długość ścieżki`)
-por_st76 <- describe(porownanie_metod_tsp76$`Długość ścieżki`)
-por_st127 <- describe(porownanie_metod_tsp127$`Długość ścieżki`)
-por_st <- rbind(por_st48)
-por_st <- rbind(por_st, por_st76)
-por_st <- rbind(por_st, por_st127)
-por_st <- por_st[ ,c("min", "max", "mean")]
-rownames(por_st) <- c("TSP_48", "TSP_76", "TSP_127")
-por_st
+# por_st48 <- describe(porownanie_metod_tsp48$`Długość ścieżki`)
+# por_st76 <- describe(porownanie_metod_tsp76$`Długość ścieżki`)
+# por_st127 <- describe(porownanie_metod_tsp127$`Długość ścieżki`)
+# por_st <- rbind(por_st48)
+# por_st <- rbind(por_st, por_st76)
+# por_st <- rbind(por_st, por_st127)
+# por_st <- por_st[ ,c("min", "max", "mean")]
+# rownames(por_st) <- c("TSP_48", "TSP_76", "TSP_127")
+# por_st
 ```
 
 W odniesieniu do Solvera, możemy zobaczyć, że dla TSP_76 i TSP_127 uzyskane wyniki są niższe. Natomiast dla TSP_48 wynik jest delikatnie wyższy. Średnie nie różnią się znacząco od tych z Solvera.
@@ -265,41 +400,41 @@ Stałe parametry:
 * random_restart = 1
 
 ```{r, echo=FALSE, warning=FALSE}
-m1 <- ggplot(max_iteration_tsp48, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "pink", size = 1) +
-  labs(
-    title = "TSP_48",
-    x = "Liczba iteracji",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal() +
-  xlim(0,100)
-
-m2 <- ggplot(max_iteration_tsp76, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "pink", size = 1) +
-  labs(
-    title = "TSP_76",
-    x = "Liczba iteracji",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal() +
-  xlim(0,100)
-
-m3 <- ggplot(max_iteration_tsp127, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "pink", size = 1) +
-  labs(
-    title = "TSP_127",
-    x = "Liczba iteracji",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal() +
-  xlim(0,100)
-
-
-
-(m1 + m2 + m3) +
-  plot_layout(guides = "collect", ncol = 2) +  
-  plot_annotation(title = "Długość ścieżki w zależności od liczby iteracji")
+# m1 <- ggplot(max_iteration_tsp48, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "pink", size = 1) +
+#   labs(
+#     title = "TSP_48",
+#     x = "Liczba iteracji",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal() +
+#   xlim(0,100)
+# 
+# m2 <- ggplot(max_iteration_tsp76, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "pink", size = 1) +
+#   labs(
+#     title = "TSP_76",
+#     x = "Liczba iteracji",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal() +
+#   xlim(0,100)
+# 
+# m3 <- ggplot(max_iteration_tsp127, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "pink", size = 1) +
+#   labs(
+#     title = "TSP_127",
+#     x = "Liczba iteracji",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal() +
+#   xlim(0,100)
+# 
+# 
+# 
+# (m1 + m2 + m3) +
+#   plot_layout(guides = "collect", ncol = 2) +  
+#   plot_annotation(title = "Długość ścieżki w zależności od liczby iteracji")
 ```
 
 <div style='text-align: justify'>
@@ -307,15 +442,15 @@ Na powyższych wykresach widzimy zależność długości ścieżki od liczby ite
 </div>
 
 ```{r, echo=FALSE}
-mi_st48 <- describe(max_iteration_tsp48$WYNIK)
-mi_st76 <- describe(max_iteration_tsp76$WYNIK)
-mi_st127 <- describe(max_iteration_tsp127$WYNIK)
-mi_st <- rbind(mi_st48)
-mi_st <- rbind(mi_st, mi_st76)
-mi_st <- rbind(mi_st, mi_st127)
-mi_st <- mi_st[ ,c("min", "max", "mean")]
-rownames(mi_st) <- c("TSP_48", "TSP_76", "TSP_127")
-mi_st
+# mi_st48 <- describe(max_iteration_tsp48$WYNIK)
+# mi_st76 <- describe(max_iteration_tsp76$WYNIK)
+# mi_st127 <- describe(max_iteration_tsp127$WYNIK)
+# mi_st <- rbind(mi_st48)
+# mi_st <- rbind(mi_st, mi_st76)
+# mi_st <- rbind(mi_st, mi_st127)
+# mi_st <- mi_st[ ,c("min", "max", "mean")]
+# rownames(mi_st) <- c("TSP_48", "TSP_76", "TSP_127")
+# mi_st
 ```
 
 <div style='text-align: justify'>
@@ -333,40 +468,40 @@ Stałe parametry:
 * max_iteration = 150
 
 ```{r, echo=FALSE}
-r1 <- ggplot(restart_tsp48, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "lightblue", size = 1) +
-  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
-  labs(
-    title = "TSP_48",
-    x = "Liczba restartów",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
-
-r2 <- ggplot(restart_tsp76, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "lightblue", size = 1) +
-  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
-  labs(
-    title = "TSP_76",
-    x = "Liczba restartów",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
-
-r3 <- ggplot(restart_tsp127, aes(x = PARAMETR, y = WYNIK)) +
-  geom_line(colour = "lightblue", size = 1) +
-  geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
-  labs(
-    title = "TSP_127",
-    x = "Liczba restartów",
-    y = "Długość ścieżki"
-  ) +
-  theme_minimal()
-
-
-(r1 + r2 + r3) +
-  plot_layout(guides = "collect", ncol = 2) +  
-  plot_annotation(title = "Długość ścieżki w zależności od liczby restartów")
+# r1 <- ggplot(restart_tsp48, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "lightblue", size = 1) +
+#   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+#   labs(
+#     title = "TSP_48",
+#     x = "Liczba restartów",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+# 
+# r2 <- ggplot(restart_tsp76, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "lightblue", size = 1) +
+#   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+#   labs(
+#     title = "TSP_76",
+#     x = "Liczba restartów",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+# 
+# r3 <- ggplot(restart_tsp127, aes(x = PARAMETR, y = WYNIK)) +
+#   geom_line(colour = "lightblue", size = 1) +
+#   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
+#   labs(
+#     title = "TSP_127",
+#     x = "Liczba restartów",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+# 
+# 
+# (r1 + r2 + r3) +
+#   plot_layout(guides = "collect", ncol = 2) +  
+#   plot_annotation(title = "Długość ścieżki w zależności od liczby restartów")
 ```
 
 <div style='text-align: justify'>
@@ -374,15 +509,15 @@ Można zauważyć, że na każdym z wykresów pojawia się tendencja spadkowa d�
 </div>
 
 ```{r, echo=FALSE}
-r_st48 <- describe(restart_tsp48$WYNIK)
-r_st76 <- describe(restart_tsp76$WYNIK)
-r_st127 <- describe(restart_tsp127$WYNIK)
-r_st <- rbind(r_st48)
-r_st <- rbind(r_st, r_st76)
-r_st <- rbind(r_st, r_st127)
-r_st <- r_st[ ,c("min", "max", "mean", "sd")]
-rownames(r_st) <- c("TSP_48", "TSP_76", "TSP_127")
-r_st
+# r_st48 <- describe(restart_tsp48$WYNIK)
+# r_st76 <- describe(restart_tsp76$WYNIK)
+# r_st127 <- describe(restart_tsp127$WYNIK)
+# r_st <- rbind(r_st48)
+# r_st <- rbind(r_st, r_st76)
+# r_st <- rbind(r_st, r_st127)
+# r_st <- r_st[ ,c("min", "max", "mean", "sd")]
+# rownames(r_st) <- c("TSP_48", "TSP_76", "TSP_127")
+# r_st
 ```
 
 <div style='text-align: justify'>
@@ -400,62 +535,52 @@ Stałe parametry:
 * max_iteration = 150
 
 ```{r, echo=FALSE}
-pt1 <- ggplot(point_tsp48, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
-  geom_col() +
-  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
-  labs(
-    title = "TSP_48",
-    x = "Punkt początkowy",
-    y = "Długość ścieżki",
-    fill = "Punkt pocz."
-  ) +
-  theme_minimal()
-
-pt2 <- ggplot(point_tsp76, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
-  geom_col() +
-  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
-  labs(
-    title = "TSP_76",
-    x = "Punkt początkowy",
-    y = "Długość ścieżki",
-    fill = "Punkt pocz."
-  ) +
-  theme_minimal()
-
-pt3 <- ggplot(point_tsp127, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
-  geom_col() +
-  geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
-  labs(
-    title = "TSP_127",
-    x = "Punkt początkowy",
-    y = "Długość ścieżki",
-    fill = "Punkt pocz."
-  ) +
-  theme_minimal()
-```
-
-```{r, echo=FALSE}
-pt1
-```
-```{r,echo=FALSE}
-pt2
-```
-```{r, echo=FALSE}
-pt3
+# pt1 <- ggplot(point_tsp48, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+#   geom_col() +
+#   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+#   labs(
+#     title = "TSP_48",
+#     x = "Punkt początkowy",
+#     y = "Długość ścieżki",
+#     fill = "Punkt pocz."
+#   ) +
+#   theme_minimal()
+# 
+# pt2 <- ggplot(point_tsp76, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+#   geom_col() +
+#   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+#   labs(
+#     title = "TSP_76",
+#     x = "Punkt początkowy",
+#     y = "Długość ścieżki",
+#     fill = "Punkt pocz."
+#   ) +
+#   theme_minimal()
+# 
+# pt3 <- ggplot(point_tsp127, aes(x = reorder(factor(PARAMETR), -WYNIK), y = WYNIK, fill = factor(PARAMETR))) +
+#   geom_col() +
+#   geom_text(aes(label = round(WYNIK,2)), vjust = 2, color = "black", size = 4) + 
+#   labs(
+#     title = "TSP_127",
+#     x = "Punkt początkowy",
+#     y = "Długość ścieżki",
+#     fill = "Punkt pocz."
+#   ) +
+#   theme_minimal()
 ```
 
 Wylosowany punkt początkowy nie wpływa znacząco na długość ścieżki. Jeżeli punkt został dobrze trafiony to długość jest mniejsza jak dla TSP_48 i punktu startowego 11.
 
 ```{r, echo=FALSE}
-pt_st48 <- describe(point_tsp48$WYNIK)
-pt_st76 <- describe(point_tsp76$WYNIK)
-pt_st127 <- describe(point_tsp127$WYNIK)
-pt_st <- rbind(pt_st48)
-pt_st <- rbind(pt_st, r_st76)
-pt_st <- rbind(pt_st, r_st127)
-pt_st <- pt_st[ ,c("min", "max", "mean")]
-rownames(pt_st) <- c("TSP_48", "TSP_76", "TSP_127")
-pt_st
+# pt_st48 <- describe(point_tsp48$WYNIK)
+# pt_st76 <- describe(point_tsp76$WYNIK)
+# pt_st127 <- describe(point_tsp127$WYNIK)
+# pt_st <- rbind(pt_st48)
+# pt_st <- rbind(pt_st, r_st76)
+# pt_st <- rbind(pt_st, r_st127)
+# pt_st <- pt_st[ ,c("min", "max", "mean")]
+# rownames(pt_st) <- c("TSP_48", "TSP_76", "TSP_127")
+# pt_st
 ```
 
 <div style='text-align: justify'>
@@ -469,7 +594,7 @@ Wyniki otrzymane poprzez zmianę poszczególnych parametrów są zdecydowanie le
 </div>
 
 ```{r, echo=FALSE}
-r_st[,c(1,3)]
+#r_st[,c(1,3)]
 ```
 
 * Dla TSP_48 najniższy wynik został uzyskany pierwszy raz przy 5 restartach i wyniósł on: **10749**.
@@ -479,25 +604,145 @@ r_st[,c(1,3)]
 * Dla TSP_127 najniższy wynik został uzyskany pierwszy raz przy 12 restartach i wyniósł on: **119375.3**
 
 
+=======
+>>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
 
 # Algorytm symulowanego wyżarzania (SA)
 
 <div style='text-align: justify'>
-Algorytm symulowanego wyżarzania (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest 
+**Algorytm symulowanego wyżarzania** (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest 
 parametryzowana w danej implementacji. 
 </div>
 
-```{r echo=FALSE, include=FALSE}
+## Badane parametry
 
+W ramach algorytmu symulowanego wyżarzania badane są następujące parametry:
+
+ - **`temperatura początkowa`** -  wartość temperatury, od której rozpoczyna się proces chłodzenia w algorytmie
+ 
+ - **`temperatura końcowa`** - wartość temperatury, do której algorytm będzie dążył w trakcie działania
+ 
+ - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+  
+    <p style="margin-top: 10px;">
+ - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+ 
+ - **`prędkość chłodzenia`** -  szybkość, z jaką zmniejszana jest temperatura w trakcie działania algorytmu
+ 
+ - **`temperatura minimalna`** - wartość temperatury, poniżej której algorytm nie będzie już kontynuował poszukiwań
+    </p>
+    
+```{r echo=FALSE, include=FALSE}
+# SA_compare_methods <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "Porównanie_metod")
+# SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "max_iterations")
+# SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "min_tem")
+# SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "cooling_rate")
+# SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "initial_temp")
+
+SA_compare_methods <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "Porównanie_metod")
+SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "max_iterations")
+SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "min_tem")
+SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "cooling_rate")
+SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "initial_temp")
 ```
+
+### Rodzaj sasiedztwa
+
+```{r echo=FALSE}
+SA_compare_methods$Dataset <- c("TSP_48", "TSP_76", "TSP_127")
+
+compare_metods_tsp48 <- SA_compare_methods[1, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp76 <- SA_compare_methods[2, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp127 <- SA_compare_methods[3, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+
+p1 <- ggplot(compare_metods_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_48",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+p2 <- ggplot(compare_metods_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_76",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+# Wykres dla TSP_127
+p3 <- ggplot(compare_metods_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_127",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+(p1 + p2 + p3 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
+```
+
 
 # Algorytm przeszukiwania tabu
 
 <div style='text-align: justify'>
-Algorytm przeszukiwania tabu (ang. Tabu Search, TS) to algorytm, który opiera się na stopniowym ulepszaniu początkowego, losowego rozwiązania. W przypadku problemu komiwojażera algorytm stara się skrócić trasę w taki sposób, aby odwiedzić wszystkie punkty. TS działa w sposób iteracyjny – w każdej iteracji obecne rozwiązanie jest modyfikowane poprzez wybór jednego z ruchów zdefiniowanych w sąsiedztwie. Charakterystyczną cechą algorytmu TS jest lista tabu, która 
+**Algorytm przeszukiwania tabu** (ang. Tabu Search, TS) to algorytm, który opiera się na stopniowym ulepszaniu początkowego, losowego rozwiązania. W przypadku problemu komiwojażera algorytm stara się skrócić trasę w taki sposób, aby odwiedzić wszystkie punkty. TS działa w sposób iteracyjny – w każdej iteracji obecne rozwiązanie jest modyfikowane poprzez wybór jednego z ruchów zdefiniowanych w sąsiedztwie. Charakterystyczną cechą algorytmu TS jest lista tabu, która 
 przechowuje ruchy wykonane w ostatnich iteracjach. Ruchy te są czasowo zakazane, co zapobiega zapętleniu się algorytmu i ponownemu odwiedzaniu tych samych rozwiązań. Algorytm pozwala również na wykonanie ruchu, który chwilowo pogarsza rozwiązanie. Taki mechanizm umożliwia ucieczkę z lokalnych ekstremów i zwiększa szansę na znalezienie rozwiązania globalnie optymalnego lub bliskiego optymalnemu. Dodatkowo TS może korzystać z kryterium zakończenia działania, 
 które przerywa algorytm, jeśli przez dłuższy czas nie nastąpi poprawa wyniku.
 </div>
+
+## Badane parametry
+
+W ramach algorytmu przeszukiwania tabu badane są następujące parametry:
+
+ - **`długość listy tabu`** - liczba wykonanych ruchów, które nie mogą być ponownie wykorzystanie przez określoną liczbę iteracji
+ 
+ - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
+ 
+ - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+  
+    <p style="margin-top: 10px;">
+ - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+    </p>
 
 ```{r echo=FALSE, include=FALSE}
 
@@ -506,32 +751,694 @@ które przerywa algorytm, jeśli przez dłuższy czas nie nastąpi poprawa wynik
 # Algorytm genetyczny
 
 <div style='text-align: justify'>
-Algorytm genetyczny (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, 
+**Algorytm genetyczny** (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, 
 aż do osiągnięcia określonej liczby iteracji lub spełnienia innych warunków stopu. 
 </div>
 
+## Badane parametry
+
+W ramach algorytmu genetycznego badane są następujące parametry:
+
+ - **`wielkość populacji`** - liczba osobników w populacji, które będą brane pod uwagę w danej iteracji algorytmu
+ 
+ - **`prawdopodobieństwo mutacji`** - prawdopodobieństwo z jakim nastąpi mutacja genów w osobnikach
+ 
+ - **`prawdopodobieństwo krzyżowania`** - prawdopodobieństwo z jakim nastąpi krzyżowanie osobników w populacji
+ 
+ - **`metoda doboru rodziców`** - sposób wyboru najlepszych osobników do reprodukcji:
+ 
+   - `turniejowy` - losowana jest grupa osobników stanowiąca 10% populacji, a jako rodzic wybierany jest osobnik z najkrótszą trasą
+   
+   - `rankingowy` - wybór rodzica odbywa się na podstawie rankingu osobników, przy czym zwracana jest tylko jedna ścieżka
+   
+   <p style="margin-top: 10px;">
+ - **`metoda krzyżowania`** - sposób łączenia genów (tras) rodziców w celu stworzenia potomków:
+ 
+   - `order crossover (OX)` - z pierwszego rodzica wybierany jest losowy segment miast, który jest kopiowany do potomka w to samo miejsce, pozostałe miasta są uzupełniane w potomku zgodnie z ich kolejnością wystąpienia w drugim rodzicu
+   
+   - `partially matched crossover (pmx)` - dziedziczenie części trasy od każdego z rodziców przy zachowaniu oryginalnej kolejności odwiedzonych miast, jednocześnie eliminując duplikaty w nowo powstałym rozwiązaniu 
+   </p>
+   
+   <p style="margin-top: 10px;">
+ - **`metoda mutacji`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ 
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    
+    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    
+    - `inversion` odwrócenie kolejności odwiedzanych miast w wybranym segmencie trasy
+    </p>
+    
+    <p style="margin-top: 10px;">
+ - **`liczba pokoleń`** - liczba iteracji algorytmu 
+    </p>
+    
 ```{r echo=FALSE, include=FALSE}
 
 ```
 
-# Algorytm zachłanny
+# Algorytm mrówkowy
+# Algorytm mrówkowy
 
 <div style='text-align: justify'>
-Algorytm zachłanny to metoda obliczeniowa, która na każdym etapie wybiera lokalne rozwiązanie optymalne, uznając je za najbardziej obiecujące w danym momencie. Decyzje podejmowane są w oparciu o aktualne informacje, bez analizy ich wpływu na dalsze kroki. Algorytm działa iteracyjnie, rozwiązując kolejne podproblemy wynikające z poprzednich wyborów, aż do uzyskania pełnego rozwiązania. Chociaż takie podejście może prowadzić do szybkich rozwiązań, nie zawsze gwarantuje znalezienie rozwiązania globalnie optymalnego.
+ Algorytm mrówkowy został stworzony na podstawie obserwacji życia mrówek podczas szukania optymalnej drogi między mrowiskiem a źródłem pożywienia. Mrówki w środowisku naturalnym poruszają się losowo, ale zostawiają na swojej drodze feromony, które pomagają innym mrówkom znaleźć najkrótszą ścieżkę. Z czasem feromony parują (ich wpływ maleje), co pozwala wyeliminować nieoptymalne ścieżki. Algorytm ten dobrze sprawdza się w rozwiązywaniu problemu komiwojażera.
 </div>
 
-```{r}
-zachlany_klasyka <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
-    sheet = "Klasyka")
-zachlany_wszystkie <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Zachłanny.xlsx", 
-    sheet = "Wszytskie")
+Zasada działania algorytmu do rozwiązania problemu komiwojażera wygląda następująco:
+
+1. Połączenie między miastami inicjowane są niewielką ilością feromonu.
+
+2. Każda mrówka umieszczana jest losowo w wybranym mieście, z którego przemieszcza się do kolejnego z prawdopodobieństwem P, będącym funkcją odległości do celu oraz wielkości śladu feromonowego pozostawionego na krawędzi łączącej je z tym miastem.
+
+3. Mrówka poruszając się z miasta i do miasta j pozostawia za sobą ślad feromonowy odwrotnie proporcjonalny do długości trasy, którą przebyła .
+
+4. Sztuczna mrówka wyposażona jest w pamięć w celu zapamiętania, które miasto już odwiedziła, aby uwzględnić je tylko jeden raz w swojej trasie (pamięć jest czyszczona przy rozpoczęciu każdego kolejnego cyklu przechodzenia).
+
+5. Dla odwzorowania parowania feromonu występującego w naturze, w algorytmie feromon jest pomniejszany o określoną wartość po każdej iteracji, tak aby uniknąć zjawiska przedwczesnej zbieżności algorytmu.
+
+## Parametry
+
+* num_ants - liczba mrówek, która bierze udział w szukaniu optymalnej trasy. Jest ona zależna od liczby miast i wybierana z przedziału (0.5 * liczba miast, 2 * liczba miast)
+
+* num_iterations - liczba iteracji
+
+* alpha - parametr sterujący ważnością intensywności śladu feromonowego
+
+* beta - parametr sterujący ważnością widoczności następnego
+miasta
+
+* rho - prędkość odparowywania feromonu
+
+## Klasyczne 
+
+Za podstawowe wartości parametrów przyjmujemy:
+
+* num_ants = 10
+
+* num_iterations = 100
+
+* alpha = 1
+
+* beta = 2
+
+* rho = 0.5
+
+```{r, echo=FALSE, include=FALSE}
+klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "Klasyk_wyniki")
+num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "num_ants")
+max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "max_it")
+alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "alpha")
+beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "beta")
+rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+    sheet = "rho")
 ```
 
-```{r}
-zachlany_klasyka
-rownames(zachlany_klasyka) <- c("TSP_48", "TSP_76", "TSP_127")
-zachlany_klasyka
+```{r, echo=FALSE}
+klasyk_mrowki_tsp48 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA1") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk_mrowki_tsp76 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA2") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk_mrowki_tsp127 <- klasyk_wyniki %>%
+  filter(DATASET == "DATA3") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+klasyk <- cbind(klasyk_mrowki_tsp48)
+klasyk <- cbind(klasyk, klasyk_mrowki_tsp76)
+klasyk <- cbind(klasyk, klasyk_mrowki_tsp127)
+
+colnames(klasyk) <- c("TSP_48", "TSP_76", "TSP_127")
+klasyk
+```
+
+```{r, echo=FALSE}
+klasyk_stat <- klasyk_wyniki %>%
+  group_by(DATASET) %>%
+  summarise(
+    Mean = mean(WYNIK),
+    Min = min(WYNIK),
+    Max = max(WYNIK)
+  ) %>%
+  as.data.frame()              
+
+rownames(klasyk_stat) <- c("TSP_48", "TSP_76", "TSP_127")
+
+klasyk_stat[,c("Min", "Max", "Mean")]
+```
+
+W tabelce widzimy statystyki uzyskane dla podstawowych wartości parametrów dla algorytmu mrówkowego. Dla TSP_48 i TSP_76 wartości minimalne są wyższe niż uzyskane przez Solver. Jedynie dla TSP_127 otrzymany wynik jest lepszy. Natomiast średnie są dość podobne.
+
+## Liczba mrówek
+
+Poniżej zbadany został wpływ liczby mrówek na długość ścieżki:
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp48 <- num_ants %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+num_ants_mrowki_tsp76 <- num_ants %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+num_ants_mrowki_tsp127 <- num_ants %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_48 możemy zobaczyć zobaczyć z wykresów pudełkowcyh, że wraz ze wzrostem liczby mrówek, która bierze udział w poszukiwaniu optymalnej trasy, mediana długości ścieżki zdecydowanie się obniża. Średnia również widocznie maleje. Najniższa jest dla liczby mrówek równej 84. 
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 pojawia nam się podobna zależność. Mediana długości ścieżki widocznie się obniża i największe różnice widać na początku. Później te różnice nie są już takie znaczące. Uzyskane średnie dla wszystkich wartości parametrów są niższe niż średnia z Solvera (139999,45).
+
+```{r, echo=FALSE}
+ggplot(num_ants_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba mrówek",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+num_ants_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 nie możemy już zobaczyć, tej zależności, że mediana i średnia długości ścieżki maleje wraz ze wzrostem liczby mrówek. Widzimy tutaj, że raz rośnie raz maleje. Średnia długość ścieżki co prawda zmalała od wartości parametru 123, jednak później wraz ze wzrostem jego wartości waha się i nie zmniejsza się znacząco. 
+
+W 2/3 przypadki wskazały, że wraz ze wzrostem liczby mrówek mediana i średnia długości ścieżki maleje. Warto też dodać, że średnie wyniki są lepsze w każdym z przypadków niż te otrzymane dla klasycznych wyników, gdzie liczba mrówek wynosiła 10.
+
+## Liczba iteracji
+
+Poniżej został zbadany wpływ liczby iteracji na długość ścieżki:
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp48 <- max_it %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+max_it_mrowki_tsp76 <- max_it %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+max_it_mrowki_tsp127 <- max_it %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+W przypadku zmian liczby iteracji, nie widać tutaj żadnej zależności. Mediana długości ścieżki raz rośnie raz maleje. Jedyny duży spadek widać na początku. Dla parametrów powyżej wartości 100, mediany już są niższe i średnia również. Poza tym liczba iteracji nie wpływa znacząco na wyniki. 
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 pojawia się już bardziej widoczna zależność. Mediana i średnia długości ścieżki maleje wraz z liczbą iteracji. Jednak nie w bardzo znaczącym stopniu. Różnice są niewielkie. Pojawia się nam też jeden wyjątek od tej zależności dla liczby iteracji równej 150, gdzie mediana i średnia znacząco spadły. Otrzymane średnie sa niższe niż te otrzymane przez Solver.
+
+```{r, echo=FALSE}
+ggplot(max_it_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+max_it_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 spadek mediany i średniej wraz z wzrostem iteracji jest już bardziej widoczny. Jednak pojawiają się też pewne wahania. W odróżnieniu od poprzednich TSP, widać tutaj, że wraz z wzrostem iteracji maleje również minimalna wartość.
+
+Wpływ liczby iteracji wydaje się być częsciowo uzależniony od liczby miast. Gdy wynosiła ona 48 nie widać było zależności. Wraz z zwiększeniem liczby miast stawała się ona bardziej wyraźna. Jednak pojawiały się wtedy pewne wahania.
+
+## Alpha
+
+Poniżej został zbadany wpływ alphy na długość ścieżki:
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp48 <- alpha %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+alpha_mrowki_tsp76 <- alpha %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+alpha_mrowki_tsp127 <- alpha %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
 ```
 
 
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla wartości alpha równej 0 widać znaczną różnicę w medianie i średniej długości ścieżki w porównaniu do pozostałych wartości. Wynika to z faktu, że alpha odpowiada za wpływ intensywności śladu feromonowego na wybory mrówek. Gdy alpha wynosi 0, ślad feromonowy nie ma żadnego wpływu na ich decyzje. W rezultacie, pomimo istnienia informacji o jakości trasy (beta = 2), brak znaczenia intensywności feromonów sprawia, że mrówki nie są w stanie z niej skorzystać.
+
+W przypadku alpha = 1, wyniki są najniższe. Jest to zapewne z wiązane z tym, że stosunek intensywności do widoczności feromonów jest najlepszy. Natomiast wraz ze wzrostem alpha, długość ścieżki rośnie, ponieważ gdy wartość alpha jest za duża w porównaniu do parametru beta, populacja mrówek traci różnorodność. Różnica mediany i średniej między alpha 3 i 4 jest znikoma. Różnica alphy w stosunku do bety jest na tyle wysoka, że zwiększanie alphy nie wpływa na poprawę, badź pogorszenie długości ścieżki.
+
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj sytuacja jest praktycznie identyczna. Dla alpha = 0 wyniki są najgorsze. Natomiast wraz ze wzrostem parametru (alpha > beta) wyniki się pogarszają do momentu gdzie nie ma już znaczącej różnicy w wynikach.
+
+```{r, echo=FALSE}
+ggplot(alpha_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Alpha",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+alpha_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 analogiczna sytuacja.
+
+Wartość parametru alpha istotnie wpływa na długość ścieżki, a tak naprawdę to jego różnica w stosunku do bety. Gdy jest ona odpowiednia, wyniki są najlepsze (średnia i mediana długości ścieżki sa najniższe). W każdym z przypadku najlepsze wyniki uzyskano dla alpha = 1 (beta = 2). Natomiast wyniki nie są lepsze od tych uzsykanych przez Solver. Średnie są porównywalne bądź gorsze.
+
+## Beta
+
+Poniżej został zbadany wpływ bety na długość ścieżki:
+
+```{r, echo=FALSE}
+beta_mrowki_tsp48 <- beta %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+beta_mrowki_tsp76 <- beta %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+beta_mrowki_tsp127 <- beta %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Największa różnica w wynikach (długościach ścieżek) jest widoczna pomiędzy wartościami beta = 1 i beta = 2. Powodem tego jest fakt, że przy beta = 1 i alpha = 1 wpływ obu parametrów – feromonów (alpha) i heurystyki (beta) – jest równoważny. W takiej sytuacji różnica pomiędzy wpływem tych dwóch czynników jest zerowa, co prowadzi do najgorszych wyników. W przypadku bardziej zróżnicowanych wartości alpha i beta (np. beta = 2), jedna z tych strategii ma większy wpływ, co pozwala mrówkom na bardziej skoncentrowane działania i prowadzi do lepszych wyników. Natomiast gdy wartość bety wzrasta, tylko na początku widać delikatną poprawę w wynikach. Później median i średnia długości ścieżki już są bardzo podobne. Wyniki się nie poprawiają.
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj mamy analogiczną sytuację do poprzedniej. Dla bety = 0 wyniki są najgorsze. Następnie już tylko nieznacznie się wahają. 
+
+```{r, echo=FALSE}
+ggplot(beta_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Beta",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+beta_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 wzrost wartości paramaetru powoduje poprawę w wynikach. Średnia i mediana długości ścieżki maleją, aż do momentu gdzie już nie uzyskujemy poprawy i wyniki się tylko nieznacznie wahają wokół podobnej wartości. W tym przypadku wzrost wartości bety spowodował największą poprawę.
+
+Współczynnik bety znacząco wpływa na długość ścieżki. Jednak tak jak było wspomniane przy parametrze alpha, największe znaczenie ma różnica między tymi dwoma parametrami.
+
+## Rho
+
+Poniżej został zbadany wpływ rho na długość ścieżki:
+
+```{r, echo=FALSE}
+rho_mrowki_tsp48 <- rho %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+rho_mrowki_tsp76 <- rho %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+rho_mrowki_tsp127 <- rho %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Wyniki średniej i mediany długości ścieżki wahają się wokół podobnych wartości niezależnie od wartości rho. Jedynie znacząca różnica jest dla rho = 0.9, Średnia i mediana są zdecydowanie wyższe. Uzyskane średnie są zdecydowanie wyższe niż te otrzyamne przez Solver.
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 widzimy natomiast, że różnice w średniej i medianie długości ścieżki są zdecydowanie największe w przypadku skrajnych wartości rho. Bardzo niskie wartości tego parametru oznaczają długotrwałe utrzymywanie się feromonów (bardzo wolne odparowywanie) co prowadzi do nadmiernej eksploatacji jednej trasy, co ogranicza zdolność algorytmu do eksploracji nowych, potencjalnie lepszych tras. Natomiast zbyt wysokie wartościpowodują bardzo szybkie odparowywanie feromonów co sprawia, że ślady na trasach szybko zanikają. W tej sytuacji algorytm prawie w ogóle nie korzysta z informacji zgromadzonych przez inne mrówki, ponieważ ślady feromonowe znikają zanim inne mrówki zdążą je wykorzystać. W związku z tym dla wartości rho, które oscylują wokół 0.5 wyniki są lepsze, ale jednocześnie zbliżone do siebie.
+
+```{r, echo=FALSE}
+ggplot(rho_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Rho",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+rho_mrowki_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 jest podobna sytuacja ze skrajnymi wartościami. Jednak lepsze są wyniki dla wartości rho trochę niższych niż.
+
+Najbardziej optymalne wyniki są uzyskiwane gdy rho przyjmuję wartości bliższe 0.5 niż skrajne (0.1 czy 0.9). Jednak wyniki nie są lepsze niż te uzyskane przez Solver. Jedynie w przypadku TSP_127 udało się otrzymać krótsze długości ścieżki.
+
+## Podsumowanie
+
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 11540.0	
+
+* Liczba mrówek - 11181 (liczba mrówek - 44)
+
+* Liczba iteracji - 11128	(liczba iteracji - 400)
+
+* Alpha - 11414	(alpha - 1)
+
+* Beta - 11313 (beta - 6)
+
+* Rho - 11246	(rho - 0.7)
+
+Dla TSP_48 przy użyciu algorytmu mrówkowego nie udało się uzyskać lepszego wyniku niż ten uzyskany przez Solver (10868)
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 124560.0		
+
+* Liczba mrówek - 117472.3 (liczba mrówek - 78)
+
+* Liczba iteracji - 117711.1	(liczba iteracji - 150)
+
+* Alpha - 125278.5	(alpha - 1)
+
+* Beta - 117716.2 (beta - 4)
+
+* Rho - 122202.6	(rho - 0.2)
+
+Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać dwa lepsze wyniki niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 134426.3			
+
+* Liczba mrówek - 123471.0 (liczba mrówek - 203)
+
+* Liczba iteracji - 128085.5	(liczba iteracji - 450)
+
+* Alpha - 136597.7	(alpha - 1)
+
+* Beta - 125936.3 (beta - 7)
+
+* Rho - 131834.5	(rho - 0.5)
+
+Dla TSP_127 przy użyciu algorytmu mrówkowego  udało się uzyskać lepsze wyniku niż ten uzyskany przez Solver (140217.6)
 
