@@ -30,6 +30,8 @@ library(ggplot2)
 library(gridExtra)
 library(psych)
 library(patchwork)
+library(dplyr)
+library(tidyr)
 ```
 
 # Wprowadzenie
@@ -50,6 +52,7 @@ Wyniki uzyskane za pomocą zaimplementowanych algorytmów zostaną porównane z 
 
 ```{r, echo=FALSE, include=FALSE}
 solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solver.xlsx")
+#solver <- read_excel("C:/Users/user/Downloads/Solver.xlsx")
 ```
 
 ```{r, echo=FALSE}
@@ -90,12 +93,19 @@ W ramach algorytmu nalbliższego sąsiada badaniu poddano wpływ różnych warto
 
 <br>
 ```{r, echo=FALSE, include=FALSE}
-NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_48")
-NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_76")
-NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-    sheet = "TSP_127")
+ NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_48")
+ NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_76")
+ NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+     sheet = "TSP_127")
+
+# NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_48")
+# NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_76")
+# NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+#     sheet = "TSP_127")
 ```
 
 ```{r, echo=FALSE}
@@ -134,7 +144,7 @@ w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
 
 (w_tsp48 + w_tsp76 + w_tsp127 + guide_area()) +
   plot_layout(guides = "collect") +  
-  plot_annotation(title = "Długość ścieżki w zależności punktu startowego",
+  plot_annotation(title = "Długość ścieżki w zależności od punktu startowego",
                   theme = theme(
       plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
 ```
@@ -198,6 +208,71 @@ W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
  
  - **`liczba iteracji wspinaczki`** - liczba iteracji, jaką algorytm może wykonać w jednej próbie wspinaczki
     </p>
+    
+```{r echo=FALSE, include=FALSE}
+# IHC_compare_methods <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
+#     sheet = "Porównanie_metod")
+# IHC_max_iterations <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
+#     sheet = "max_iterations")
+
+IHC_compare_methods <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "Porównanie_metod")
+IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "max_iterations")
+```
+
+### Rodzaj sasiedztwa
+
+```{r echo=FALSE}
+IHC_compare_methods$Dataset <- c("TSP_48", "TSP_76", "TSP_127")
+
+compare_metods_tsp48 <- IHC_compare_methods[1, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp76 <- IHC_compare_methods[2, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp127 <- IHC_compare_methods[3, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+
+p1 <- ggplot(compare_metods_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_48",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+p2 <- ggplot(compare_metods_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_76",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+# Wykres dla TSP_127
+p3 <- ggplot(compare_metods_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_127",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+(p1 + p2 + p3 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
+```
 
 ### Porównanie metod
 
@@ -541,10 +616,84 @@ W ramach algorytmu symulowanego wyżarzania badane są następujące parametry:
  
  - **`temperatura minimalna`** - wartość temperatury, poniżej której algorytm nie będzie już kontynuował poszukiwań
     </p>
- 
+    
 ```{r echo=FALSE, include=FALSE}
+# SA_compare_methods <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "Porównanie_metod")
+# SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "max_iterations")
+# SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "min_tem")
+# SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "cooling_rate")
+# SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+#     sheet = "initial_temp")
 
+SA_compare_methods <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "Porównanie_metod")
+SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "max_iterations")
+SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "min_tem")
+SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "cooling_rate")
+SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+    sheet = "initial_temp")
 ```
+
+### Rodzaj sasiedztwa
+
+```{r echo=FALSE}
+SA_compare_methods$Dataset <- c("TSP_48", "TSP_76", "TSP_127")
+
+compare_metods_tsp48 <- SA_compare_methods[1, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp76 <- SA_compare_methods[2, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+compare_metods_tsp127 <- SA_compare_methods[3, ] %>% pivot_longer(cols = -Dataset, names_to = "Metoda", values_to = "Długość ścieżki")
+
+p1 <- ggplot(compare_metods_tsp48, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_48",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+p2 <- ggplot(compare_metods_tsp76, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_76",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+# Wykres dla TSP_127
+p3 <- ggplot(compare_metods_tsp127, aes(x = reorder(Metoda, -`Długość ścieżki`), y = `Długość ścieżki`, fill = Metoda)) +
+  geom_col() +
+  geom_text(aes(label = round(`Długość ścieżki`, 1)), vjust = 2, color = "black", size = 3.2) + 
+  labs(
+    title = "TSP_127",
+    x = "Metoda",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 10, hjust = 0.5))
+
+(p1 + p2 + p3 + guide_area()) +
+  plot_layout(guides = "collect") +  
+  plot_annotation(title = "Długość ścieżki w zależności od rodzaju ruchu",
+                  theme = theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
+```
+
 
 # Algorytm przeszukiwania tabu
 
