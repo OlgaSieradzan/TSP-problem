@@ -296,7 +296,7 @@ Za podstawowe dane przyjmujemy :
 
 * max_iterations = 10000
 
-* min_temperature = 0.00001
+* min_temperature = 1e-100
 
 * time_limit = `None`
 
@@ -341,7 +341,7 @@ rownames(SA_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 SA_clasic_stat[,c("Min", "Max", "Mean")]
 ```
 
-Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu symulowanego wyżarzania oraz minimalną, maksymalną i średnią wartość. Otrzymane wyniki są zdecydowanie wyższe niż te uzyskane przez Solver. Zwłaszcza dla TSP_127 minimalna wartość jest praktycznie większa o 100 tys. Średnie również znacząco przewyższają uzyskane przez Solver.
+Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu symulowanego wyżarzania oraz minimalną, maksymalną i średnią wartość. Dla TSP_48 wyniki są zbliżone do tych z Solvera. Dla TSP_127 minimalna wartość jest trochę wyższa. Natomiast dla TSP_76 minimalna wartośc jest zdecydowanie lepsza, jak również średnia.
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 SA_clasic_time <- SA_clasic %>%
@@ -359,7 +359,7 @@ rownames(SA_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
 SA_clasic_time[,2:4]
 ```
 
-Uzyskane czasy przy podstawowych parametrach są bardzo niskie. W Solverze były one zdecydowanie wyższe. w każdym  z przypadków.
+Uzyskane czasy przy podstawowych parametrach są bardzo niskie, nie wynoszą nawet sekundy. W Solverze były one zdecydowanie wyższe. w każdym  z przypadków.
 
 ## Rodzaj ruchu
 
@@ -403,7 +403,7 @@ SA_move_type_tsp48 %>%
   as.data.frame() 
 ```
 
-Widzimy, że sposób w jaki generujemy sąsiadów a algorytmie ma tutaj duże znaczenie. Wyniki są najgorsze w przypadku `swap` - średnia jest bardzo wysoka. Natomiast mediana i średnia długości ścieżki są najniższe w przypadku ruchu `2-opt`. 
+Widzimy, że sposób w jaki generujemy sąsiadów a algorytmie ma tutaj duże znaczenie. Wyniki są najgorsze w przypadku `swap` - średnia jest wysoka. Natomiast mediana i średnia długości ścieżki są najniższe w przypadku ruchu `2-opt`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek.
 
 ```{r, echo=FALSE}
 ggplot(SA_move_type_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -429,7 +429,7 @@ SA_move_type_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 pojawiła się analogiczna sytuacja. Dla `2-opt` wyniki są najlepsze, aczkolwiek i tak zdecydowanie gorsze niż te uzyskane przez Solver (średnia jest wyższa o 40 tys.). Najgorzej wypada `swap`. 
+Dla TSP_76 pojawiła się analogiczna sytuacja. Dla `2-opt` wyniki są najlepsze. Uzyskana minimalna długość ścieżki, dla tej wartości parametru jest znacząco lepsza od Solvera (118293.5). Ponownie najgorzej wypada `swap`. Średnie się różnią znacząco w zależności od typu ruchu.
 
 ```{r, echo=FALSE}
 ggplot(SA_move_type_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -455,9 +455,9 @@ SA_move_type_tsp127 %>%
   as.data.frame() 
 ```
 
-Tutaj sytuacja analogiczna. Jest jedynie już mniejsza różnica, pomiędzy medianą i średnią długości ścieżki dla `swap` i `insertion`. Wykorzystanie tych dwóch rodzajó ruchów bardzo pogorszyło wyniki, średnia przekroczyła aż 300 tys.
+Tutaj sytuacja analogiczna. Wyniki są słabe dla `insertion` i `swap`. Natomiast dla `2-opt` już nie ma lepszych wyników niż w przypadku Solvera.
 
-Jest tu dobrze widoczna zależność, że najkrótsza średnia i mediana długości ścieżki są w przypadku typu ruchu `2-opt`. Jednak w każdym z przypadków otrzymane wyniki były zdecydowanie gorsze niż te z Solvera.
+Jest tu dobrze widoczna zależność, że najkrótsza średnia i mediana długości ścieżki są w przypadku typu ruchu `2-opt`. Dla tej wartości parametru wariancja jest również w każdym z przypadków najmniejsza. Parametry `swap` i `insertion` nie działają tak efektywnie jak `2-opt`.
 
 ## Temperatura początkowa
 
@@ -501,7 +501,7 @@ SA_initial_temp_tsp48 %>%
   as.data.frame() 
 ```
 
-Z wykresów pudełkowych nie widać żadnej zależności. Mediana i średnia długości ścieżki wahają się na podobnym poziomie dla różnych wartości parametru. Temperatura początkowa wydaję się nie mieć dużego znaczenia.
+Z wykresów pudełkowych nie widać żadnej zależności. Mediana i średnia długości ścieżki wahają się na podobnym poziomie dla różnych wartości parametru. Temperatura początkowa wydaję się nie mieć dużego wpływu.
 
 ```{r, echo=FALSE}
 ggplot(SA_initial_temp_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -527,7 +527,7 @@ SA_initial_temp_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 pojawiają się już większe wahania, ale nadal dla nie widać, żeby w zależności od temperatury mediana długości ścieżki rosła, bądź malała. Nie mamy tutaj też bardzo dużych odstępstw tzn. średnie i mediany są dość zbliżone do siebie. Otrzymane wyniki są już lepsze niż te uzyskane z podstawowych wartości parametrów czy też poprzez zmianę parametru rodzaju ruchu, ale nadal gorsze od tych z Solvera. 
+Dla TSP_76 pojawiają się już większe wahania na początku, ale nadal dla nie widać, żeby w zależności od temperatury mediana długości ścieżki się znacząco zmieniała. Nie mamy tutaj też bardzo dużych odstępstw tzn. średnie i mediany są dość zbliżone do siebie. Otrzymane wyniki są bardzo dobre i zdecydowanie lepsze od tych z Solvera.
 
 ```{r, echo=FALSE}
 ggplot(SA_initial_temp_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -553,9 +553,9 @@ SA_initial_temp_tsp127 %>%
   as.data.frame() 
 ```
 
-Dla TSP_127 pojawia się widoczny spadek mediany długości ścieżki, jednak jest on tylko do wartości parametru = 10 tys. Następnie zaczyna ona delikatnie rosnąć, ale wartości i tak są lepsze niż te dla niskich początkowych temperatur. Średnia jest dlaje bardzo wysoka. Zmiana tego parametru nie poprawiła wyników.
+Dla TSP_127 mediana i średnia długości ścieżki rosną. Następnie pojawia się spadek i ponownie wzrost. Nie można jednak powiedzieć, że tak będzie za każdym razem. Należałoby sprawdzić większą liczbę parametrów. Wyniki jednak dalej są dość słabe.
 
-Wpływ początkowej temperatury nie wydaje się być duży. Dopiero dla dużej liczby miast pojawiły się niższe mediany długości ścieżki dla wyższych temperatur. W pozostałych przypadkach nie było to widoczne. Wyniki nadal nie są zadowalające. Dla TSP_127 widać, że algorytm ma problem z uzyskaniem niższych wyników.
+Wpływ początkowej temperatury nie wydaje się być duży. 
 
 ## Prędkość chłodzenia
 
@@ -599,6 +599,8 @@ SA_cooling_rate_tsp48 %>%
   as.data.frame() 
 ```
 
+Z wykresu bardzo dobrze widać jak mediana długości ścieżki maleje wraz ze wzrostem prędkości chłodzenia. Średnia również wykazuje takie zachowanie. Jednak pod koniec nie mediana i średnia długości ścieżki nie maleją tak szybko, stają się wręcz zbliżone (0.94-0.98). 
+
 ```{r, echo=FALSE}
 ggplot(SA_cooling_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
@@ -622,6 +624,8 @@ SA_cooling_rate_tsp76 %>%
   ) %>%
   as.data.frame() 
 ```
+
+Dla TSP_76 pojawiła się analogiczna sytuacja. Wraz ze wzrostem prędkości chłodzenia maleje mediana i średnia długości ścieżki. 
 
 ```{r, echo=FALSE}
 ggplot(SA_cooling_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
@@ -647,17 +651,255 @@ SA_cooling_rate_tsp127 %>%
   as.data.frame() 
 ```
 
+W tym przypadku sytuacja jest identyczna.
+
+We wszystkich przypadkach średnia i mediana długości ścieżki maleje wraz ze wzrostem prędkości chłodzenia. Może tak być dlatego, że temperatura szybciej spada do wartości minimalnej, więc algorytm spędza mniej czasu na eksplorowaniu gorszych rozwiązań. W rezultacie szybciej zbliża się do lokalnego minimum, co skutkuje krótszymi rozwiązaniami, ponieważ algorytm nie oddala się zbytnio od bieżącego rozwiązania.
+
 ## Liczba iteracji
 
+Poniżej zbadany został wpływ liczby iteracji na długość ścieżki:
 
+```{r, echo=FALSE}
+SA_max_iterations_tsp48 <- SA_max_iterations %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+SA_max_iterations_tsp76 <- SA_max_iterations %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+SA_max_iterations_tsp127 <- SA_max_iterations %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(SA_max_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+SA_max_iterations_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+DLa TSP_48 z wykresów dobrze widać, że wraz ze wzrostem liczby iteracji, maleje mediana i średnia długości ścieżki. Na początku maleją dość szybko, natomiast później następuje spowolnienie. Dla bardzo wysokich wartości parametrów nie widać już znaczących różnic w wynikach.
+
+```{r, echo=FALSE}
+ggplot(SA_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+SA_max_iterations_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj pojawia się podobna sytuacja. Jednak w tym przypadku mediana i średnia dłużej maleją. Dopiero dla liczby iteracji = 6000 (dla TSP_48 = 4000), wartości statystyk stają sie do siebie zbliżone.
+
+```{r, echo=FALSE}
+ggplot(SA_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+SA_max_iterations_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Analogicznie dla TSP_127. Wraz ze wzrostem liczby iteracji, maleje średnia i mediana długości ścieżki. Jednak robi to jeszcze wolniej niż w poprzednich przypadkach. Dopiero dla liczby iteracji = 8000 statysyki się wahają wokół podobnych wartości.
+
+We wszystkich sytuacjach widać, że wraz ze wzrostem liczby iteracji, maleje mediana i średnia długośći ścieżki. Jednakże w pewnym momencie, różnym w zależności od liczby miast w problemie, osiągane wyniki przestają się znacząco różnić. Oznacza to, że algorytm stabilizuje się i zaczyna zbliżać się do swojego optimum. Dalsze zwiększanie liczby iteracji prowadzi jedynie do minimalnych zmian w wynikach, więc nie ma większego sensu.
 
 ## Minimalna temperatura
 
+Poniżej zbadany został wpływ minimalnej temperatury na długość ścieżki:
 
+```{r, echo=FALSE}
+SA_min_temp_tsp48 <- SA_min_temp %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+SA_min_temp_tsp76 <- SA_min_temp %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+SA_min_temp_tsp127 <- SA_min_temp %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(SA_min_temp_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Minimalna temperatura",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+SA_min_temp_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Wraz ze wzrostem wartości temperatury minimimalnej mediana i średnia rosną. Zbyt duża minimalna temperatura początkowa powoduje, że algorytm kończy działanie zanim zdoła osiągnąć najlepsze możliwe rozwiązania. W efekcie pozostaje na gorszych ścieżkach, co powoduje wzrost mediany i średniej długości.
+
+```{r, echo=FALSE}
+ggplot(SA_min_temp_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Minimalna temperatura",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+SA_min_temp_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj pojawia się podobna sytuacja. Wraz ze wzrostem wartości minimalnej, wyniki są coraz gorsze.
+
+```{r, echo=FALSE}
+ggplot(SA_min_temp_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Minimalna temperatura",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+SA_min_temp_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 sytuacja jest analogiczna.
+
+Widoczna jest zależność, że wraz ze wzrostem wartości minimalnej, median i średnia długość ścieżki maleją.
 
 ## Podsumowanie
 
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
+* Klasyk - 11100.0		
+
+* Rodzaje ruchów - 10928 (rodzaj ruchu - 2-opt)
+
+* Temperatura początkowa - 10866 (temperatura początkowa - 100 tys.)
+
+* Prędkość chłodzenia - 10875 (prędkość chłodzenia - 0.93)
+
+* Liczba iteracji  - 10811 (liczba iteracji - 8000)
+
+* Minimalna temperatura - 10862	(minimalna temperatura - 1e-40)
+
+Dla TSP_48 przy użyciu algorytmu symulowanego wyżarzania udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 116708.4	
+
+* Rodzaje ruchów - 113460.2 (rodzaj ruchu - 2-opt)
+
+* Temperatura początkowa - 113094.6 (temperatura początkowa - 50 tys.)
+
+* Prędkość chłodzenia - 114398.9 (prędkość chłodzenia - 0.97)
+
+* Liczba iteracji  -  113809.8 (liczba iteracji - 9000)
+
+* Minimalna temperatura - 112768.6	(minimalna temperatura - 1e-60)
+
+Dla TSP_76 przy użyciu algorytmu symulowanego wyżarzania również udało się uzyskać sporo zdecydowanie lepszych wyników niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 147496.4	
+
+* Rodzaje ruchów - 148832.8 (rodzaj ruchu - 2-opt)
+
+* Temperatura początkowa - 146215.7 (temperatura początkowa - 10 tys.)
+
+* Prędkość chłodzenia - 143162.3 (prędkość chłodzenia - 0.98)
+
+* Liczba iteracji  - 148956.7 (liczba iteracji - 8000)
+
+* Minimalna temperatura - 147347.1	(minimalna temperatura - 1e-50)
+
+Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6). 
 
 # Algorytm przeszukiwania tabu
 
