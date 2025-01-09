@@ -218,7 +218,7 @@ W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
     - **`2-opt`** wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
   
     <p style="margin-top: 10px;">
- - **`czas działania`** - czas, jaki posiada algorytm na znalezienie rozwiązania
+ - **`limit czasowy`** - czas, jaki posiada algorytm na znalezienie rozwiązania
  
  - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
  
@@ -228,6 +228,39 @@ W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
 
 =======
 >>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
+
+```{r}
+IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "Basic")
+IHC_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "move_type")
+IHC_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "initial_temperature")
+IHC_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "cooling_rate")
+IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "max_iterations")
+IHC_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+    sheet = "min_temperature")
+```
+
+## Klasyczny
+
+
+
+## Punkt początkowy
+
+
+
+## Rodzaj ruchu
+
+## Limit czasowy
+
+## Liczba iteracji bez poprawy
+
+## Liczba iteracji wspinaczki
+
+## Podsumowanie
 
 # Algorytm symulowanego wyżarzania (SA)
 
