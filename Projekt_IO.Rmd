@@ -79,8 +79,6 @@ rownames(sol) <- c("TSP_48", "TSP_76", "TSP_127")
 sol
 ```
 
-Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez pozostałe algorytmy.
-
 # Algorytmu Najbliższego Sąsiada (NN)
 
 <div style='text-align: justify'>
@@ -168,7 +166,7 @@ W tabelce widzimy najkrótsze ścieżki otrzymane dla poszczególnych TSP.
 * **TSP_48**
 
 ```{r, echo=FALSE}
-NN_tsp48$Punkt[NN_tsp48$Wynik == min(NN_tsp48$Wynik)]
+NN_tsp48_punkt <- NN_tsp48$Punkt[NN_tsp48$Wynik == min(NN_tsp48$Wynik)]
 NN_tsp48[c(10,35),]
 ```
 
@@ -177,7 +175,7 @@ Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1
 * **TSP_76**
 
 ```{r, echo=FALSE}
-NN_tsp76$Punkt[NN_tsp76$Wynik == min(NN_tsp76$Wynik)]
+NN_tsp76_punkt <- NN_tsp76$Punkt[NN_tsp76$Wynik == min(NN_tsp76$Wynik)]
 NN_tsp76[16,]
 ```
 
@@ -186,7 +184,7 @@ Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **
 * **TSP_127**
 
 ```{r, echo=FALSE}
-NN_tsp127$Punkt[NN_tsp127$Wynik == min(NN_tsp127$Wynik)]
+NN_tsp127_punkt <- NN_tsp127$Punkt[NN_tsp127$Wynik == min(NN_tsp127$Wynik)]
 NN_tsp127[117,]
 ```
 
@@ -232,33 +230,566 @@ W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
 ```{r}
 IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
     sheet = "Basic")
-IHC_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "move_type")
-IHC_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "initial_temperature")
-IHC_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "cooling_rate")
-IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "max_iterations")
-IHC_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "min_temperature")
+IHC_max_iterations <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
+    sheet = "num_starts")
+IHC_move_type <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
+    sheet = "neighborhood_type")
+##IHC_max_hill_climbing_iterations <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
+##    sheet = "max_hill_climbing_iterations")
+IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
+    sheet = "max_iterations_without_improvem")
+##IHC_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+##    sheet = "time_limit")
 ```
 
 ## Klasyczny
 
+Za podstawowe dane przyjmujemy:
 
+* num_starts = 100, 
 
-## Punkt początkowy
+* neighborhood_type = "two-opt", 
 
+* time_limit = 500, 
 
+* max_iterations_without_improvement = 100, 
 
-## Rodzaj ruchu
+* max_hill_climbing_iterations = 1000.
+
+```{r, echo=FALSE}
+IHC_clasic_tsp48 <- IHC_clasic %>%
+  filter(DATASET == "DATA1") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+IHC_clasic_tsp76 <- IHC_clasic %>%
+  filter(DATASET == "DATA2") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+IHC_clasic_tsp127 <- IHC_clasic %>%
+  filter(DATASET == "DATA3") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+IHC_clasic_wyniki <- cbind(IHC_clasic_tsp48)
+IHC_clasic_wyniki <- cbind(IHC_clasic_wyniki, IHC_clasic_tsp76)
+IHC_clasic_wyniki <- cbind(IHC_clasic_wyniki, IHC_clasic_tsp127)
+
+colnames(IHC_clasic_wyniki) <- c("TSP_48", "TSP_76", "TSP_127")
+IHC_clasic_wyniki
+```
+
+```{r, echo=FALSE}
+IHC_clasic_stat <- IHC_clasic %>%
+  group_by(DATASET) %>%
+  summarise(
+    Mean = mean(WYNIK),
+    Min = min(WYNIK),
+    Max = max(WYNIK)
+  ) %>%
+  as.data.frame()              
+
+rownames(IHC_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
+
+IHC_clasic_stat[,c("Min", "Max", "Mean")]
+```
+
+Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu iteracyjnej wspinaczki oraz minimalną, maksymalną i średnią wartość. Uzyskane wyniki są bardzo dobre. Średnie w każdym z przypadku są o wiele niższe niż te uzyskane przez Solver.
+
+**Czas**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+IHC_clasic_time <- IHC_clasic %>%
+  group_by(DATASET) %>%
+  select(CZAS) %>%
+  summarise(
+    Min = min(CZAS),
+    Max = max(CZAS),
+    Mean = mean(CZAS)
+  ) %>% 
+  as.data.frame()
+  
+rownames(IHC_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
+
+IHC_clasic_time[,2:4]
+```
+
+Średnie czas są dość niskie dla TS_48 i TSP_76. Natomiast dla TSP_127 średni czas wynosi już ok. 2 minut.
+
+## Liczba iteracji
+
+Poniżej zbadany został wpływ liczby iteracji na długość ścieżki:
+
+```{r, echo=FALSE}
+IHC_max_iterations_tsp48 <- IHC_max_iterations %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+IHC_max_iterations_tsp76 <- IHC_max_iterations %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+IHC_max_iterations_tsp127 <- IHC_max_iterations %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+IHC_max_iterations_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Mediana i średnie wahają się w zależności od liczby iteracji wokół podobnych wartości. Nie widać żadnej zależności. 
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+IHC_max_iterations_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj analogiczna sytuacja. Średnie są natomiast bardzo niskie w porównaniu do Solvera.
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba iteracji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+IHC_max_iterations_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 pojawia się taka sama sytuacja.
+
+W żadnym z przypadków nie widac, żadnej zależności. Jednak różnice w liczbie parametrów są dość małe. Możliwe, że sprawdzenie większej liczby iteracji pokazałoby jakąś zależność.
+
+## Rodzaj sąsiedztwa
+
+Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
+
+```{r, echo=FALSE}
+IHC_move_type_tsp48 <- IHC_move_type %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+IHC_move_type_tsp76 <- IHC_move_type %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+IHC_move_type_tsp127 <- IHC_move_type %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(IHC_move_type_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Typ ruchu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+IHC_move_type_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Rodzaj sąsiedztwa zdecydowanie wpływa na długości ścieżki. Mediana i średnia są najniższe w przypadku `two-opt`. Natomiast najgorsze wyniki są dla `swap`.
+
+```{r, echo=FALSE}
+ggplot(IHC_move_type_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Typ ruchu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+IHC_move_type_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj jest bardzo podobna sytuacja. Dla `insetion` wyniki nie są najgorsze. Jednak jest dość znacząca różnica między nimi a `two-opt`.
+
+```{r, echo=FALSE}
+ggplot(IHC_move_type_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Typ ruchu",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+IHC_move_type_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 jest identyczna sytuacja co w poprzednich TSP.
+
+Długość ścieżki definitywnie zależy od rodzaju ruchu. Dla `two-opt` w każdym z przypadków wyniki są najlepsze. Natomiast dla `swap` najgorsza.
 
 ## Limit czasowy
 
+Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
+
+```{r, echo=FALSE}
+# IHC_time_limit_tsp48 <- IHC_time_limit %>%
+#   filter(DATASET == "DATA1") %>%
+#   as.data.frame()
+# 
+# IHC_time_limit_tsp76 <- IHC_time_limit %>%
+#   filter(DATASET == "DATA2") %>%
+#   as.data.frame()
+# 
+# IHC_time_limit_tsp127 <- IHC_time_limit %>%
+#   filter(DATASET == "DATA3") %>%
+#   as.data.frame()
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_time_limit_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_48",
+#     x = "Limit czasowy",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+# IHC_time_limit_tsp48 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_76",
+#     x = "Limit czasowy",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+# IHC_time_limit_tsp76 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_127",
+#     x = "Limit czasow",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+# IHC_time_limit_tsp127 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
+
 ## Liczba iteracji bez poprawy
 
+Poniżej zbadany został wpływ liczby iteracji bez poprawy na długość ścieżki:
+
+```{r, echo=FALSE}
+IHC_max_iterations_without_improvement_tsp48 <- IHC_max_iterations_without_improvement %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+IHC_max_iterations_without_improvement_tsp76 <- IHC_max_iterations_without_improvement %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+IHC_max_iterations_without_improvement_tsp127 <- IHC_max_iterations_without_improvement %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_without_improvement_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba iteracji bez poprawy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+IHC_max_iterations_without_improvement_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Mediana i średnia są dość zbliżone dla każdej wartości parametru. Nie widać tutaj znaczących różnic.
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_without_improvement_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba iteracji bez poprawy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+IHC_max_iterations_without_improvement_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 pojawia się podobna sytuacja. W jednym z przypadków natomiast średnia i mediana są wyższe. Natomiast nie widać żadnej zależności.
+
+```{r, echo=FALSE}
+ggplot(IHC_max_iterations_without_improvement_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba iteracji bez poprawy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+IHC_max_iterations_without_improvement_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj natomiasst widzimy pod koniec wzrost mediany i średniej, który nie był widoczny wcześniej.
+
+Nie widać tutaj, aby jakaś zależność się pojawiała. Ogólnie rzecz biorąc w każdym przypadku mediana i średnia zachowują się podobnie z pewnymi odstępstwami.
+
 ## Liczba iteracji wspinaczki
+
+Poniżej zbadany został wpływ liczby iteracji wspiczanki na długość ścieżki:
+
+```{r, echo=FALSE}
+# IHC_max_hill_climbing_iterations_tsp48 <- IHC_max_hill_climbing_iterations %>%
+#   filter(DATASET == "DATA1") %>%
+#   as.data.frame()
+# 
+# IHC_max_hill_climbing_iterations_tsp76 <- IHC_max_hill_climbing_iterations %>%
+#   filter(DATASET == "DATA2") %>%
+#   as.data.frame()
+# 
+# IHC_max_hill_climbing_iterations_tsp127 <- IHC_max_hill_climbing_iterations %>%
+#   filter(DATASET == "DATA3") %>%
+#   as.data.frame()
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_max_hill_climbing_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_48",
+#     x = "Liczba iteracji wspinaczki",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+# IHC_max_hill_climbing_iterations_tsp48 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_max_hill_climbing_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_76",
+#     x = "Liczba iteracji wspinaczki",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+# IHC_max_hill_climbing_iterations_tsp76 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
+
+```{r, echo=FALSE}
+# ggplot(IHC_max_hill_climbing_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+#   geom_boxplot(fill = "pink") +
+#   labs(
+#     title = "TSP_127",
+#     x = "Liczba iteracji wspinaczki",
+#     y = "Długość ścieżki"
+#   ) +
+#   theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+# IHC_max_hill_climbing_iterations_tsp127 %>%
+#   group_by(PARAMETR) %>%
+#   summarise(
+#     Min = min(WYNIK_1),
+#     Max = max(WYNIK_1),
+#     Mean = mean(WYNIK_1)
+#   ) %>%
+#   as.data.frame() 
+```
 
 ## Podsumowanie
 
@@ -1591,8 +2122,7 @@ Dla TSP_127 przy użyciu algorytmu tabu search udało się uzyskać lepsze wynik
 # Algorytm genetyczny
 
 <div style='text-align: justify'>
-**Algorytm genetyczny** (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, 
-aż do osiągnięcia określonej liczby iteracji lub spełnienia innych warunków stopu. 
+**Algorytm genetyczny** (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, aż do osiągnięcia określonej liczby iteracji lub spełnienia innych warunków stopu. 
 </div>
 
 ## Badane parametry
@@ -1634,8 +2164,850 @@ W ramach algorytmu genetycznego badane są następujące parametry:
     </p>
     
 ```{r echo=FALSE, include=FALSE}
-
+GA_klasyk <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "Basic")
+GA_population_size <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "population_size")
+GA_mutation_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "mutation_rate")
+GA_crossover_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "crossover_rate")
+GA_generations <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "generations")
+GA_selection_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "selection_method")
+GA_crossover_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "crossover_method")
+GA_mutation_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+    sheet = "mutation_method")
 ```
+
+## Klasyczny
+
+Za podstawowe dane przyjmujemy:
+
+* population_size = 10 
+
+* generations = 5000
+
+* crossover_rate = 0.6
+
+* mutation_rate = 0.15
+
+* selection_method = `tournament`
+    
+* crossover_method = `order`
+    
+* mutation_method = `2-opt`
+
+```{r, echo=FALSE}
+GA_klasyk_wyniki_tsp48 <- GA_klasyk %>%
+  filter(DATASET == "DATA1") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+GA_klasyk_wyniki_tsp76 <- GA_klasyk %>%
+  filter(DATASET == "DATA2") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+GA_klasyk_wyniki_tsp127 <- GA_klasyk %>%
+  filter(DATASET == "DATA3") %>%
+  select(WYNIK) %>%
+  as.data.frame()
+
+GA_klasyk_wyniki <- cbind(GA_klasyk_wyniki_tsp48)
+GA_klasyk_wyniki <- cbind(GA_klasyk_wyniki, GA_klasyk_wyniki_tsp76)
+GA_klasyk_wyniki <- cbind(GA_klasyk_wyniki, GA_klasyk_wyniki_tsp127)
+
+colnames(GA_klasyk_wyniki) <- c("TSP_48", "TSP_76", "TSP_127")
+GA_klasyk_wyniki
+```
+
+```{r, echo=FALSE}
+GA_klasyk_stat <- GA_klasyk %>%
+  group_by(DATASET) %>%
+  summarise(
+    Mean = mean(WYNIK),
+    Min = min(WYNIK),
+    Max = max(WYNIK)
+  ) %>%
+  as.data.frame()              
+
+rownames(GA_klasyk_stat) <- c("TSP_48", "TSP_76", "TSP_127")
+
+GA_klasyk_stat[,c("Min", "Max", "Mean")]
+```
+
+W tabelce widzimy statystyki uzyskane dla podstawowych wartości parametrów dla algorytmu genetycznego. Średnie różnią dla TSP_76 i TSP_127 różnią się od tych uzyskanych przez Solver. Dla liczby miast = 76 jest ona niższa. Natomiast dla liczby miast = 127 zdecydowanie wyższa.
+
+**Czas**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+GA_clasic_time <- GA_klasyk %>%
+  group_by(DATASET) %>%
+  select(CZAS) %>%
+  summarise(
+    Min = min(CZAS),
+    Max = max(CZAS),
+    Mean = mean(CZAS)
+  ) %>% 
+  as.data.frame()
+  
+rownames(GA_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
+
+GA_clasic_time[,2:4]
+```
+
+Średnie czasy dla każdego z przypadków są bardzo niskie.
+
+## Wielkość populacji
+
+Poniżej zbadany został wpływ wielkości populacji na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_population_size_tsp48 <- GA_population_size %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_population_size_tsp76 <- GA_population_size %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_population_size_tsp127 <- GA_population_size %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_population_size_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Wielkość populacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_population_size_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Średnia i mediana dla wielkości populacji = 5 są zdecydowanie wyższe niż w pozostałych przypadkach. Dla innych parametrów utrzymują się na podobnym poziomie.
+
+```{r, echo=FALSE}
+ggplot(GA_population_size_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Wielkość populacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_population_size_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 dla parametru = 5 średnia i mediana są również największe w porównaniu do pozosałych wyników. Natępnie widać, że wraz ze wzrostem liczby populacji, maleje średnia i mediana.
+
+```{r, echo=FALSE}
+ggplot(GA_population_size_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Wielkość populacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_population_size_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj pojawia się analogiczna sytaucja jak dla TSP_76. Gdy zwiększyła się liczba miast, bardziej widoczna stała się zależność, że wraz ze wzrostem liczby populacji, maleje średnia i mediana długości ścieżki.
+
+Liczba populacji = 5 w każdym z przypadków dała najwyższe długości ścieżki. Natomiast wraz ze wzrostem parametru, maleje długość ścieżki. Może tak być dlatego, że większa populacja (wieksza liczba osobników w każdej generacji algorytmu) zwiększa różnorodność rozwiązań, co zwiększa szansę na znalezienie lepszego rozwiązania i pozwala uniknąć utknięcia w minimach lokalnych.
+
+## Prawdopodobieństwo mutacji
+
+Poniżej zbadany został wpływ prawdopodobieństwa mutacji na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_mutation_rate_tsp48 <- GA_mutation_rate %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_mutation_rate_tsp76 <- GA_mutation_rate %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_mutation_rate_tsp127 <- GA_mutation_rate %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_rate_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Prawdopodobieństwo mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_mutation_rate_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Wraz ze wzrostem prawdopodobieństwa mutacji, maleje średnia i mediana długości ścieżki. 
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Prawdopodobieństwo mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_mutation_rate_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 jest identyczna sytuacja, a nawet bardziej widoczna.
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Prawdopodobieństwo mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_mutation_rate_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Analogicznie lda TSP_127. Chociaż średnia w tym przypadku nawet dla parametru = 0.2 jest wyższa niż ta uzyskana w Solverza.
+
+Widać w każdym z przypadków, bardzo dobrze, że wraz ze wzrostem prawdopodobieństwa mutacji, maleje długość ścieżki. Mutowanie pozwala na eksplorowanie większej liczby rozwiązań. Niskie wartości parametru powodują, że osobniki w populacji są do siebie dość zbliżone, dlatego długości ścieżki są wtedy większe.
+
+## Prawdopodobieństwo krzyżowania
+
+Poniżej zbadany został wpływ prawdopodobieństwa krzyżowania na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_crossover_rate_tsp48 <- GA_crossover_rate %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_crossover_rate_tsp76 <- GA_crossover_rate %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_crossover_rate_tsp127 <- GA_crossover_rate %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_rate_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Prawdopodobieństwo krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_crossover_rate_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Widzimy na początku spadek wartości mediany i średniej. Natomiast później zaczynają delikatnie rosnąć.
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Prawdopodobieństwo krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_crossover_rate_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 jest już trochę inna sytuacja. Średnia i mediana od początku delikatnie rosną, a później wahają się wokół zbliżonych wartości.
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Prawdopodobieństwo krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_crossover_rate_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutja jest podobona sytaucja jak dla TSP_76.
+
+Ciężko zauważyć tutaj jakąś istotną zależność. Średnie i mediany nie różnią się znacząco.
+
+## Liczba pokoleń
+
+Poniżej zbadany został wpływ liczby pokoleń na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_generations_tsp48 <- GA_generations %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_generations_tsp76 <- GA_generations %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_generations_tsp127 <- GA_generations %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_generations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Liczba pokoleń",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_generations_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Wraz ze wzrostem liczby pokoleń następuje spadek wartości mediany, jednak na końcu ona wzrasta. Średnia natomiast raz rośnie raz maleje. 
+
+```{r, echo=FALSE}
+ggplot(GA_generations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Liczba pokoleń",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_generations_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 widać, że wraz ze wzrostem liczby pokoleń, maleje zarówno średnia jak i mediana. 
+
+```{r, echo=FALSE}
+ggplot(GA_generations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Liczba pokoleń",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_generations_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj pojawia się analogiczna sytuacja, jak dla TSP_76.
+
+Wraz ze wzrostem liczby pokoleń (inaczej liczby iteracji algorytmu), maleje długość ścieżki. Jest to dość logiczna zależność. Większa liczba iteracji zwiększa szanse na dokładne przeszukanie przestrzeni. 
+
+## Metoda doboru rodziców
+
+Poniżej zbadany został wpływ metoda doboru rodziców na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_selection_method_tsp48 <- GA_selection_method %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_selection_method_tsp76 <- GA_selection_method %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_selection_method_tsp127 <- GA_selection_method %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_selection_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Metoda doboru rodziców",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_selection_method_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dobieranie rodziców metodą ruletki zdecydowanie sie nie sprawdza. Wyniki nawet nie są zbliżone do tych osiągniętych przy metodzie ruletki.
+
+```{r, echo=FALSE}
+ggplot(GA_selection_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Metoda doboru rodziców",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_selection_method_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj sytuacja analogiczna. Różnica jest diametralna, pomiędzy wynikami.
+
+```{r, echo=FALSE}
+ggplot(GA_selection_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Metoda doboru rodziców",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_selection_method_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 analogicznie.
+
+Wyniki są definitywnie lepsze w przypadku metody doboru rodziców w sposób truniejowy. W ruletce wybór jest mocno losowy, co może prowadzić do selekcji słabszych osobników w wielu iteracjach. Natomiast metoda turniejowa z spośród losowo wybranych osobników, zawsze wybiera tego o najniższym koszcie, dlatego może działać lepiej.
+
+## Metoda krzyżowania
+
+Poniżej zbadany został wpływ metoda krzyżowania na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_crossover_method_tsp48 <- GA_crossover_method %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_crossover_method_tsp76 <- GA_crossover_method %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_crossover_method_tsp127 <- GA_crossover_method %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Metoda krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_crossover_method_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Średnia i mediana śa bardzo zbliżone do siebie. Żadna z metod się nie wyróżnia.
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Metoda krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_crossover_method_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_76 mediana w przypadku metody `pmx` jest zdecydowanie wyższa. Średnie natomiast są zbliżone. 
+
+```{r, echo=FALSE}
+ggplot(GA_crossover_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Metoda krzyżowania",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_crossover_method_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 zarówno mediana i średnia są do siebie zbliżone.
+
+Nie widać więc tutaj żadnej zależności.
+
+## Metoda mutacji
+
+Poniżej zbadany został wpływ metoda mutacji na długość ścieżki:
+
+```{r, echo=FALSE}
+GA_mutation_method_tsp48 <- GA_mutation_method %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+GA_mutation_method_tsp76 <- GA_mutation_method %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+GA_mutation_method_tsp127 <- GA_mutation_method %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
+```
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Metoda mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_48**
+
+```{r, echo=FALSE}
+GA_mutation_method_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_48 najlepiej sprawdziła się metoda mutacji `inversion`. Natomiast najgorzej wypadła metoda `swap`. Metoda `insertion` nie ma dużo gorszych wyników.
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Metoda mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_76**
+
+```{r, echo=FALSE}
+GA_mutation_method_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Tutaj pojawia się podobna sytuacja. Metoda `inversion` daje najlepsze wyniki. Jednak jest już większa różnica pomiędzy metodami.
+
+```{r, echo=FALSE}
+ggplot(GA_mutation_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Metoda mutacji",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
+```
+
+**TSP_127**
+
+```{r, echo=FALSE}
+GA_mutation_method_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
+```
+
+Dla TSP_127 analogiczna sytuacja.
+
+Naefektywniejsza jest metoda `inversion` we wszystkich przypadkach. Najgorzej natomiast wypada `swap`.
+
+## Podsumowanie
+
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	11048.0
+
+* Wielkość populacji - 10795 (wielkość populacji - 15)
+
+* Prawdopodobieństwo mutacji - 11055	(prawd. mutacja - 0.2)
+
+* Prawdopodobieństwo krzyżowania -  10920 (prawd. krzyżowanie - 0.9)
+
+* Liczba pokoleń -  10975 (liczba pokoleń - 10 tys.)
+
+* Metoda doboru rodziców - 11173	(metoda - tournament)
+
+* Metoda krzyżowania - 10803	(metoda - order)
+
+* Metoda mutacji - 10936	(metoda - inversion)
+
+Dla TSP_48 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (10868).
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	116714.4
+
+* Wielkość populacji - 112600.5	 (wielkość populacji - 20)
+
+* Prawdopodobieństwo mutacji - 115561.1	(prawd. mutacja - 0.2)
+
+* Prawdopodobieństwo krzyżowania - 118452.6	(prawd. krzyżowanie - 0.8)
+
+* Liczba pokoleń - 112672.9 (liczba pokoleń - 15 tys.)
+
+* Metoda doboru rodziców - 121744.9	(metoda - tournament)
+
+* Metoda krzyżowania - 121250.0		(metoda - pmx)
+
+* Metoda mutacji - 121265.7	(metoda - inversion)
+
+Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać lika lepszych wyników niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	165047.0
+
+* Wielkość populacji - 141116.7 (wielkość populacji - 20)
+
+* Prawdopodobieństwo mutacji - 162368.2	(prawd. mutacja - 0.2)
+
+* Prawdopodobieństwo krzyżowania - 152547.3	(prawd. krzyżowanie - 0.7)
+
+* Liczba pokoleń - 133161.4 (liczba pokoleń - 15.tys)
+
+* Metoda doboru rodziców - 157986.9	(metoda - tournament)
+
+* Metoda krzyżowania - 160299.3	(metoda - order)
+
+* Metoda mutacji - 169240.5	(metoda - inversion)
+
+Dla TSP_127 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (140217.6)
 
 # Algorytm mrówkowy
 
