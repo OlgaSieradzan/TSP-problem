@@ -238,8 +238,8 @@ IHC_move_type <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx",
 ##    sheet = "max_hill_climbing_iterations")
 IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
     sheet = "max_iterations_without_improvem")
-##IHC_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-##    sheet = "time_limit")
+IHC_time_limit <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx",
+   sheet = "time_limit")
 ```
 
 ## Klasyczny
@@ -518,90 +518,98 @@ Długość ścieżki definitywnie zależy od rodzaju ruchu. Dla `two-opt` w każ
 Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
 
 ```{r, echo=FALSE}
-# IHC_time_limit_tsp48 <- IHC_time_limit %>%
-#   filter(DATASET == "DATA1") %>%
-#   as.data.frame()
-# 
-# IHC_time_limit_tsp76 <- IHC_time_limit %>%
-#   filter(DATASET == "DATA2") %>%
-#   as.data.frame()
-# 
-# IHC_time_limit_tsp127 <- IHC_time_limit %>%
-#   filter(DATASET == "DATA3") %>%
-#   as.data.frame()
+IHC_time_limit_tsp48 <- IHC_time_limit %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+IHC_time_limit_tsp76 <- IHC_time_limit %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+IHC_time_limit_tsp127 <- IHC_time_limit %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
 ```
 
 ```{r, echo=FALSE}
-# ggplot(IHC_time_limit_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_48",
-#     x = "Limit czasowy",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
+ggplot(IHC_time_limit_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_48",
+    x = "Limit czasowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 ```
 
 **TSP_48**
 
 ```{r, echo=FALSE}
-# IHC_time_limit_tsp48 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
+IHC_time_limit_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame()
 ```
 
+Dla TSP_48 limit czasowy nie wydaje się wpływać na długość ścieżki. Średnie i mediany dla każdego parametru są dość zbliżone do siebie.
+
 ```{r, echo=FALSE}
-# ggplot(IHC_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_76",
-#     x = "Limit czasowy",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
+ggplot(IHC_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_76",
+    x = "Limit czasowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 ```
 
 **TSP_76**
 
 ```{r, echo=FALSE}
-# IHC_time_limit_tsp76 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
+IHC_time_limit_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame()
 ```
 
+Natomiast tutaj widzimy, że mediana i średnia długośći ścieżki maleją wraz ze wzrostem limitu czasowego. Jednak największy spadek jest na początku, później już te różnice są niewielkie.
+
 ```{r, echo=FALSE}
-# ggplot(IHC_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_127",
-#     x = "Limit czasow",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
+ggplot(IHC_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "TSP_127",
+    x = "Limit czasowy",
+    y = "Długość ścieżki"
+  ) +
+  theme_minimal()
 ```
 
 **TSP_127**
 
 ```{r, echo=FALSE}
-# IHC_time_limit_tsp127 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
+IHC_time_limit_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame()
 ```
+
+Dla TSP_127 widać już jednak zdecydowanie malejącą średnią i mediane wraz ze wzrostem limitu czasowego. 
+
+Jedynie dla TSP_127 pojawiła się zależność, że wraz ze wzrostem limitu czasowego, maleje długość ścieżki. Może być to związane z tym, że tutaj liczba miast jest największa, więc znalezienie lepszych tras wymaga większego limitu czasowego w porównaniu do pozostałych.
 
 ## Liczba iteracji bez poprawy
 
@@ -792,6 +800,54 @@ Poniżej zbadany został wpływ liczby iteracji wspiczanki na długość ścież
 ```
 
 ## Podsumowanie
+
+Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	10713.0
+
+* Liczba iteracji - 10695 (liczba iteracji - 125)
+
+* Rodzaj sąsiedztwa - 10700 (rodzaj sąsiedztwa - two-opt)
+
+* Limit czasowy - 10692	 (limit czasowy - 200)
+
+* Liczba iteracji bez poprawy  -  10695 (liczba iteracji bez poprawy - 50)
+
+* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+
+Dla TSP_48 przy użyciu algorytmu symulowanego wyżarzania udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+
+Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	110039.7
+
+* Liczba iteracji - 109207.4 (liczba iteracji - 125)
+
+* Rodzaj sąsiedztwa - 109661.0 (rodzaj sąsiedztwa - two-opt)
+
+* Limit czasowy - 109058.3 (limit czasowy - 1000)
+
+* Liczba iteracji bez poprawy  - 108942.2 (liczba iteracji bez poprawy - 50)
+
+* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+
+Dla TSP_76 przy użyciu algorytmu symulowanego wyżarzania również udało się uzyskać sporo zdecydowanie lepszych wyników niż ten uzyskany przez Solver (118293.5)
+
+Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+
+* Klasyk - 	122191.3
+
+* Liczba iteracji - 119515.0 (liczba iteracji - 125)
+
+* Rodzaj sąsiedztwa - 121017.9 (rodzaj sąsiedztwa - two-opt) 
+
+* Limit czasowy - 119118.3 (limit czasowy - 1400)
+
+* Liczba iteracji bez poprawy  - 120208.5 (liczba iteracji bez poprawy - 50)
+
+* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+
+Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6). 
 
 # Algorytm symulowanego wyżarzania (SA)
 
