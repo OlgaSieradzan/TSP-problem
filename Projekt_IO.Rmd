@@ -14,10 +14,10 @@ output:
 ---
 
 <style>
-  img {
-    width: 100%;
-    height: auto;
-  }
+.custom-style img {
+  width: 100%;
+  height: auto;
+}
 </style>
 
 ```{r setup, include=FALSE}
@@ -34,17 +34,25 @@ library(dplyr)
 library(tidyr)
 ```
 
+***
+
 # Wprowadzenie
+
+***
 
 <div style='text-align: justify'>
 **Problem komiwojażera** (ang. Travelling Salesman Problem, TSP) to jedno z najbardziej znanych oraz intensywnie badanych zagadnień w dziedzinie optymalizacji kombinatorycznej oraz teorii grafów. W swojej klasycznej formie problem ten polega na znalezieniu najkrótszej możliwej trasy, która odwiedza dokładnie raz każdy z zadanych punktów i powraca do punktu początkowego. TSP znajduje zastosowanie w wielu dziedzinach, takich jak logistyka, planowanie tras, produkcja czy genetyka.
 
-TSP jest problemem należącym do klasy NP-trudnych, co oznacza, że wraz ze wzrostem liczby punktów (miast) liczba możliwych tras rośnie w sposób wykładniczy, a dokładne rozwiązanie staje się coraz trudniejsze do obliczenia w rozsądnym czasie. Z tego powodu opracowanie efektywnych algorytmów heurystycznych i metaheurystycznych, które pozwalają na znalezienie bliskich optymalnym rozwiązań w akceptowalnym czasie.
+TSP jest problemem należącym do klasy NP-trudnych, co oznacza, że wraz ze wzrostem liczby punktów (miast) liczba możliwych tras rośnie w sposób wykładniczy, a dokładne rozwiązanie staje się coraz trudniejsze do obliczenia w rozsądnym czasie. Z tego powodu opracowuje się efektywne algorytmy heurystyczne i metaheurystyczne, które umożliwiają znalezienie rozwiązań zbliżonych do optymalnych w akceptowalnym czasie.
 
 Celem naszego projektu jest implementacja sześciu różnych algorytmów, które rozwiązują problem komiwojażera.
 </div>
 
+***
+
 # Solver
+
+***
 
 <div style='text-align: justify'>
 Wyniki uzyskane za pomocą zaimplementowanych algorytmów zostaną porównane z tymi uzyskanymi w Solverze. Będzie to nasz benchmark.
@@ -63,9 +71,15 @@ solver[,c(2,4,6)]
 W przypadku danych TSP_48 czasy są tutaj dość zbliżone. Najniższy z nich to 92.625 s. Natomiast dla TSP_76 mamy dwie wartości znacząco odstające od pozostałych. Dla TSP_127 czasy są zdecydowanie najdłuższe w stosunku do pozostałych. Nie ma tam tak rozbieżnych wyników jak dla TSP_76. 
 </div>
 
+***
+
 ## Statystyki
 
-W statystykach poniżej przedstawiono najkrótszą oraz najdłuższą długość ścieżki uzyskaną przez Solver. Mamy również wyciągniętą średnią ze wszystkich wyników.
+***
+
+<div style='text-align: justify'>
+W statystykach poniżej przedstawiono najkrótszą oraz najdłuższą długość ścieżki uzyskaną przez Solver. Mamy również wyznaczoną średnią ze wszystkich wyników.
+</div>
 
 ```{r, echo=FALSE}
 sol_tsp48 <- describe(solver$TSP_48)
@@ -79,34 +93,45 @@ rownames(sol) <- c("TSP_48", "TSP_76", "TSP_127")
 sol
 ```
 
+Będzie to nasz benchmark, do którego będziemy odnosić wyniki uzyskane przez pozostałe algorytmy.
+
+***
+
 # Algorytmu Najbliższego Sąsiada (NN)
+
+***
 
 <div style='text-align: justify'>
 **Algorytm najbliższego sąsiada** (ang. nearest neighbour algorithm, NN) jest prostym algorytmem służącym do rozwiązania prolemu komiwojażera. Jego celem jest znalezienie najkrótszej trasy, która przechodzi przez wszystkie miasta. Proces rozpoczyna się od wybranego miasta, a następnie w każdym kroku wybierane jest najbliższe miasto, które jeszcze nie zostało odwiedzone, do którego algorytm przechodzi. Po odwiedzeniu wszystkich miast algorytm kończy działanie i zwraca uzyskaną trasę.
 </div>
 
+***
+
 ## Badane parametry
+
+***
 
 W ramach algorytmu nalbliższego sąsiada badaniu poddano wpływ różnych wartości parametru `miasto startowe`.
 
 <br>
 ```{r, echo=FALSE, include=FALSE}
- NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-     sheet = "TSP_48")
- NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-     sheet = "TSP_76")
- NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-     sheet = "TSP_127")
+  NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+      sheet = "TSP_48")
+  NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+      sheet = "TSP_76")
+  NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+      sheet = "TSP_127")
 
-# NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
-#     sheet = "TSP_48")
-# NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
-#     sheet = "TSP_76")
-# NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
-#     sheet = "TSP_127")
+ # NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+ #     sheet = "TSP_48")
+ # NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+ #     sheet = "TSP_76")
+ # NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+ #     sheet = "TSP_127")
 ```
 
-```{r, echo=FALSE}
+<div class="custom-style">
+```{r, echo=FALSE, fig.align="center"}
 w_tsp48 <- ggplot(NN_tsp48, aes(x = Punkt, y = Wynik)) +
   geom_point(size = 2, position = position_jitter(width = 0.2), colour = "blue") +
   labs(
@@ -146,8 +171,11 @@ w_tsp127 <- ggplot(NN_tsp127, aes(x = Punkt, y = Wynik)) +
                   theme = theme(
       plot.title = element_text(size = 14, face = "bold", hjust = 0.5)))
 ```
+</div>
 
+<div style='text-align: justify'>
 Na wykresach widzimy długość trasy w zależności od punktu startowego. Punkt startowy to miasto, z którego zaczynamy szukać najkrótszej trasy. Z wykresów nie da się wiele wyciągnąć, nie ma tutaj żadnej zależności. Widzimy jednak, że wybór punktu początkowego, z którego zaczyna algorytm ma znaczenie.
+</div>
 
 ```{r echo=FALSE, include=FALSE}
 stat_NN_tsp48 <- describe(NN_tsp48$Wynik)
@@ -170,7 +198,9 @@ NN_tsp48_punkt <- NN_tsp48$Punkt[NN_tsp48$Wynik == min(NN_tsp48$Wynik)]
 NN_tsp48[c(10,35),]
 ```
 
+<div style='text-align: justify'>
 Długość ścieżki wyniosła **12012** i jest to gorszy wynik od Solvera o **1144**. Średni wynik również jest gorszy. Ten wynik został uzyskany dla 2 punktów początkowych: 10 i 35.
+</div>
 
 * **TSP_76**
 
@@ -179,7 +209,9 @@ NN_tsp76_punkt <- NN_tsp76$Punkt[NN_tsp76$Wynik == min(NN_tsp76$Wynik)]
 NN_tsp76[16,]
 ```
 
+<div style='text-align: justify'>
 Długość ścieżki wyniosła **130921** i jest to gorszy wynik od Solvera o **12627.5**. Średni wynik również jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 16.
+</div>
 
 * **TSP_127**
 
@@ -188,67 +220,92 @@ NN_tsp127_punkt <- NN_tsp127$Punkt[NN_tsp127$Wynik == min(NN_tsp127$Wynik)]
 NN_tsp127[117,]
 ```
 
+<div style='text-align: justify'>
 Długość ścieżki wyniosła **133970.6** i jest to lepszy wynik od Solvera o **6247**. Średni wynik tutaj też jest gorszy. Wynik ten udało się uzyskać dla punktu początkowego 117.
+</div>
 
 Za pomocą tego algorytmu nie udało się uzyskać lepszych wyników niż Solver dla TSP_48 i TSP_76.
 
+***
+
 # Algorytm wspinaczki z multistartem (IHC)
 
+***
+
 <div style='text-align: justify'>
-**Algorytm iteracyjnej wspinaczki** to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie 
-rozwiązania bliskiego globalnemu optimum.
+**Algorytm iteracyjnej wspinaczki** to technika optymalizacyjna, stosowana do znajdowania zbliżonych do optymalnych rozwiązań problemów, które mogą mieć wiele lokalnych minimów. Wykorzystuje on podejście algorytmu wspinaczki, rozszerzone o wielokrotne losowanie różnych początkowych rozwiązań, co zwiększa szansę na znalezienie rozwiązania bliskiego globalnemu optimum.
+
+Zasada działania algorytmu wspinaczki z multistartem do rozwiązania problemu komiwojażera:
+
+1. Na początku każdej iteracji wybierane jest losowe rozwiązanie początkowe, które stanowi punkt wyjścia dla algorytmu wspinaczki górskiej.
+
+2. Analizowane jest sąsiedztwo bieżącego rozwiązania w celu znalezienia trasy o najmniejszym koszcie, korzystając z wybranej metody sąsiedztwa.
+
+3. Dla każdego sąsiedniego rozwiązania obliczany jest koszt trasy, który porównywany jest z aktualnym kosztem. Jeśli koszt sąsiedniej trasy jest niższy, 
+zostaje ona zaakceptowana jako nowe rozwiązanie i proces powtarzany jest, aż nie będzie możliwe znalezienie lepszego rozwiązania.
+
+4. Każda iteracja algorytmu jest ograniczona liczbą kroków (maksymalna liczba iteracji bez poprawy), a cały proces jest powtarzany przez określoną 
+liczbę prób, aby uniknąć utknięcia w lokalnym optimum.
+
+5. Dla każdej iteracji obliczany jest czas wykonania algorytmu, a najlepsze znalezione rozwiązanie jest zapisywane.
+
+6. Algorytm kończy poszukiwania, gdy upłynie określony limit czasu lub po przeprowadzeniu zaplanowanej liczby iteracji.
+
+7. Na koniec algorytm zwraca najlepszą znalezioną trasę.
 </div>
 
-<<<<<<< HEAD
+***
+
 ## Badane parametry
 
+***
 
 W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
 
- - **`liczba punktów początkowych`** - maksymalna liczba losowych punktów początkowych, z których algorytm rozpoczyna wspinaczkę
+ - **`num_starts`** - liczba iteracji
  
- - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ - **`neighborhood_type`** - rodzaj sąsiedztwa - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
  
     - **`swap`** nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
     
     - **`insertion`** polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
     
-    - **`2-opt`** wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+    - **`two-opt`** wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
   
     <p style="margin-top: 10px;">
- - **`limit czasowy`** - czas, jaki posiada algorytm na znalezienie rozwiązania
+ - **`time_limit`** - limit czasowy, jaki posiada algorytm na znalezienie rozwiązania
  
- - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
+ - **`max_iterations_without_improvement`** - liczba iteracji bez poprawy - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
  
- - **`liczba iteracji wspinaczki`** - liczba iteracji, jaką algorytm może wykonać w jednej próbie wspinaczki
+ - **`max_hill_climbing_iterations`** - liczba iteracji wspinaczki - liczba iteracji, jaką algorytm może wykonać w jednej próbie wspinaczki
     </p>
 
-
-=======
->>>>>>> d2d616ca7c243c7370a932c94612a3612908bc57
-
-```{r}
-IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
-    sheet = "Basic")
-IHC_max_iterations <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
-    sheet = "num_starts")
-IHC_move_type <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
-    sheet = "neighborhood_type")
-##IHC_max_hill_climbing_iterations <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
-##    sheet = "max_hill_climbing_iterations")
-IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx", 
-    sheet = "max_iterations_without_improvem")
-IHC_time_limit <- read_excel("C:/Users/Justyna/Desktop/IHC.xlsx",
-   sheet = "time_limit")
+```{r, echo=FALSE}
+ IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+                               sheet = "Basic")
+ IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+     sheet = "num_starts")
+ IHC_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+                                  sheet = "neighborhood_type")
+ IHC_max_hill_climbing_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+     sheet = "max_hill_climbing_iterations")
+ IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+     sheet = "max_iterations_without_improvem")
+ IHC_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+     sheet = "time_limit")
 ```
 
-## Klasyczny
+***
+
+### Klasyczne
+
+***
 
 Za podstawowe dane przyjmujemy:
 
 * num_starts = 100, 
 
-* neighborhood_type = "two-opt", 
+* neighborhood_type = `two-opt`, 
 
 * time_limit = 500, 
 
@@ -295,7 +352,9 @@ rownames(IHC_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 IHC_clasic_stat[,c("Min", "Max", "Mean")]
 ```
 
+<div style='text-align: justify'>
 Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu iteracyjnej wspinaczki oraz minimalną, maksymalną i średnią wartość. Uzyskane wyniki są bardzo dobre. Średnie w każdym z przypadku są o wiele niższe niż te uzyskane przez Solver.
+</div>
 
 **Czas**
 
@@ -315,9 +374,14 @@ rownames(IHC_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
 IHC_clasic_time[,2:4]
 ```
 
+<div style='text-align: justify'>
 Średnie czas są dość niskie dla TS_48 i TSP_76. Natomiast dla TSP_127 średni czas wynosi już ok. 2 minut.
 
-## Liczba iteracji
+***
+
+### Liczba iteracji
+
+***
 
 Poniżej zbadany został wpływ liczby iteracji na długość ścieżki:
 
@@ -335,18 +399,20 @@ IHC_max_iterations_tsp127 <- IHC_max_iterations %>%
   as.data.frame()
 ```
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_48)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_48)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_tsp48 %>%
@@ -359,20 +425,24 @@ IHC_max_iterations_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Mediana i średnie wahają się w zależności od liczby iteracji wokół podobnych wartości. Nie widać żadnej zależności. 
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_76)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_76)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_tsp76 %>%
@@ -385,20 +455,24 @@ IHC_max_iterations_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj analogiczna sytuacja. Średnie są natomiast bardzo niskie w porównaniu do Solvera.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_127)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_127)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_tsp127 %>%
@@ -410,12 +484,17 @@ IHC_max_iterations_tsp127 %>%
   ) %>%
   as.data.frame() 
 ```
-
+<div style='text-align: justify'>
 Dla TSP_127 pojawia się taka sama sytuacja.
 
 W żadnym z przypadków nie widac, żadnej zależności. Jednak różnice w liczbie parametrów są dość małe. Możliwe, że sprawdzenie większej liczby iteracji pokazałoby jakąś zależność.
+<div>
 
-## Rodzaj sąsiedztwa
+***
+
+### Rodzaj sąsiedztwa
+
+***
 
 Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
 
@@ -433,18 +512,20 @@ IHC_move_type_tsp127 <- IHC_move_type %>%
   as.data.frame()
 ```
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_move_type_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_48)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_48)**
 
 ```{r, echo=FALSE}
 IHC_move_type_tsp48 %>%
@@ -457,20 +538,24 @@ IHC_move_type_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Rodzaj sąsiedztwa zdecydowanie wpływa na długości ścieżki. Mediana i średnia są najniższe w przypadku `two-opt`. Natomiast najgorsze wyniki są dla `swap`.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_move_type_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_76)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_76)**
 
 ```{r, echo=FALSE}
 IHC_move_type_tsp76 %>%
@@ -483,20 +568,24 @@ IHC_move_type_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj jest bardzo podobna sytuacja. Dla `insetion` wyniki nie są najgorsze. Jednak jest dość znacząca różnica między nimi a `two-opt`.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_move_type_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_127)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_127)**
 
 ```{r, echo=FALSE}
 IHC_move_type_tsp127 %>%
@@ -509,13 +598,19 @@ IHC_move_type_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 jest identyczna sytuacja co w poprzednich TSP.
 
 Długość ścieżki definitywnie zależy od rodzaju ruchu. Dla `two-opt` w każdym z przypadków wyniki są najlepsze. Natomiast dla `swap` najgorsza.
+<div>
 
-## Limit czasowy
+***
 
-Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
+### Limit czasowy
+
+***
+
+Poniżej zbadany został wpływ limitu czasowego na długość ścieżki:
 
 ```{r, echo=FALSE}
 IHC_time_limit_tsp48 <- IHC_time_limit %>%
@@ -531,18 +626,20 @@ IHC_time_limit_tsp127 <- IHC_time_limit %>%
   as.data.frame()
 ```
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_time_limit_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_48)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_48)**
 
 ```{r, echo=FALSE}
 IHC_time_limit_tsp48 %>%
@@ -552,23 +649,27 @@ IHC_time_limit_tsp48 %>%
     Max = max(WYNIK_1),
     Mean = mean(WYNIK_1)
   ) %>%
-  as.data.frame()
+  as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_48 limit czasowy nie wydaje się wpływać na długość ścieżki. Średnie i mediany dla każdego parametru są dość zbliżone do siebie.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_76)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_76)**
 
 ```{r, echo=FALSE}
 IHC_time_limit_tsp76 %>%
@@ -578,23 +679,27 @@ IHC_time_limit_tsp76 %>%
     Max = max(WYNIK_1),
     Mean = mean(WYNIK_1)
   ) %>%
-  as.data.frame()
+  as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Natomiast tutaj widzimy, że mediana i średnia długośći ścieżki maleją wraz ze wzrostem limitu czasowego. Jednak największy spadek jest na początku, później już te różnice są niewielkie.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_127)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_127)**
 
 ```{r, echo=FALSE}
 IHC_time_limit_tsp127 %>%
@@ -604,14 +709,20 @@ IHC_time_limit_tsp127 %>%
     Max = max(WYNIK_1),
     Mean = mean(WYNIK_1)
   ) %>%
-  as.data.frame()
+  as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 widać już jednak zdecydowanie malejącą średnią i mediane wraz ze wzrostem limitu czasowego. 
 
 Jedynie dla TSP_127 pojawiła się zależność, że wraz ze wzrostem limitu czasowego, maleje długość ścieżki. Może być to związane z tym, że tutaj liczba miast jest największa, więc znalezienie lepszych tras wymaga większego limitu czasowego w porównaniu do pozostałych.
+<div>
 
-## Liczba iteracji bez poprawy
+***
+
+### Liczba iteracji bez poprawy
+
+***
 
 Poniżej zbadany został wpływ liczby iteracji bez poprawy na długość ścieżki:
 
@@ -629,18 +740,20 @@ IHC_max_iterations_without_improvement_tsp127 <- IHC_max_iterations_without_impr
   as.data.frame()
 ```
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_without_improvement_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_48)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_48)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_without_improvement_tsp48 %>%
@@ -653,20 +766,24 @@ IHC_max_iterations_without_improvement_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Mediana i średnia są dość zbliżone dla każdej wartości parametru. Nie widać tutaj znaczących różnic.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_without_improvement_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_76)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_76)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_without_improvement_tsp76 %>%
@@ -679,20 +796,24 @@ IHC_max_iterations_without_improvement_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 pojawia się podobna sytuacja. W jednym z przypadków natomiast średnia i mediana są wyższe. Natomiast nie widać żadnej zależności.
+</div>
 
+<br>
 ```{r, echo=FALSE}
 ggplot(IHC_max_iterations_without_improvement_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_127)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_127)**
 
 ```{r, echo=FALSE}
 IHC_max_iterations_without_improvement_tsp127 %>%
@@ -705,103 +826,133 @@ IHC_max_iterations_without_improvement_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj natomiasst widzimy pod koniec wzrost mediany i średniej, który nie był widoczny wcześniej.
 
 Nie widać tutaj, aby jakaś zależność się pojawiała. Ogólnie rzecz biorąc w każdym przypadku mediana i średnia zachowują się podobnie z pewnymi odstępstwami.
+</div>
 
-## Liczba iteracji wspinaczki
+***
 
-Poniżej zbadany został wpływ liczby iteracji wspiczanki na długość ścieżki:
+### Liczba iteracji wspinaczki
 
-```{r, echo=FALSE}
-# IHC_max_hill_climbing_iterations_tsp48 <- IHC_max_hill_climbing_iterations %>%
-#   filter(DATASET == "DATA1") %>%
-#   as.data.frame()
-# 
-# IHC_max_hill_climbing_iterations_tsp76 <- IHC_max_hill_climbing_iterations %>%
-#   filter(DATASET == "DATA2") %>%
-#   as.data.frame()
-# 
-# IHC_max_hill_climbing_iterations_tsp127 <- IHC_max_hill_climbing_iterations %>%
-#   filter(DATASET == "DATA3") %>%
-#   as.data.frame()
-```
+***
+
+Poniżej zbadany został wpływ liczby iteracji wspinaczki na długość ścieżki:
 
 ```{r, echo=FALSE}
-# ggplot(IHC_max_hill_climbing_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_48",
-#     x = "Liczba iteracji wspinaczki",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
+IHC_max_hill_climbing_iterations_tsp48 <- IHC_max_hill_climbing_iterations %>%
+  filter(DATASET == "DATA1") %>%
+  as.data.frame()
+
+IHC_max_hill_climbing_iterations_tsp76 <- IHC_max_hill_climbing_iterations %>%
+  filter(DATASET == "DATA2") %>%
+  as.data.frame()
+
+IHC_max_hill_climbing_iterations_tsp127 <- IHC_max_hill_climbing_iterations %>%
+  filter(DATASET == "DATA3") %>%
+  as.data.frame()
 ```
 
-**TSP_48**
+<br>
+```{r, echo=FALSE}
+ggplot(IHC_max_hill_climbing_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "Wpływ liczby iteracji wspinaczki na długość ścieżki (TSP_48)",
+    x = "Liczba iteracji wspinaczki",
+    y = "Długość ścieżki"
+  ) +
+  theme_light()
+```
+
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji wspinaczki (TSP_48)**
 
 ```{r, echo=FALSE}
-# IHC_max_hill_climbing_iterations_tsp48 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
+IHC_max_hill_climbing_iterations_tsp48 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
 ```
+
+<div style='text-align: justify'>
+Wyniki są dość zbliżone dla każdej wartości parametru. Średnia i mediana wahają się wokół podobnych wartośći.
+</div>
+
+<br>
+```{r, echo=FALSE}
+ggplot(IHC_max_hill_climbing_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "Wpływ liczby iteracji wspinaczki na długość ścieżki (TSP_76)",
+    x = "Liczba iteracji wspinaczki",
+    y = "Długość ścieżki"
+  ) +
+  theme_light()
+```
+
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji wspinaczki (TSP_76)**
 
 ```{r, echo=FALSE}
-# ggplot(IHC_max_hill_climbing_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_76",
-#     x = "Liczba iteracji wspinaczki",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
+IHC_max_hill_climbing_iterations_tsp76 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
 ```
 
-**TSP_76**
+<div style='text-align: justify'>
+Tutaj natomiast widzimy delikatny spadek mediany i średniej wraz ze wzrostem liczby iteracji wspinaczki. Jednak nie jest on bardzo znaczący.
+</div>
+
+<br>
+```{r, echo=FALSE}
+ggplot(IHC_max_hill_climbing_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
+  geom_boxplot(fill = "pink") +
+  labs(
+    title = "Wpływ liczby iteracji wspinaczki na długość ścieżki (TSP_127)",
+    x = "Liczba iteracji wspinaczki",
+    y = "Długość ścieżki"
+  ) +
+  theme_light()
+```
+
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji wspinaczki (TSP_127)**
 
 ```{r, echo=FALSE}
-# IHC_max_hill_climbing_iterations_tsp76 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
+IHC_max_hill_climbing_iterations_tsp127 %>%
+  group_by(PARAMETR) %>%
+  summarise(
+    Min = min(WYNIK_1),
+    Max = max(WYNIK_1),
+    Mean = mean(WYNIK_1)
+  ) %>%
+  as.data.frame() 
 ```
 
-```{r, echo=FALSE}
-# ggplot(IHC_max_hill_climbing_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
-#   geom_boxplot(fill = "pink") +
-#   labs(
-#     title = "TSP_127",
-#     x = "Liczba iteracji wspinaczki",
-#     y = "Długość ścieżki"
-#   ) +
-#   theme_minimal()
-```
+<div style='text-align: justify'>
+Dla TSP_127 widać na początku dość intensywny spadek mediany i średniej, jednak później wartości wzrastają.
 
-**TSP_127**
+Ciężko stwierdzić czy isteniej tu jakaś zależność. Dla TSP_76 i TSP_127 widać na początku spadek mediany i średniej. Dla TSP_48 nie widać wpływu tego parametru.
+</div>
 
-```{r, echo=FALSE}
-# IHC_max_hill_climbing_iterations_tsp127 %>%
-#   group_by(PARAMETR) %>%
-#   summarise(
-#     Min = min(WYNIK_1),
-#     Max = max(WYNIK_1),
-#     Mean = mean(WYNIK_1)
-#   ) %>%
-#   as.data.frame() 
-```
+***
 
 ## Podsumowanie
 
-Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+***
+
+Najlepsze wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
 * Klasyk - 	10713.0
 
@@ -813,11 +964,11 @@ Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
 * Liczba iteracji bez poprawy  -  10695 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+* Liczba iteracji wspinaczki - 10690	(liczba iteracji wspinaczki - 1000)
 
-Dla TSP_48 przy użyciu algorytmu symulowanego wyżarzania udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+Dla TSP_48 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem udało się uzyskać zdecydownie lepsze wyniki niż ten uzyskany przez Solver (10868).
 
-Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
 
 * Klasyk - 	110039.7
 
@@ -829,9 +980,9 @@ Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
 
 * Liczba iteracji bez poprawy  - 108942.2 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+* Liczba iteracji wspinaczki - 109036.8	(liczba iteracji wspinaczki - 750)
 
-Dla TSP_76 przy użyciu algorytmu symulowanego wyżarzania również udało się uzyskać sporo zdecydowanie lepszych wyników niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem również udało się uzyskać również zdecydowanie lepsze wyniki niż ten uzyskany przez Solver (118293.5)
 
 Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
 
@@ -845,68 +996,101 @@ Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
 
 * Liczba iteracji bez poprawy  - 120208.5 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 	(liczba iteracji wspinaczki - )
+* Liczba iteracji wspinaczki - 120273.5	(liczba iteracji wspinaczki - 1000)
 
-Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6). 
+Dla TSP_127 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem również są lepsze wyniki niż ten uzyskany przez Solver (140217.6).
+
+***
 
 # Algorytm symulowanego wyżarzania (SA)
 
+***
+
 <div style='text-align: justify'>
-**Algorytm symulowanego wyżarzania** (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest 
-parametryzowana w danej implementacji. 
+**Algorytm symulowanego wyżarzania** (ang. Simulated Annealing, SA) jest iteracyjną metodą optymalizacji, która rozpoczyna się od losowego rozwiązania i w każdej iteracji wprowadza zmiany w obrębie sąsiedztwa. Inspiracją dla algorytmu SA był proces metalurgiczny, w którym metal w wysokich temperaturach łatwiej poddaje się obróbce plastycznej. W miarę obniżania temperatury, zmiany kształtu stają się coraz trudniejsze. Podobnie, w algorytmie symulowanego wyżarzania na początku akceptowane są ruchy prowadzące do gorszych rozwiązań z relatywnie dużym prawdopodobieństwem, gdy temperatura jest wysoka. Z upływem iteracji oraz spadkiem temperatury, prawdopodobieństwo akceptacji gorszych rozwiązań maleje, co skutkuje tym, że algorytm niemal zawsze odrzuca pogarszające ruchy. Mechanizm ten ma na celu unikanie utknięcia w ekstremach lokalnych. W każdej iteracji generowane są losowe ruchy, a ich liczba jest parametryzowana w danej implementacji. 
+
+Zasada działania algorytmu symulowanego wyżarzania do rozwiązania problemu komiwojażera:
+
+1. Na początku losowo generowana jest początkowa trasa, która reprezentuje kolejność odwiedzania miast. Ta trasa jest traktowana jako bieżące rozwiązanie i wyznaczany jest koszt tej trasy.
+
+2. Ustalana jest początkowa wartość temperatury, która kontroluje prawdopodobieństwo akceptacji gorszych rozwiązań w trakcie przeszukiwania.
+
+3. W każdej iteracji generowany jest sąsiad bieżącego rozwiązania w oparciu o wybrany typ ruchu.
+
+4. Dla nowego rozwiązania obliczany jest koszt, a następnie różnica kosztów między bieżącym a sąsiednim rozwiązaniem. 
+
+5. Jeśli nowa trasa jest lepsza, algorytm akceptuje ją jako nowe bieżące rozwiązanie. Jeśli jest gorsza, algorytm może ją zaakceptować z prawdopodobieństwem zależnym od różnicy kosztów i aktualnej temperatury.
+
+6. Jeśli bieżące rozwiązanie jest lepsze od dotychczasowego najlepszego rozwiązania, algorytm zapisuje je jako nowe najlepsze rozwiązanie.
+
+7. Po każdej iteracji temperatura jest zmniejszana poprzez pomnożenie jej przez współczynnik chłodzenia. Obniżanie temperatury zmniejsza prawdopodobieństwo akceptacji gorszych rozwiązań.
+
+8. Algorytm kończy działanie, gdy spełniony zostanie jeden z warunków zakończenia: liczba iteracji osiągnie maksymalną wartość, temperatura spadnie poniżej minimalnej wartości, lub czas działania przekroczy ustalony limit.
+
+9. Po zakończeniu działania algorytm zwraca najlepsze znalezione rozwiązanie.
 </div>
+
+***
 
 ## Badane parametry
 
+***
+
 W ramach algorytmu symulowanego wyżarzania badane są następujące parametry:
 
- - **`temperatura początkowa`** -  wartość temperatury, od której rozpoczyna się proces chłodzenia w algorytmie
- 
- - **`temperatura końcowa`** - wartość temperatury, do której algorytm będzie dążył w trakcie działania
- 
- - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ - **`move_type`** - rodzaj sąsiedztwa - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
  
     - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
     
     - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
     
-    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+    - `two-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
   
     <p style="margin-top: 10px;">
- - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+ - **`initial_temperature`** -  początkowa wartość temperatury, która kontroluje akceptację gorszych rozwiązań.
  
- - **`prędkość chłodzenia`** -  szybkość, z jaką zmniejszana jest temperatura w trakcie działania algorytmu
+ - **`cooling_rate`** - współczynnik chłodzenia, określający szybkość obniżania temperatury w kolejnych iteracjach
  
- - **`temperatura minimalna`** - wartość temperatury, poniżej której algorytm nie będzie już kontynuował poszukiwań
+ - **`max_iterations`** - liczba iteracji, po których algorytm kończy działanie
+
+ - **`min_temperature`** -minimalna wartość temperatury, poniżej której algorytm kończy działanie
+ 
+ - **`time_limit`** - limit czasowy
     </p>
     
 ```{r echo=FALSE, include=FALSE}
-# SA_compare_methods <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
-#     sheet = "Porównanie_metod")
-# SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
-#     sheet = "max_iterations")
-# SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
-#     sheet = "min_tem")
-# SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
-#     sheet = "cooling_rate")
-# SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
-#     sheet = "initial_temp")
-
-SA_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "Basic")
-SA_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "move_type")
-SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "initial_temperature")
-SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "cooling_rate")
-SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "max_iterations")
-SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-    sheet = "min_temperature")
+ # SA_clasic <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "Basic")
+ # SA_move_type <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "move_type")
+ # SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "initial_temperature")
+ # SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "cooling_rate")
+ # SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "max_iterations")
+ # SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+ #     sheet = "min_temperature")
+ 
+ SA_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "Basic")
+ SA_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "move_type")
+ SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "initial_temperature")
+ SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "cooling_rate")
+ SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "max_iterations")
+ SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+     sheet = "min_temperature")
 ```
 
-## Klasyczne
+***
+
+### Klasyczne
+
+***
 
 Za podstawowe dane przyjmujemy :
 
@@ -961,7 +1145,9 @@ rownames(SA_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 SA_clasic_stat[,c("Min", "Max", "Mean")]
 ```
 
-Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu symulowanego wyżarzania oraz minimalną, maksymalną i średnią wartość. Dla TSP_48 wyniki są zbliżone do tych z Solvera. Dla TSP_127 minimalna wartość jest trochę wyższa. Natomiast dla TSP_76 minimalna wartośc jest zdecydowanie lepsza, jak również średnia.
+<div style='text-align: justify'>
+Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla algorytmu symulowanego wyżarzania oraz minimalną, maksymalną i średnią wartość. Dla TSP_48 wyniki są zbliżone do tych z Solvera. Dla TSP_127 minimalna wartość jest trochę wyższa. Natomiast dla TSP_76 minimalna wartość jest zdecydowanie lepsza, jak również średnia.
+</div>
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
 SA_clasic_time <- SA_clasic %>%
@@ -979,11 +1165,17 @@ rownames(SA_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
 SA_clasic_time[,2:4]
 ```
 
-Uzyskane czasy przy podstawowych parametrach są bardzo niskie, nie wynoszą nawet sekundy. W Solverze były one zdecydowanie wyższe. w każdym  z przypadków.
+<div style='text-align: justify'>
+Uzyskane czasy przy podstawowych parametrach są bardzo niskie, nie wynoszą nawet sekundy. W Solverze w każdym z przypadków były one zdecydowanie wyższe.
+</div>
 
-## Rodzaj ruchu
+*** 
 
-Poniżej zbadany został wpływ rodzaju ruchu na długość ścieżki:
+### Rodzaj sąsiedztwa
+
+***
+
+Poniżej zbadany został wpływ rodzaju sąsiedztwa na długość ścieżki:
 
 ```{r, echo=FALSE}
 SA_move_type_tsp48 <- SA_move_type %>%
@@ -999,18 +1191,21 @@ SA_move_type_tsp127 <- SA_move_type %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_move_type_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_48)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()  
 ```
+<br>
 
-**TSP_48**
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_48)**
 
 ```{r, echo=FALSE}
 SA_move_type_tsp48 %>%
@@ -1023,20 +1218,23 @@ SA_move_type_tsp48 %>%
   as.data.frame() 
 ```
 
-Widzimy, że sposób w jaki generujemy sąsiadów a algorytmie ma tutaj duże znaczenie. Wyniki są najgorsze w przypadku `swap` - średnia jest wysoka. Natomiast mediana i średnia długości ścieżki są najniższe w przypadku ruchu `2-opt`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek.
+<div style='text-align: justify'>
+Widzimy, że sposób w jaki generujemy sąsiadów w algorytmie ma tutaj duże znaczenie. Wyniki są najgorsze w przypadku `swap` - średnia jest wysoka. Natomiast mediana i średnia długości ścieżki są najniższe w przypadku ruchu `2-opt`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_move_type_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_76)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
-
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_76)**
 
 ```{r, echo=FALSE}
 SA_move_type_tsp76 %>%
@@ -1049,20 +1247,23 @@ SA_move_type_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 pojawiła się analogiczna sytuacja. Dla `2-opt` wyniki są najlepsze. Uzyskana minimalna długość ścieżki, dla tej wartości parametru jest znacząco lepsza od Solvera (118293.5). Ponownie najgorzej wypada `swap`. Średnie się różnią znacząco w zależności od typu ruchu.
+<div style='text-align: justify'>
+Dla TSP_76 pojawiła się analogiczna sytuacja. Dla `2-opt` wyniki są najlepsze. Uzyskana minimalna długość ścieżki dla tej wartości parametru jest znacząco lepsza od Solvera (118293.5). Ponownie najgorzej wypada `swap`. Średnie różnią się znacząco w zależności od typu ruchu.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_move_type_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sąsiedztwa na długość ścieżki (TSP_127)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
-
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_127)**
 
 ```{r, echo=FALSE}
 SA_move_type_tsp127 %>%
@@ -1075,11 +1276,17 @@ SA_move_type_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj sytuacja analogiczna. Wyniki są słabe dla `insertion` i `swap`. Natomiast dla `2-opt` już nie ma lepszych wyników niż w przypadku Solvera.
 
 Jest tu dobrze widoczna zależność, że najkrótsza średnia i mediana długości ścieżki są w przypadku typu ruchu `2-opt`. Dla tej wartości parametru wariancja jest również w każdym z przypadków najmniejsza. Parametry `swap` i `insertion` nie działają tak efektywnie jak `2-opt`.
+</div>
 
-## Temperatura początkowa
+***
+
+### Temperatura początkowa
+
+***
 
 Poniżej zbadany został wpływ temperatury początkowej na długość ścieżki:
 
@@ -1097,18 +1304,20 @@ SA_initial_temp_tsp127 <- SA_initial_temp %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_initial_temp_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ temperatury początkowej na długość ścieżki (TSP_48)",
     x = "Temperatura początkowa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wartości temperatury początkowej (TSP_48)**
 
 ```{r, echo=FALSE}
 SA_initial_temp_tsp48 %>%
@@ -1121,20 +1330,23 @@ SA_initial_temp_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Z wykresów pudełkowych nie widać żadnej zależności. Mediana i średnia długości ścieżki wahają się na podobnym poziomie dla różnych wartości parametru. Temperatura początkowa wydaję się nie mieć dużego wpływu.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_initial_temp_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ temperatury początkowej na długość ścieżki (TSP_76)",
     x = "Temperatura początkowa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+**Statystyki długości ścieżki w zależności od wartości temperatury początkowej (TSP_76)**
 
 ```{r, echo=FALSE}
 SA_initial_temp_tsp76 %>%
@@ -1147,20 +1359,23 @@ SA_initial_temp_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 pojawiają się już większe wahania na początku, ale nadal dla nie widać, żeby w zależności od temperatury mediana długości ścieżki się znacząco zmieniała. Nie mamy tutaj też bardzo dużych odstępstw tzn. średnie i mediany są dość zbliżone do siebie. Otrzymane wyniki są bardzo dobre i zdecydowanie lepsze od tych z Solvera.
+<div style='text-align: justify'>
+Dla TSP_76 pojawiają się już większe wahania na początku, ale nadal nie widać, żeby w zależności od temperatury mediana długości ścieżki się znacząco zmieniała. Nie mamy tutaj też bardzo dużych odstępstw tzn. średnie i mediany są dość zbliżone do siebie. Otrzymane wyniki są bardzo dobre i zdecydowanie lepsze od tych z Solvera.
+</div>
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_initial_temp_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ temperatury początkowej na długość ścieżki (TSP_127)",
     x = "Temperatura początkowa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wartości temperatury początkowej (TSP_127)**
 
 ```{r, echo=FALSE}
 SA_initial_temp_tsp127 %>%
@@ -1173,11 +1388,17 @@ SA_initial_temp_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 mediana i średnia długości ścieżki rosną. Następnie pojawia się spadek i ponownie wzrost. Nie można jednak powiedzieć, że tak będzie za każdym razem. Należałoby sprawdzić większą liczbę parametrów. Wyniki jednak dalej są dość słabe.
 
 Wpływ początkowej temperatury nie wydaje się być duży. 
+</div>
 
-## Prędkość chłodzenia
+***
+
+### Prędkość chłodzenia
+
+***
 
 Poniżej zbadany został wpływ prędkości chłodzenia na długość ścieżki:
 
@@ -1195,18 +1416,20 @@ SA_cooling_rate_tsp127 <- SA_cooling_rate %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_cooling_rate_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ prędkości chłodzenia na długość ścieżki (TSP_48)",
     x = "Prędkość chłodzenia",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od prędkości chłodzenia (TSP_48)**
 
 ```{r, echo=FALSE}
 SA_cooling_rate_tsp48 %>%
@@ -1219,20 +1442,24 @@ SA_cooling_rate_tsp48 %>%
   as.data.frame() 
 ```
 
-Z wykresu bardzo dobrze widać jak mediana długości ścieżki maleje wraz ze wzrostem prędkości chłodzenia. Średnia również wykazuje takie zachowanie. Jednak pod koniec nie mediana i średnia długości ścieżki nie maleją tak szybko, stają się wręcz zbliżone (0.94-0.98). 
+<div style='text-align: justify'>
+Z wykresu bardzo dobrze widać jak mediana długości ścieżki maleje wraz ze wzrostem prędkości chłodzenia. Średnia również wykazuje takie zachowanie. Jednak pod koniec mediana i średnia długości ścieżki nie maleją tak szybko, stają się wręcz zbliżone (0.94-0.98).
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_cooling_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ prędkości chłodzenia na długość ścieżki (TSP_76)",
     x = "Prędkość chłodzenia",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od prędkości chłodzenia (TSP_76)**
 
 ```{r, echo=FALSE}
 SA_cooling_rate_tsp76 %>%
@@ -1245,20 +1472,24 @@ SA_cooling_rate_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 pojawiła się analogiczna sytuacja. Wraz ze wzrostem prędkości chłodzenia maleje mediana i średnia długości ścieżki. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_cooling_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ prędkości chłodzenia na długość ścieżki (TSP_127)",
     x = "Prędkość chłodzenia",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od prędkości chłodzenia (TSP_127)**
 
 ```{r, echo=FALSE}
 SA_cooling_rate_tsp127 %>%
@@ -1271,11 +1502,17 @@ SA_cooling_rate_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 W tym przypadku sytuacja jest identyczna.
 
 We wszystkich przypadkach średnia i mediana długości ścieżki maleje wraz ze wzrostem prędkości chłodzenia. Może tak być dlatego, że temperatura szybciej spada do wartości minimalnej, więc algorytm spędza mniej czasu na eksplorowaniu gorszych rozwiązań. W rezultacie szybciej zbliża się do lokalnego minimum, co skutkuje krótszymi rozwiązaniami, ponieważ algorytm nie oddala się zbytnio od bieżącego rozwiązania.
+</div>
 
-## Liczba iteracji
+***
+
+### Liczba iteracji
+
+***
 
 Poniżej zbadany został wpływ liczby iteracji na długość ścieżki:
 
@@ -1293,18 +1530,20 @@ SA_max_iterations_tsp127 <- SA_max_iterations %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_max_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_48)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_48)**
 
 ```{r, echo=FALSE}
 SA_max_iterations_tsp48 %>%
@@ -1317,20 +1556,24 @@ SA_max_iterations_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 DLa TSP_48 z wykresów dobrze widać, że wraz ze wzrostem liczby iteracji, maleje mediana i średnia długości ścieżki. Na początku maleją dość szybko, natomiast później następuje spowolnienie. Dla bardzo wysokich wartości parametrów nie widać już znaczących różnic w wynikach.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_76)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_76)**
 
 ```{r, echo=FALSE}
 SA_max_iterations_tsp76 %>%
@@ -1343,20 +1586,24 @@ SA_max_iterations_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj pojawia się podobna sytuacja. Jednak w tym przypadku mediana i średnia dłużej maleją. Dopiero dla liczby iteracji = 6000 (dla TSP_48 = 4000), wartości statystyk stają sie do siebie zbliżone.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_127)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
-
-**TSP_127**
+ 
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_127)**
 
 ```{r, echo=FALSE}
 SA_max_iterations_tsp127 %>%
@@ -1369,11 +1616,17 @@ SA_max_iterations_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Analogicznie dla TSP_127. Wraz ze wzrostem liczby iteracji, maleje średnia i mediana długości ścieżki. Jednak robi to jeszcze wolniej niż w poprzednich przypadkach. Dopiero dla liczby iteracji = 8000 statysyki się wahają wokół podobnych wartości.
 
-We wszystkich sytuacjach widać, że wraz ze wzrostem liczby iteracji, maleje mediana i średnia długośći ścieżki. Jednakże w pewnym momencie, różnym w zależności od liczby miast w problemie, osiągane wyniki przestają się znacząco różnić. Oznacza to, że algorytm stabilizuje się i zaczyna zbliżać się do swojego optimum. Dalsze zwiększanie liczby iteracji prowadzi jedynie do minimalnych zmian w wynikach, więc nie ma większego sensu.
+We wszystkich sytuacjach widać, że wraz ze wzrostem liczby iteracji, maleje mediana i średnia długości ścieżki. Jednakże w pewnym momencie, różnym w zależności od liczby miast w problemie, osiągane wyniki przestają się znacząco różnić. Oznacza to, że algorytm stabilizuje się i zaczyna zbliżać się do swojego optimum. Dalsze zwiększanie liczby iteracji prowadzi jedynie do minimalnych zmian w wynikach, więc nie ma większego sensu.
+</div>
 
-## Minimalna temperatura
+***
+
+### Minimalna temperatura
+
+***
 
 Poniżej zbadany został wpływ minimalnej temperatury na długość ścieżki:
 
@@ -1391,18 +1644,20 @@ SA_min_temp_tsp127 <- SA_min_temp %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_min_temp_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ minimalnej temperatury na długość ścieżki (TSP_48)",
     x = "Minimalna temperatura",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wartości temperatury minimalnej (TSP_48)**
 
 ```{r, echo=FALSE}
 SA_min_temp_tsp48 %>%
@@ -1415,20 +1670,24 @@ SA_min_temp_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Wraz ze wzrostem wartości temperatury minimimalnej mediana i średnia rosną. Zbyt duża minimalna temperatura początkowa powoduje, że algorytm kończy działanie zanim zdoła osiągnąć najlepsze możliwe rozwiązania. W efekcie pozostaje na gorszych ścieżkach, co powoduje wzrost mediany i średniej długości.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_min_temp_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ minimalnej temperatury na długość ścieżki (TSP_76)",
     x = "Minimalna temperatura",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od wartości temperatury minimalnej (TSP_76)**
 
 ```{r, echo=FALSE}
 SA_min_temp_tsp76 %>%
@@ -1441,20 +1700,24 @@ SA_min_temp_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj pojawia się podobna sytuacja. Wraz ze wzrostem wartości minimalnej, wyniki są coraz gorsze.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(SA_min_temp_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ minimalnej temperatury na długość ścieżki (TSP_127)",
     x = "Minimalna temperatura",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wartości temperatury minimalnej (TSP_127)**
 
 ```{r, echo=FALSE}
 SA_min_temp_tsp127 %>%
@@ -1469,9 +1732,15 @@ SA_min_temp_tsp127 %>%
 
 Dla TSP_127 sytuacja jest analogiczna.
 
+<div style='text-align: justify'>
 Widoczna jest zależność, że wraz ze wzrostem wartości minimalnej, median i średnia długość ścieżki maleją.
+</div>
+
+***
 
 ## Podsumowanie
+
+***
 
 Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
@@ -1521,48 +1790,93 @@ Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
 
 Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6). 
 
-# Algorytm przeszukiwania tabu
+***
+
+# Algorytm przeszukiwania tabu (TS)
+
+***
 
 <div style='text-align: justify'>
 **Algorytm przeszukiwania tabu** (ang. Tabu Search, TS) to algorytm, który opiera się na stopniowym ulepszaniu początkowego, losowego rozwiązania. W przypadku problemu komiwojażera algorytm stara się skrócić trasę w taki sposób, aby odwiedzić wszystkie punkty. TS działa w sposób iteracyjny – w każdej iteracji obecne rozwiązanie jest modyfikowane poprzez wybór jednego z ruchów zdefiniowanych w sąsiedztwie. Charakterystyczną cechą algorytmu TS jest lista tabu, która przechowuje ruchy wykonane w ostatnich iteracjach. Ruchy te są czasowo zakazane, co zapobiega zapętleniu się algorytmu i ponownemu odwiedzaniu tych samych rozwiązań. Algorytm pozwala również na wykonanie ruchu, który chwilowo pogarsza rozwiązanie. Taki mechanizm umożliwia ucieczkę z lokalnych ekstremów i zwiększa szansę na znalezienie rozwiązania globalnie optymalnego lub bliskiego optymalnemu. Dodatkowo TS może korzystać z kryterium zakończenia działania, które przerywa algorytm, jeśli przez dłuższy czas nie nastąpi poprawa wyniku.
+
+Zasada działania algorytmu przeszukiwania tabu do rozwiązania problemu komiwojażera:
+
+1. Generowane jest początkowe rozwiązanie oraz obliczany jego koszt.
+
+2. Inicjalizowana jest lista tabu z ograniczoną długością. Jeśli lista osiągnie maksymalną długość, najstarsze rozwiązanie zostaje z niej usunięte.
+
+3. W każdej iteracji algorytmu generowane jest sąsiedztwo, które zawiera rozwiązania uzyskane poprzez zastosowanie jednego z trzech typów ruchów. Sąsiedztwo jest generowane na podstawie bieżącego rozwiązania.
+
+4. Każde rozwiązanie w sąsiedztwie jest oceniane pod kątem kosztu. Spośród tych rozwiązań wybierany jest najlepszy sąsiad, który nie jest na liście tabu,a którego koszt jest mniejszy niż dotychczasowego najlepszego rozwiązania.
+
+5. Jeżeli znaleziony najlepszy sąsiad nie jest na liście tabu, staje się on nowym rozwiązaniem bazowym i jest dodawany do listy tabu.
+
+6. Jeśli znaleziono lepsze rozwiązanie, aktualizowane są zarówno bieżące rozwiązanie, jak i najlepsze rozwiązanie, jeśli nowe jest lepsze od dotychczasowego.
+
+7. Algorytm kończy działanie, gdy zostanie osiągnięty limit czasu, maksymalna liczba iteracji lub maksymalna liczba iteracji bez poprawy rozwiązania.
+
+8. Po zakończeniu działania, algorytm zwraca najlepsze znalezione rozwiązanie.
 </div>
+
+***
 
 ## Badane parametry
 
+***
+
 W ramach algorytmu przeszukiwania tabu badane są następujące parametry:
 
- - **`długość listy tabu`** - liczba wykonanych ruchów, które nie mogą być ponownie wykorzystanie przez określoną liczbę iteracji
- 
- - **`liczba iteracji bez poprawy`** - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
- 
- - **`rodzaj sąsiedztwa`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ - **`move_type`** - rodzaj sąsiedztwa - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
  
     - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
     
     - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
     
-    - `2-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
+    - `two-opt` wiąże się z odwróceniem segmentu trasy między dwoma wybranymi wierzchołkami, co prowadzi do zmiany kolejności miast w tym segmencie
   
     <p style="margin-top: 10px;">
- - **`czas działania`** - limit czasu, jaki posiada algorytm na znalezienie rozwiązania
+ - **`tabu_list_length`** - długość listy tabu - liczba wykonanych ruchów, które nie mogą być ponownie wykorzystanie przez określoną liczbę iteracji
+ 
+ - **`max_iterations`** - liczba iteracji, po której algorytm kończy działanie
+ 
+  - **`max_no_improve`** - liczba iteracji bez poprawy - liczba iteracji, po której algorytm kończy działanie, jeśli nie znaleziono lepszego rozwiązania
+ 
+ - **`time_limit`** - limit czasowy
     </p>
 
 ```{r echo=FALSE, include=FALSE}
-TS_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "Basic")
-TS_move_generator <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "move_generator")
-TS_list_length <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "tabu_list_length")
-TS_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "max_iterations")
-TS_max_no_improve <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "max_no_improve")
-TS_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-    sheet = "time_limit")
+ TS_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "Basic")
+ TS_move_generator <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "move_generator")
+ TS_list_length <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "tabu_list_length")
+ TS_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "max_iterations")
+ TS_max_no_improve <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "max_no_improve")
+ TS_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
+     sheet = "time_limit")
+
+ # TS_clasic <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "Basic")
+ # TS_move_generator <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "move_generator")
+ # TS_list_length <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "tabu_list_length")
+ # TS_max_iterations <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "max_iterations")
+ # TS_max_no_improve <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "max_no_improve")
+ # TS_time_limit <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ #     sheet = "time_limit")
 ```
 
-## Klasyczny
+***
+
+### Klasyczne
+
+***
 
 Za podstawowe dane przyjmujemy:
 
@@ -1615,7 +1929,9 @@ rownames(TS_clasic_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 TS_clasic_stat[,c("Min", "Max", "Mean")]
 ```
 
+<div style='text-align: justify'>
 Powyżej w tabelkach możemy zobaczyć uzyskane wyniki dla podstawowych wartości parametrów dla algorytmu przeszukiwania tabu oraz minimalną, maksymalną i średnią wartość. Średnie dla TSP_48 i TSP_76 są zbliżone do tych uzyskanych przez Solver. Natomiast dla TSP_127 wyniki oraz średnia są zdecydowanie wyższe.
+</div>
 
 ```{r, echo=FALSE,warning=FALSE, message=FALSE}
 TS_clasic_time <- TS_clasic %>%
@@ -1635,9 +1951,13 @@ TS_clasic_time[,2:4]
 
 Średnie czasy są bardzo niskie, zwłaszcza w porównaniu do Solvera.
 
-## Rodzaje ruchów
+***
 
-Poniżej zbadany został wpływ rodzaju ruchu na długość ścieżki:
+### Rodzaj sądziedztwa
+
+***
+
+Poniżej zbadany został wpływ rodzaju sasiedztwa na długość ścieżki:
 
 ```{r, echo=FALSE}
 TS_move_generator_tsp48 <- TS_move_generator %>%
@@ -1653,18 +1973,20 @@ TS_move_generator_tsp127 <- TS_move_generator %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_move_generator_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sasiedztwa na długość ścieżki (TSP_48)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_48)**
 
 ```{r, echo=FALSE}
 TS_move_generator_tsp48 %>%
@@ -1677,20 +1999,24 @@ TS_move_generator_tsp48 %>%
   as.data.frame() 
 ```
 
-Pojawiła nam się tutaj również zależność pomiędzy rodzajem ruchów, a medianą i średnią długością ścieżki. Najlepsze wyniki uzyskiwane są dla rodzaju ruchu `2-opt`, a najgorsze dla `swap`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek. 
+<div style='text-align: justify'>
+Pojawiła nam się tutaj również zależność pomiędzy rodzajem sąsiedztwa, a medianą i średnią długością ścieżki. Najlepsze wyniki uzyskiwane są dla rodzaju sąsiedtwa `2-opt`, a najgorsze dla `swap`. Wyniki dla `2-opt` charakteryzują się małą wariancją (rozkład jest wąski), co wskazuje na niewielkie różnice w długościach ścieżek. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_move_generator_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sasiedztwa na długość ścieżki (TSP_76)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_76)**
 
 ```{r, echo=FALSE}
 TS_move_generator_tsp76 %>%
@@ -1703,20 +2029,24 @@ TS_move_generator_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 mamy podobną sytuację. Wyniki są najlepsze dla `2-opt`, najgorsze dla `swap`. Podobna jest też sytuacja z wariancją dla `2-opt`. Nie ma tam takiej różnorodności jak w pozostałych.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_move_generator_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Typ ruchu",
+    title = "Wpływ rodzaju sasiedztwa na długość ścieżki (TSP_127)",
+    x = "Rodzaj sąsiedztwa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od rodzaju sąsiedztwa (TSP_127)**
 
 ```{r, echo=FALSE}
 TS_move_generator_tsp127 %>%
@@ -1729,11 +2059,17 @@ TS_move_generator_tsp127 %>%
   as.data.frame() 
 ```
 
-Dla TSP_127 analogiczna sytuacja. Jednak pomimo różnych rodzjaów ruchów, wyniki nadal są zdecydowanie gorsze.
+<div style='text-align: justify'>
+Dla TSP_127 analogiczna sytuacja. Jednak pomimo różnych rodzajów sąsiedztwa, wyniki nadal są zdecydowanie gorsze.
 
-Na podstawie analizy widać dużą zależność długości ścieżki od rodzju ruchów. W każdym z przypadków, najlepsze wyniki uzyskano dla `2-opt`, a najgorsze dla `swap`. Ponadto rozkłady wyników dla `2-opt` charakteryzują się małą wariancją w odróżnieniu do pozostałych.
+Na podstawie analizy widać dużą zależność długości ścieżki od rodzju sąsiedztwa. W każdym z przypadków, najlepsze wyniki uzyskano dla `2-opt`, a najgorsze dla `swap`. Ponadto rozkłady wyników dla `2-opt` charakteryzują się małą wariancją w odróżnieniu do pozostałych.
+</div>
 
-## Długość listy tabu
+***
+
+### Długość listy tabu
+
+***
 
 Poniżej zbadany został wpływ długości listy tabu na długość ścieżki:
 
@@ -1751,18 +2087,20 @@ TS_list_length_tsp127 <- TS_list_length %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_list_length_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Długośc listy tabu",
+    title = "Wpływ długości listy tabu na długość ścieżki (TSP_48)",
+    x = "Długość listy tabu",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od długości listy tabu (TSP_48)**
 
 ```{r, echo=FALSE}
 TS_list_length_tsp48 %>%
@@ -1775,20 +2113,24 @@ TS_list_length_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Mediana i średnia długości ścieżki na początku maleje, ale później znowu rośnie. W przypadku TSP_48 liczaba miast jest stosunkowo mała, więc przy zbyt długiej liście tabu algorytm  może zabraniać zbyt wiele rozwiązań. Dlatego w w przypadku długości listy tabu = 15 i 20, średnie i mediana są wyższe niż dla długości listy = 10. Natomiast 5 może być zbyt małą liczbą i algorytm nie zapamiętuje wystarczającej liczby ostatnich ruchów, co oznacza, że łatwo może powrócić do wcześniej odwiedzonych rozwiązań.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_list_length_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Długośc listy tabu",
+    title = "Wpływ długości listy tabu na długość ścieżki (TSP_76)",
+    x = "Długość listy tabu",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od długości listy tabu (TSP_76)**
 
 ```{r, echo=FALSE}
 TS_list_length_tsp76 %>%
@@ -1801,20 +2143,24 @@ TS_list_length_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 ciężko wyciągnąć jakąś zależność z wykresów. Mediana i średnia się wahają. Nie sprawdzają się tutaj poprzednie wyjaśnienia. Może należałoby sprawdzić więcej wartości tego parametru w tym przypadku.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_list_length_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Długośc listy tabu",
+    title = "Wpływ długości listy tabu na długość ścieżki (TSP_127)",
+    x = "Długość listy tabu",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od długości listy tabu (TSP_127)**
 
 ```{r, echo=FALSE}
 TS_list_length_tsp127 %>%
@@ -1827,11 +2173,17 @@ TS_list_length_tsp127 %>%
   as.data.frame() 
 ```
 
-Natomiast dla TSP_127 widać dobrze, że wraz ze wzrostem długości listy, maleje śrenia i mediana długości ścieżki. Przy tak dużej liczbie miast (127), mała lista tabu nie spełnia dobrze swojej roli i często algorytm wraca do rozwiązań już odwiedzonych. 
+<div style='text-align: justify'>
+Natomiast dla TSP_127 widać dobrze, że wraz ze wzrostem długości listy, maleje średnia i mediana długości ścieżki. Przy tak dużej liczbie miast (127), mała lista tabu nie spełnia dobrze swojej roli i często algorytm wraca do rozwiązań już odwiedzonych. 
 
-Pojawia się tu pewna zależnośc między długością listy tabu, a długością ścieżki. Jednak duży też zależy od liczby miast w problemie komiwojażera. Od niego powinna być uzależniona długośc listy tabu. Dla TSP_48 można byłby sprawdzić więcej wartości tego parametru, może wtedy ta zależność byłaby tam bardziej widoczna. Natomiast ciekawy przypadek jest dla TSP_76. Ciężko tam stwierdzić, aby jakakolwiek zależność istaniała.
+Pojawia się tu pewna zależność między długością listy tabu a długością ścieżki. Jednak dużo też zależy od liczby miast w problemie komiwojażera. Od niej powinna być uzależniona długość listy tabu. Dla TSP_48 można byłby sprawdzić więcej wartości tego parametru, może wtedy ta zależność byłaby tam bardziej widoczna. Natomiast ciekawy przypadek jest dla TSP_76. Ciężko tam stwierdzić, aby jakakolwiek zależność istniała.
+</div>
 
-## Liczba iteracji
+***
+
+### Liczba iteracji
+
+***
 
 Poniżej zbadany został wpływ liczby iteracji na długość ścieżki:
 
@@ -1849,18 +2201,20 @@ TS_max_iterations_tsp127 <- TS_max_iterations %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_iterations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_48)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_48)**
 
 ```{r, echo=FALSE}
 TS_max_iterations_tsp48 %>%
@@ -1873,20 +2227,24 @@ TS_max_iterations_tsp48 %>%
   as.data.frame() 
 ```
 
-W przypadku liczby iteracji pojawiła się ciekawa sytuacja. Mediana długości ścieżki rośnie wraz z liczbą iteracji. Średnia natomiast wzrosła w odniesieniu do liczby iteracji = 500. Spodziewalibyśmy się raczej odwrotnej sytuacji Niezależnie od wartości parametru, w każdym przypadku minimalna wartość jest niższa od tej uzyskanej przez Solver (10868). Średnie są natomiast zbliżone.
+<div style='text-align: justify'>
+W przypadku liczby iteracji pojawiła się ciekawa sytuacja. Mediana długości ścieżki rośnie wraz z liczbą iteracji. Średnia natomiast wzrosła w odniesieniu do liczby iteracji = 500. Spodziewalibyśmy się raczej odwrotnej sytuacji. Niezależnie od wartości parametru, w każdym przypadku minimalna wartość jest niższa od tej uzyskanej przez Solver (10868). Średnie są natomiast zbliżone.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_iterations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_76)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_76)**
 
 ```{r, echo=FALSE}
 TS_max_iterations_tsp76 %>%
@@ -1899,20 +2257,24 @@ TS_max_iterations_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 W tym przypadku natomiast średnia zmalała i mediana również w odniesieniu do liczby iteracji = 500. Pojawiła się odwrotna sytuacja niż dla TSP_48. Wyniki są zdecydowanie lepsze niż te uzyskane przez Solver (118293.5). Średnia również zdecydowanie zmalała.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_iterations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_127)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_127)**
 
 ```{r, echo=FALSE}
 TS_max_iterations_tsp127 %>%
@@ -1925,11 +2287,17 @@ TS_max_iterations_tsp127 %>%
   as.data.frame() 
 ```
 
-Tutaj pojawia się podobna zależnośc co w przypadku TSP_48. Średnia i mediana rosną w porównaniu do tych uzyskanych dla liczby iteracji = 500. Jednak wyniki również w tym przypadku są zdecydowanie lepsze niż te uzyskane przez Solver(140217.6).
+<div style='text-align: justify'>
+Tutaj pojawia się podobna zależność co w przypadku TSP_48. Średnia i mediana rosną w porównaniu do tych uzyskanych dla liczby iteracji = 500. Jednak wyniki również w tym przypadku są zdecydowanie lepsze niż te uzyskane przez Solver(140217.6).
 
-Ciężko więc stwierdzić czy jest tu jakaś zależność. W 2/3 przypadki wzrost liczby iteracji powodowaj wzrost średniej i mediana.
+Ciężko więc stwierdzić, czy występuje tu jakaś zależność. W 2/3 przypadków wzrost liczby iteracji powodują wzrost średniej i mediany.
+</div>
 
-## Liczba iteracji bez poprawy
+***
+
+### Liczba iteracji bez poprawy
+
+***
 
 Poniżej zbadany został wpływ liczby iteracji bez poprawy na długość ścieżki:
 
@@ -1947,18 +2315,20 @@ TS_max_no_improve_tsp127 <- TS_max_no_improve %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_no_improve_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_48)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_48)**
 
 ```{r, echo=FALSE}
 TS_max_no_improve_tsp48 %>%
@@ -1971,20 +2341,24 @@ TS_max_no_improve_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Na początku widać, że mediana i średnia długości ścieżki maleją znacząco. Później jednak następuję wzrost tych statystyk. Przy zwiększaniu liczby iteracji bez poprawy, algorytm ma więcej czasu na eksplorację, co pozwala mu unikać lokalnych minimów i znajdować lepsze rozwiązania. Jednak zbyt duże wartości powodują, że algorytm zaczyna eksplorować przestrzeń rozwiązań zbyt długo, nawet w sytuacjach, gdy lepsze rozwiązania już się nie pojawiają, stąd wzrost średniej i mediany.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_no_improve_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_76)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_76)**
 
 ```{r, echo=FALSE}
 TS_max_no_improve_tsp76 %>%
@@ -1997,20 +2371,24 @@ TS_max_no_improve_tsp76 %>%
   as.data.frame() 
 ```
 
-Sytaucja jest tutaj podobna. Jednak już przy liczbie iteracji bez poprawy = 150 mamy wzrost mediany i średniej. Dla TSP_76 już od tej wartości algorytm może zbyt długo poszukiwać lepszego rozwiązania. Natomiast otrzymane wyniki są bardzo.
+<div style='text-align: justify'>
+Sytaucja jest tutaj podobna. Jednak już przy liczbie iteracji bez poprawy = 150 mamy wzrost mediany i średniej. Dla TSP_76 już od tej wartości algorytm może zbyt długo poszukiwać lepszego rozwiązania. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_max_no_improve_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji bez poprawy na długość ścieżki (TSP_127)",
     x = "Liczba iteracji bez poprawy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji bez poprawy (TSP_127)**
 
 ```{r, echo=FALSE}
 TS_max_no_improve_tsp127 %>%
@@ -2023,13 +2401,19 @@ TS_max_no_improve_tsp127 %>%
   as.data.frame() 
 ```
 
-Tutaj sytuacja jest cięższa do zdefiniowania. Mediana raz maleje raz rośnie. Natomiast średnia utrzymuje się na podobnym poziomie. Otrzymane wyniki są zdecydowanie lepsze.
+<div style='text-align: justify'>
+Tutaj sytuacja jest cięższa do zdefiniowania. Mediana raz maleje, raz rośnie. Natomiast średnia utrzymuje się na podobnym poziomie. Otrzymane wyniki są zdecydowanie lepsze.
 
 Można więc powiedzieć, że trzeba odpowiednio dostosować liczbę iteracji bez poprawy. Zbyt mała liczba może spowodować, że algorytm nie będzie eksplorował dostatecznie głęboko przestrzeni rozwiązań i szybko zatrzyma się na minimach lokalnych. Natomiast zbyt duża liczba iteracji bez poprawy może spowodować, że algorytm przejdzie przez wiele słabszych rozwiązań i poświęci zbyt dużo czasu na mniej obiecujące rozwiązania.
+</div>
 
-## Limit czasowy
+***
 
-Poniżej zbadany został wpływ liczby iteracji bez poprawy na długość ścieżki:
+### Limit czasowy
+
+***
+
+Poniżej zbadany został wpływ limitu czasowego na długość ścieżki:
 
 ```{r, echo=FALSE}
 TS_time_limit_tsp48 <- TS_time_limit %>%
@@ -2045,18 +2429,20 @@ TS_time_limit_tsp127 <- TS_time_limit %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_time_limit_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_48)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_48)**
 
 ```{r, echo=FALSE}
 TS_time_limit_tsp48 %>%
@@ -2069,20 +2455,24 @@ TS_time_limit_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Mediana oraz średnia się wahają. Nie widać tu zależności limitu czasu od długości ścieżki. Wyniki natomiast są zbliżone do tych z Solvera.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_time_limit_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_76)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_76)**
 
 ```{r, echo=FALSE}
 TS_time_limit_tsp76 %>%
@@ -2097,18 +2487,20 @@ TS_time_limit_tsp76 %>%
 
 Tutaj podobna sytuacja. Średnia i mediana raz rosną, raz maleją.
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(TS_time_limit_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ limitu czasowego na długość ścieżki (TSP_127)",
     x = "Limit czasowy",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od limitu czasowego (TSP_127)**
 
 ```{r, echo=FALSE}
 TS_time_limit_tsp127 %>%
@@ -2121,11 +2513,17 @@ TS_time_limit_tsp127 %>%
   as.data.frame() 
 ```
 
-Dla TSP_127 na początku widać duży spadek wartości mediany i średniej. Nie było to w widoczne w poprzenich TSP w takim stopniu. Może to się wiązać z tym, że TSP_127 ma największą liczbę miast, więc limit czasowy = 60s był zbyt mały dla niego.
+<div style='text-align: justify'>
+Dla TSP_127 na początku widać duży spadek wartości mediany i średniej. Nie było to w widoczne w poprzednich TSP w takim stopniu. Może to się wiązać z tym, że TSP_127 ma największą liczbę miast, więc limit czasowy = 60s był zbyt mały dla niego.
 
 Nie widać tutaj żadnej zależności długości ścieżki od limitu czasu. Jedynie dla TSP_127 pojawiła się bardziej znacząca różnica w odniesieniu do początkowego limitu.
+</div>
+
+***
 
 ## Podsumowanie
+
+***
 
 Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
@@ -2175,70 +2573,112 @@ Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
 
 Dla TSP_127 przy użyciu algorytmu tabu search udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6)
 
-# Algorytm genetyczny
+***
+
+# Algorytm genetyczny (GA)
+
+***
 
 <div style='text-align: justify'>
 **Algorytm genetyczny** (ang. Genetic Algorithm, GA) to technika optymalizacyjna, która przeszukuje przestrzeń możliwych rozwiązań danego problemu, wykorzystując elementy losowe w celu znalezienia najlepszego rozwiązania. Jego działanie naśladuje proces ewolucji biologicznej. Początkowa populacja rozwiązań poddawana jest serii operacji, takich jak krzyżowanie oraz mutacje, co prowadzi do powstania nowej generacji. Proces ten jest powtarzany wielokrotnie, aż do osiągnięcia określonej liczby iteracji lub spełnienia innych warunków stopu. 
+
+Zasada działania algorytmu genetycznego do rozwiązania problemu komiwojażera:
+
+1. Na początku inicjalizowana jest populacja z losowymi permutacjami.
+
+2. Wybór osobników do krzyżowania odbywa się na podstawie jednej z metod selekcji: turniejowej lub ruletki, które przydzielają większą szansę na wybór osobnikom o lepszym dopasowaniu.
+
+3. Algorytm tworzy nowe rozwiązania (dzieci) przez krzyżowanie par rodziców za pomocą jednej z metod: order lub PMX.
+
+4. Mutacja jest wykonywana zgodnie z wybranym typem.
+
+5. Po każdym pokoleniu algorytm ocenia rozwiązania, wybierając najlepsze na podstawie minimalnej odległości (kosztu trasy).
+
+6. Algorytm powtarza proces selekcji, krzyżowania i mutacji przez wiele pokoleń, stale dążąc do poprawy wyników, aż osiągnie ustaloną liczbę pokoleń lub osiągnie optymalne rozwiązanie.
 </div>
+
+***
 
 ## Badane parametry
 
+***
+
 W ramach algorytmu genetycznego badane są następujące parametry:
 
- - **`wielkość populacji`** - liczba osobników w populacji, które będą brane pod uwagę w danej iteracji algorytmu
+ - **`population_size`** - wielkość populacji - liczba osobników w populacji, które będą brane pod uwagę w danej iteracji algorytmu
  
- - **`prawdopodobieństwo mutacji`** - prawdopodobieństwo z jakim nastąpi mutacja genów w osobnikach
+ - **`mutation_rate`** - prawdopodobieństwo mutacji - prawdopodobieństwo z jakim nastąpi mutacja genów w osobnikach
  
- - **`prawdopodobieństwo krzyżowania`** - prawdopodobieństwo z jakim nastąpi krzyżowanie osobników w populacji
+ - **`crossover_rate`** - prawdopodobieństwo krzyżowania - prawdopodobieństwo z jakim nastąpi krzyżowanie osobników w populacji
  
- - **`metoda doboru rodziców`** - sposób wyboru najlepszych osobników do reprodukcji:
+ - **`selection_method`** - metoda doboru rodziców - sposób wyboru najlepszych osobników do reprodukcji:
  
-   - `turniejowy` - losowana jest grupa osobników stanowiąca 10% populacji, a jako rodzic wybierany jest osobnik z najkrótszą trasą
+   - `tournament` - metoda turniejowa - losowo wybierane jest k osobników z populacji. Następnie spośród nich wybierany jest 
+osobnik o najlepszym wyniku.
    
-   - `rankingowy` - wybór rodzica odbywa się na podstawie rankingu osobników, przy czym zwracana jest tylko jedna ścieżka
+   - `roulette` - metoda ruletki - każdemu osobnikowi w populacji przydzielane jest prawdopodobieństwo wyboru proporcjonalne do jego wyniku. Następnie, losowana jest liczba z przedziału [0, 1], a na jej podstawie wybierany jest osobnik: im większe prawdopodobieństwo, tym większa szansa, że jego wynik odpowiada wylosowanej liczbie
    
    <p style="margin-top: 10px;">
- - **`metoda krzyżowania`** - sposób łączenia genów (tras) rodziców w celu stworzenia potomków:
+ - **`crossover_method`** - metoda krzyżowania - sposób łączenia genów (tras) rodziców w celu stworzenia potomków:
  
-   - `order crossover (OX)` - z pierwszego rodzica wybierany jest losowy segment miast, który jest kopiowany do potomka w to samo miejsce, pozostałe miasta są uzupełniane w potomku zgodnie z ich kolejnością wystąpienia w drugim rodzicu
+   - `order` - z pierwszego rodzica wybierany jest losowy segment miast, który jest kopiowany do potomka w to samo miejsce, pozostałe miasta są uzupełniane w potomku zgodnie z ich kolejnością wystąpienia w drugim rodzicu
    
-   - `partially matched crossover (pmx)` - dziedziczenie części trasy od każdego z rodziców przy zachowaniu oryginalnej kolejności odwiedzonych miast, jednocześnie eliminując duplikaty w nowo powstałym rozwiązaniu 
+   - `pmx` - dziedziczenie części trasy od każdego z rodziców przy zachowaniu oryginalnej kolejności odwiedzonych miast, jednocześnie eliminując duplikaty w nowo powstałym rozwiązaniu 
    </p>
+
+- **`generations`** - liczba pokoleń, czyli liczba iteracji algorytmu
    
    <p style="margin-top: 10px;">
- - **`metoda mutacji`** - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
+ - **`mutation_method`** - metoda mutacji - metoda generowania nowych rozwiązań na podstawie aktualnego rozwiązania. W badaniu uwzględniono typy:
  
-    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch miast w bieżącej trasie
+    - `swap` nowe rozwiązanie powstaje poprzez zamianę miejscami dwóch genów w bieżącej permutacji trasy
     
-    - `insertion` polega na wyborze jednego miasta z danej trasy, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej trasie
+    - `insertion` polega na wyborze jednego genu z danej permutacji, usunięciu go z jego pierwotnej pozycji, a następnie wstawieniu go w inne, wybrane miejsce w tej samej permutacji
     
-    - `inversion` odwrócenie kolejności odwiedzanych miast w wybranym segmencie trasy
-    </p>
-    
-    <p style="margin-top: 10px;">
- - **`liczba pokoleń`** - liczba iteracji algorytmu 
+    - `inversion` odwrócenie kolejności genów w wybranym segmencie permutacji
     </p>
     
 ```{r echo=FALSE, include=FALSE}
-GA_klasyk <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "Basic")
-GA_population_size <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "population_size")
-GA_mutation_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "mutation_rate")
-GA_crossover_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "crossover_rate")
-GA_generations <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "generations")
-GA_selection_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "selection_method")
-GA_crossover_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "crossover_method")
-GA_mutation_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-    sheet = "mutation_method")
+ GA_klasyk <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "Basic")
+ GA_population_size <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "population_size")
+ GA_mutation_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "mutation_rate")
+ GA_crossover_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "crossover_rate")
+ GA_generations <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "generations")
+ GA_selection_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "selection_method")
+ GA_crossover_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "crossover_method")
+ GA_mutation_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+     sheet = "mutation_method")
+
+# GA_klasyk <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "Basic")
+# GA_population_size <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "population_size")
+# GA_mutation_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "mutation_rate")
+# GA_crossover_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "crossover_rate")
+# GA_generations <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "generations")
+# GA_selection_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "selection_method")
+# GA_crossover_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "crossover_method")
+# GA_mutation_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+#     sheet = "mutation_method")
 ```
 
-## Klasyczny
+***
+
+### Klasyczne
+
+***
 
 Za podstawowe dane przyjmujemy:
 
@@ -2295,7 +2735,9 @@ rownames(GA_klasyk_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 GA_klasyk_stat[,c("Min", "Max", "Mean")]
 ```
 
+<div style='text-align: justify'>
 W tabelce widzimy statystyki uzyskane dla podstawowych wartości parametrów dla algorytmu genetycznego. Średnie różnią dla TSP_76 i TSP_127 różnią się od tych uzyskanych przez Solver. Dla liczby miast = 76 jest ona niższa. Natomiast dla liczby miast = 127 zdecydowanie wyższa.
+</div>
 
 **Czas**
 
@@ -2317,7 +2759,11 @@ GA_clasic_time[,2:4]
 
 Średnie czasy dla każdego z przypadków są bardzo niskie.
 
-## Wielkość populacji
+***
+
+### Wielkość populacji
+
+***
 
 Poniżej zbadany został wpływ wielkości populacji na długość ścieżki:
 
@@ -2335,18 +2781,20 @@ GA_population_size_tsp127 <- GA_population_size %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_population_size_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ wielkości populacji na długość ścieżki (TSP_48)",
     x = "Wielkość populacji",
     y = "Długość ścieżki"
   ) +
   theme_minimal()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wielkości populacji (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_population_size_tsp48 %>%
@@ -2359,20 +2807,24 @@ GA_population_size_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Średnia i mediana dla wielkości populacji = 5 są zdecydowanie wyższe niż w pozostałych przypadkach. Dla innych parametrów utrzymują się na podobnym poziomie.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_population_size_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ wielkości populacji na długość ścieżki (TSP_76)",
     x = "Wielkość populacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od wielkości populacji (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_population_size_tsp76 %>%
@@ -2385,20 +2837,24 @@ GA_population_size_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 dla parametru = 5 średnia i mediana są również największe w porównaniu do pozosałych wyników. Natępnie widać, że wraz ze wzrostem liczby populacji, maleje średnia i mediana.
+<div style='text-align: justify'>
+Dla TSP_76 dla parametru = 5 średnia i mediana są również największe w porównaniu do pozostałych wyników. Natępnie widać, że wraz ze wzrostem liczby populacji, maleje średnia i mediana.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_population_size_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ wielkości populacji na długość ścieżki (TSP_127)",
     x = "Wielkość populacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wielkości populacji (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_population_size_tsp127 %>%
@@ -2411,11 +2867,17 @@ GA_population_size_tsp127 %>%
   as.data.frame() 
 ```
 
-Tutaj pojawia się analogiczna sytaucja jak dla TSP_76. Gdy zwiększyła się liczba miast, bardziej widoczna stała się zależność, że wraz ze wzrostem liczby populacji, maleje średnia i mediana długości ścieżki.
+<div style='text-align: justify'>
+Tutaj pojawia się analogiczna sytuacja jak dla TSP_76. Gdy zwiększyła się liczba miast, bardziej widoczna stała się zależność, że wraz ze wzrostem liczby populacji, maleje średnia i mediana długości ścieżki.
 
 Liczba populacji = 5 w każdym z przypadków dała najwyższe długości ścieżki. Natomiast wraz ze wzrostem parametru, maleje długość ścieżki. Może tak być dlatego, że większa populacja (wieksza liczba osobników w każdej generacji algorytmu) zwiększa różnorodność rozwiązań, co zwiększa szansę na znalezienie lepszego rozwiązania i pozwala uniknąć utknięcia w minimach lokalnych.
+</div>
 
-## Prawdopodobieństwo mutacji
+***
+
+### Prawdopodobieństwo mutacji
+
+***
 
 Poniżej zbadany został wpływ prawdopodobieństwa mutacji na długość ścieżki:
 
@@ -2433,18 +2895,20 @@ GA_mutation_rate_tsp127 <- GA_mutation_rate %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_rate_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ prawdopodobieństwa mutacji na długość ścieżki (TSP_48)",
     x = "Prawdopodobieństwo mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa mutacji (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_mutation_rate_tsp48 %>%
@@ -2459,18 +2923,20 @@ GA_mutation_rate_tsp48 %>%
 
 Wraz ze wzrostem prawdopodobieństwa mutacji, maleje średnia i mediana długości ścieżki. 
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ prawdopodobieństwa mutacji na długość ścieżki (TSP_76)",
     x = "Prawdopodobieństwo mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa mutacji (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_mutation_rate_tsp76 %>%
@@ -2485,18 +2951,20 @@ GA_mutation_rate_tsp76 %>%
 
 Dla TSP_76 jest identyczna sytuacja, a nawet bardziej widoczna.
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ prawdopodobieństwa mutacji na długość ścieżki (TSP_127)",
     x = "Prawdopodobieństwo mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa mutacji (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_mutation_rate_tsp127 %>%
@@ -2509,11 +2977,17 @@ GA_mutation_rate_tsp127 %>%
   as.data.frame() 
 ```
 
-Analogicznie lda TSP_127. Chociaż średnia w tym przypadku nawet dla parametru = 0.2 jest wyższa niż ta uzyskana w Solverza.
+<div style='text-align: justify'>
+Analogicznie dla TSP_127. Chociaż średnia w tym przypadku nawet dla parametru = 0.2 jest wyższa niż ta uzyskana w Solverze.
 
-Widać w każdym z przypadków, bardzo dobrze, że wraz ze wzrostem prawdopodobieństwa mutacji, maleje długość ścieżki. Mutowanie pozwala na eksplorowanie większej liczby rozwiązań. Niskie wartości parametru powodują, że osobniki w populacji są do siebie dość zbliżone, dlatego długości ścieżki są wtedy większe.
+W każdym z przypadków bardzo dobrze widoczna jest zależność, że wraz ze wzrostem prawdopodobieństwa mutacji, maleje długość ścieżki. Mutowanie pozwala na eksplorowanie większej liczby rozwiązań. Niskie wartości parametru powodują, że osobniki w populacji są do siebie dość zbliżone, dlatego długości ścieżki są wtedy większe.
+</div>
 
-## Prawdopodobieństwo krzyżowania
+***
+
+### Prawdopodobieństwo krzyżowania
+
+***
 
 Poniżej zbadany został wpływ prawdopodobieństwa krzyżowania na długość ścieżki:
 
@@ -2531,18 +3005,20 @@ GA_crossover_rate_tsp127 <- GA_crossover_rate %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_rate_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ prawdopodobieństwa krzyżowania na długość ścieżki (TSP_48)",
     x = "Prawdopodobieństwo krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa krzyżowania (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_crossover_rate_tsp48 %>%
@@ -2555,20 +3031,24 @@ GA_crossover_rate_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Widzimy na początku spadek wartości mediany i średniej. Natomiast później zaczynają delikatnie rosnąć.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_rate_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ prawdopodobieństwa krzyżowania na długość ścieżki (TSP_76)",
     x = "Prawdopodobieństwo krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa krzyżowania (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_crossover_rate_tsp76 %>%
@@ -2581,20 +3061,24 @@ GA_crossover_rate_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 jest już trochę inna sytuacja. Średnia i mediana od początku delikatnie rosną, a później wahają się wokół zbliżonych wartości.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_rate_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ prawdopodobieństwa krzyżowania na długość ścieżki (TSP_127)",
     x = "Prawdopodobieństwo krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od prawdopodobieństwa krzyżowania (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_crossover_rate_tsp127 %>%
@@ -2607,11 +3091,17 @@ GA_crossover_rate_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutja jest podobona sytaucja jak dla TSP_76.
 
 Ciężko zauważyć tutaj jakąś istotną zależność. Średnie i mediany nie różnią się znacząco.
+</div>
 
-## Liczba pokoleń
+***
+
+### Liczba pokoleń
+
+***
 
 Poniżej zbadany został wpływ liczby pokoleń na długość ścieżki:
 
@@ -2629,18 +3119,20 @@ GA_generations_tsp127 <- GA_generations %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_generations_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby pokoleń na długość ścieżki (TSP_48)",
     x = "Liczba pokoleń",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby pokoleń (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_generations_tsp48 %>%
@@ -2652,21 +3144,25 @@ GA_generations_tsp48 %>%
   ) %>%
   as.data.frame() 
 ```
+ 
+<div style='text-align: justify'>
+Wraz ze wzrostem liczby pokoleń następuje spadek wartości mediany, jednak na końcu ona wzrasta. Średnia natomiast raz rośnie, raz maleje. 
+</div>
 
-Wraz ze wzrostem liczby pokoleń następuje spadek wartości mediany, jednak na końcu ona wzrasta. Średnia natomiast raz rośnie raz maleje. 
-
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_generations_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby pokoleń na długość ścieżki (TSP_76)",
     x = "Liczba pokoleń",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby pokoleń (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_generations_tsp76 %>%
@@ -2679,20 +3175,22 @@ GA_generations_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 widać, że wraz ze wzrostem liczby pokoleń, maleje zarówno średnia jak i mediana. 
+Dla TSP_76 widać, że wraz ze wzrostem liczby pokoleń, maleje zarówno średnia, jak i mediana. 
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_generations_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby pokoleń na długość ścieżki (TSP_127)",
     x = "Liczba pokoleń",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby pokoleń (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_generations_tsp127 %>%
@@ -2705,13 +3203,19 @@ GA_generations_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj pojawia się analogiczna sytuacja, jak dla TSP_76.
 
 Wraz ze wzrostem liczby pokoleń (inaczej liczby iteracji algorytmu), maleje długość ścieżki. Jest to dość logiczna zależność. Większa liczba iteracji zwiększa szanse na dokładne przeszukanie przestrzeni. 
+</div>
 
-## Metoda doboru rodziców
+***
 
-Poniżej zbadany został wpływ metoda doboru rodziców na długość ścieżki:
+### Metoda doboru rodziców
+
+***
+
+Poniżej zbadany został wpływ metody doboru rodziców na długość ścieżki:
 
 ```{r, echo=FALSE}
 GA_selection_method_tsp48 <- GA_selection_method %>%
@@ -2727,18 +3231,20 @@ GA_selection_method_tsp127 <- GA_selection_method %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_selection_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ metody doboru rodziców na długość ścieżki (TSP_48)",
     x = "Metoda doboru rodziców",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od metody doboru rodziców (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_selection_method_tsp48 %>%
@@ -2751,20 +3257,24 @@ GA_selection_method_tsp48 %>%
   as.data.frame() 
 ```
 
-Dobieranie rodziców metodą ruletki zdecydowanie sie nie sprawdza. Wyniki nawet nie są zbliżone do tych osiągniętych przy metodzie ruletki.
+<div style='text-align: justify'>
+Dobieranie rodziców metodą ruletki zdecydowanie sie nie sprawdza. Wyniki nawet nie są zbliżone do tych osiągniętych przy metodzie turniejowy.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_selection_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ metody doboru rodziców na długość ścieżki (TSP_76)",
     x = "Metoda doboru rodziców",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od metody doboru rodziców (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_selection_method_tsp76 %>%
@@ -2777,20 +3287,22 @@ GA_selection_method_tsp76 %>%
   as.data.frame() 
 ```
 
-Tutaj sytuacja analogiczna. Różnica jest diametralna, pomiędzy wynikami.
+Tutaj sytuacja analogiczna. Różnica pomiędzy wynikami jest diametralna.
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_selection_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ metody doboru rodziców na długość ścieżki (TSP_127)",
     x = "Metoda doboru rodziców",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od metody doboru rodziców (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_selection_method_tsp127 %>%
@@ -2805,11 +3317,17 @@ GA_selection_method_tsp127 %>%
 
 Dla TSP_127 analogicznie.
 
-Wyniki są definitywnie lepsze w przypadku metody doboru rodziców w sposób truniejowy. W ruletce wybór jest mocno losowy, co może prowadzić do selekcji słabszych osobników w wielu iteracjach. Natomiast metoda turniejowa z spośród losowo wybranych osobników, zawsze wybiera tego o najniższym koszcie, dlatego może działać lepiej.
+<div style='text-align: justify'>
+Wyniki są definitywnie lepsze w przypadku metody doboru rodziców w sposób turniejowy. W ruletce wybór jest mocno losowy, co może prowadzić do selekcji słabszych osobników w wielu iteracjach. Natomiast metoda turniejowa z spośród losowo wybranych osobników, zawsze wybiera tego o najniższym koszcie, dlatego może działać lepiej.
+</div>
 
-## Metoda krzyżowania
+***
 
-Poniżej zbadany został wpływ metoda krzyżowania na długość ścieżki:
+### Metoda krzyżowania
+
+***
+
+Poniżej zbadany został wpływ metody krzyżowania na długość ścieżki:
 
 ```{r, echo=FALSE}
 GA_crossover_method_tsp48 <- GA_crossover_method %>%
@@ -2825,18 +3343,20 @@ GA_crossover_method_tsp127 <- GA_crossover_method %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ metody krzyżowania na długość ścieżki (TSP_48)",
     x = "Metoda krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od metody krzyżowania (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_crossover_method_tsp48 %>%
@@ -2851,18 +3371,20 @@ GA_crossover_method_tsp48 %>%
 
 Średnia i mediana śa bardzo zbliżone do siebie. Żadna z metod się nie wyróżnia.
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ metody krzyżowania na długość ścieżki (TSP_76)",
     x = "Metoda krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od metody krzyżowania (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_crossover_method_tsp76 %>%
@@ -2875,20 +3397,24 @@ GA_crossover_method_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 mediana w przypadku metody `pmx` jest zdecydowanie wyższa. Średnie natomiast są zbliżone. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_crossover_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ metody krzyżowania na długość ścieżki (TSP_127)",
     x = "Metoda krzyżowania",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od metody krzyżowania (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_crossover_method_tsp127 %>%
@@ -2905,9 +3431,13 @@ Dla TSP_127 zarówno mediana i średnia są do siebie zbliżone.
 
 Nie widać więc tutaj żadnej zależności.
 
-## Metoda mutacji
+***
 
-Poniżej zbadany został wpływ metoda mutacji na długość ścieżki:
+### Metoda mutacji
+
+***
+
+Poniżej zbadany został wpływ metody mutacji na długość ścieżki:
 
 ```{r, echo=FALSE}
 GA_mutation_method_tsp48 <- GA_mutation_method %>%
@@ -2923,18 +3453,20 @@ GA_mutation_method_tsp127 <- GA_mutation_method %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_method_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ metody mutacji na długość ścieżki (TSP_48)",
     x = "Metoda mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od metody mutacji (TSP_48)**
 
 ```{r, echo=FALSE}
 GA_mutation_method_tsp48 %>%
@@ -2947,20 +3479,24 @@ GA_mutation_method_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_48 najlepiej sprawdziła się metoda mutacji `inversion`. Natomiast najgorzej wypadła metoda `swap`. Metoda `insertion` nie ma dużo gorszych wyników.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_method_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ metody mutacji na długość ścieżki (TSP_76)",
     x = "Metoda mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od metody mutacji (TSP_76)**
 
 ```{r, echo=FALSE}
 GA_mutation_method_tsp76 %>%
@@ -2973,20 +3509,24 @@ GA_mutation_method_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Tutaj pojawia się podobna sytuacja. Metoda `inversion` daje najlepsze wyniki. Jednak jest już większa różnica pomiędzy metodami.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(GA_mutation_method_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ metody mutacji na długość ścieżki (TSP_127)",
     x = "Metoda mutacji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od metody mutacji (TSP_127)**
 
 ```{r, echo=FALSE}
 GA_mutation_method_tsp127 %>%
@@ -3001,9 +3541,15 @@ GA_mutation_method_tsp127 %>%
 
 Dla TSP_127 analogiczna sytuacja.
 
+<div style='text-align: justify'>
 Naefektywniejsza jest metoda `inversion` we wszystkich przypadkach. Najgorzej natomiast wypada `swap`.
+</div>
+
+***
 
 ## Podsumowanie
+
+***
 
 Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
@@ -3065,11 +3611,14 @@ Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
 
 Dla TSP_127 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (140217.6)
 
-# Algorytm mrówkowy
+***
+
+# Algorytm mrówkowy (ACO)
+
+***
 
 <div style='text-align: justify'>
- Algorytm mrówkowy został stworzony na podstawie obserwacji życia mrówek podczas szukania optymalnej drogi między mrowiskiem a źródłem pożywienia. Mrówki w środowisku naturalnym poruszają się losowo, ale zostawiają na swojej drodze feromony, które pomagają innym mrówkom znaleźć najkrótszą ścieżkę. Z czasem feromony parują (ich wpływ maleje), co pozwala wyeliminować nieoptymalne ścieżki. Algorytm ten dobrze sprawdza się w rozwiązywaniu problemu komiwojażera.
-</div>
+***Algorytm mrówkowy*** (ang. Ant Colony Optimization, ACO) został stworzony na podstawie obserwacji życia mrówek podczas szukania optymalnej drogi między mrowiskiem a źródłem pożywienia. Mrówki w środowisku naturalnym poruszają się losowo, ale zostawiają na swojej drodze feromony, które pomagają innym mrówkom znaleźć najkrótszą ścieżkę. Z czasem feromony parują (ich wpływ maleje), co pozwala wyeliminować nieoptymalne ścieżki. Algorytm ten dobrze sprawdza się w rozwiązywaniu problemu komiwojażera.
 
 Zasada działania algorytmu do rozwiązania problemu komiwojażera wygląda następująco:
 
@@ -3082,21 +3631,30 @@ Zasada działania algorytmu do rozwiązania problemu komiwojażera wygląda nast
 4. Sztuczna mrówka wyposażona jest w pamięć w celu zapamiętania, które miasto już odwiedziła, aby uwzględnić je tylko jeden raz w swojej trasie (pamięć jest czyszczona przy rozpoczęciu każdego kolejnego cyklu przechodzenia).
 
 5. Dla odwzorowania parowania feromonu występującego w naturze, w algorytmie feromon jest pomniejszany o określoną wartość po każdej iteracji, tak aby uniknąć zjawiska przedwczesnej zbieżności algorytmu.
+</div>
 
-## Parametry
+***
 
-* num_ants - liczba mrówek, która bierze udział w szukaniu optymalnej trasy. Jest ona zależna od liczby miast i wybierana z przedziału (0.5 * liczba miast, 2 * liczba miast)
+## Badane parametry
 
-* num_iterations - liczba iteracji
+***
 
-* alpha - parametr sterujący ważnością intensywności śladu feromonowego
+* **`num_ants`** - liczba mrówek, która bierze udział w szukaniu optymalnej trasy. Jest ona zależna od liczby miast i wybierana z przedziału (0.5 * liczba miast, 2 * liczba miast)
 
-* beta - parametr sterujący ważnością widoczności następnego
+* **`num_iterations`** - liczba iteracji
+
+* **`alpha`** - parametr sterujący ważnością intensywności śladu feromonowego
+
+* **`beta`** - parametr sterujący ważnością widoczności następnego
 miasta
 
-* rho - prędkość odparowywania feromonu
+* **`rho`** - prędkość odparowywania feromonu
 
-## Klasyczne 
+***
+
+### Klasyczne 
+
+***
 
 Za podstawowe wartości parametrów przyjmujemy:
 
@@ -3111,18 +3669,31 @@ Za podstawowe wartości parametrów przyjmujemy:
 * rho = 0.5
 
 ```{r, echo=FALSE, include=FALSE}
-klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "Klasyk_wyniki")
-num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "num_ants")
-max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "max_it")
-alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "alpha")
-beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "beta")
-rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-    sheet = "rho")
+ klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "Klasyk_wyniki")
+ num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "num_ants")
+ max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "max_it")
+ alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "alpha")
+ beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "beta")
+ rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+     sheet = "rho")
+
+# klasyk_wyniki <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "Klasyk_wyniki")
+# num_ants <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "num_ants")
+# max_it <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "max_it")
+# alpha <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "alpha")
+# beta <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "beta")
+# rho <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+#     sheet = "rho")
 ```
 
 ```{r, echo=FALSE}
@@ -3164,7 +3735,9 @@ rownames(klasyk_stat) <- c("TSP_48", "TSP_76", "TSP_127")
 klasyk_stat[,c("Min", "Max", "Mean")]
 ```
 
+<div style='text-align: justify'>
 W tabelce widzimy statystyki uzyskane dla podstawowych wartości parametrów dla algorytmu mrówkowego. Dla TSP_48 i TSP_76 wartości minimalne są wyższe niż uzyskane przez Solver. Jedynie dla TSP_127 otrzymany wynik jest lepszy. Natomiast średnie są dość podobne.
+</div>
 
 **Czas**
 
@@ -3184,9 +3757,15 @@ rownames(ACO_clasic_time) <- c("TSP_48", "TSP_76", "TSP_127")
 ACO_clasic_time[,2:4]
 ```
 
+<div style='text-align: justify'>
 Średnie czasy trwania agorytmu są dość niskie. Jednak zwiększają się w zależności od liczby miast.
+</div>
 
-## Liczba mrówek
+***
+
+### Liczba mrówek
+
+***
 
 Poniżej zbadany został wpływ liczby mrówek na długość ścieżki:
 
@@ -3204,18 +3783,20 @@ num_ants_mrowki_tsp127 <- num_ants %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(num_ants_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby mrówek na długość ścieżki (TSP_48)",
     x = "Liczba mrówek",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby mrówek (TSP_48)**
 
 ```{r, echo=FALSE}
 num_ants_mrowki_tsp48 %>%
@@ -3228,20 +3809,23 @@ num_ants_mrowki_tsp48 %>%
   as.data.frame() 
 ```
 
-Dla TSP_48 możemy zobaczyć zobaczyć z wykresów pudełkowcyh, że wraz ze wzrostem liczby mrówek, która bierze udział w poszukiwaniu optymalnej trasy, mediana długości ścieżki zdecydowanie się obniża. Średnia również widocznie maleje. Najniższa jest dla liczby mrówek równej 84. 
+<div style='text-align: justify'>
+Dla TSP_48 możemy zobaczyć zobaczyć z wykresów pudełkowych, że wraz ze wzrostem liczby mrówek, która bierze udział w poszukiwaniu optymalnej trasy, mediana długości ścieżki zdecydowanie się obniża. Średnia również widocznie maleje. Najniższa jest dla liczby mrówek równej 84. 
+</div>
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align="center"}
 ggplot(num_ants_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby mrówek na długość ścieżki (TSP_76)",
     x = "Liczba mrówek",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby mrówek (TSP_76)**
 
 ```{r, echo=FALSE}
 num_ants_mrowki_tsp76 %>%
@@ -3254,20 +3838,24 @@ num_ants_mrowki_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 pojawia nam się podobna zależność. Mediana długości ścieżki widocznie się obniża i największe różnice widać na początku. Później te różnice nie są już takie znaczące. Uzyskane średnie dla wszystkich wartości parametrów są niższe niż średnia z Solvera (139999,45).
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(num_ants_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby mrówek na długość ścieżki (TSP_127)",
     x = "Liczba mrówek",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby mrówek (TSP_127)**
 
 ```{r, echo=FALSE}
 num_ants_mrowki_tsp127 %>%
@@ -3280,11 +3868,17 @@ num_ants_mrowki_tsp127 %>%
   as.data.frame() 
 ```
 
-Dla TSP_127 nie możemy już zobaczyć, tej zależności, że mediana i średnia długości ścieżki maleje wraz ze wzrostem liczby mrówek. Widzimy tutaj, że raz rośnie raz maleje. Średnia długość ścieżki co prawda zmalała od wartości parametru 123, jednak później wraz ze wzrostem jego wartości waha się i nie zmniejsza się znacząco. 
+<div style='text-align: justify'>
+Dla TSP_127 nie możemy już zobaczyć tej zależności, że mediana i średnia długości ścieżki maleje wraz ze wzrostem liczby mrówek. Widzimy tutaj, że raz rośnie, raz maleje. Średnia długość ścieżki co prawda zmalała od wartości parametru 123, jednak później wraz ze wzrostem jego wartości waha się i nie zmniejsza się znacząco. 
 
 W 2/3 przypadki wskazały, że wraz ze wzrostem liczby mrówek mediana i średnia długości ścieżki maleje. Warto też dodać, że średnie wyniki są lepsze w każdym z przypadków niż te otrzymane dla klasycznych wyników, gdzie liczba mrówek wynosiła 10.
+</div>
+
+***
 
 ## Liczba iteracji
+
+***
 
 Poniżej został zbadany wpływ liczby iteracji na długość ścieżki:
 
@@ -3302,18 +3896,20 @@ max_it_mrowki_tsp127 <- max_it %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(max_it_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_48)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_48)**
 
 ```{r, echo=FALSE}
 max_it_mrowki_tsp48 %>%
@@ -3326,20 +3922,24 @@ max_it_mrowki_tsp48 %>%
   as.data.frame() 
 ```
 
-W przypadku zmian liczby iteracji, nie widać tutaj żadnej zależności. Mediana długości ścieżki raz rośnie raz maleje. Jedyny duży spadek widać na początku. Dla parametrów powyżej wartości 100, mediany już są niższe i średnia również. Poza tym liczba iteracji nie wpływa znacząco na wyniki. 
+<div style='text-align: justify'>
+W przypadku zmian liczby iteracji, nie widać żadnej zależności. Mediana długości ścieżki raz rośnie, raz maleje. Jedyny duży spadek widać na początku. Dla parametrów powyżej wartości 100, mediany już są niższe, średnia również. Poza tym liczba iteracji nie wpływa znacząco na wyniki. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(max_it_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_76)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_76)**
 
 ```{r, echo=FALSE}
 max_it_mrowki_tsp76 %>%
@@ -3352,20 +3952,24 @@ max_it_mrowki_tsp76 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_76 pojawia się już bardziej widoczna zależność. Mediana i średnia długości ścieżki maleje wraz z liczbą iteracji. Jednak nie w bardzo znaczącym stopniu. Różnice są niewielkie. Pojawia się nam też jeden wyjątek od tej zależności dla liczby iteracji równej 150, gdzie mediana i średnia znacząco spadły. Otrzymane średnie sa niższe niż te otrzymane przez Solver.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(max_it_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ liczby iteracji na długość ścieżki (TSP_127)",
     x = "Liczba iteracji",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od liczby iteracji (TSP_127)**
 
 ```{r, echo=FALSE}
 max_it_mrowki_tsp127 %>%
@@ -3378,13 +3982,19 @@ max_it_mrowki_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 spadek mediany i średniej wraz z wzrostem iteracji jest już bardziej widoczny. Jednak pojawiają się też pewne wahania. W odróżnieniu od poprzednich TSP, widać tutaj, że wraz z wzrostem iteracji maleje również minimalna wartość.
 
-Wpływ liczby iteracji wydaje się być częsciowo uzależniony od liczby miast. Gdy wynosiła ona 48 nie widać było zależności. Wraz z zwiększeniem liczby miast stawała się ona bardziej wyraźna. Jednak pojawiały się wtedy pewne wahania.
+Wpływ liczby iteracji wydaje się być częściowo uzależniony od liczby miast. Gdy wynosiła ona 48 nie widać było zależności. Wraz z zwiększeniem liczby miast stawała się ona bardziej wyraźna. Jednak pojawiały się wtedy pewne wahania.
+</div>
 
-## Alpha
+***
 
-Poniżej został zbadany wpływ alphy na długość ścieżki:
+### Parametr alfa
+
+***
+
+Poniżej został zbadany wpływ parametru alfa na długość ścieżki:
 
 ```{r, echo=FALSE}
 alpha_mrowki_tsp48 <- alpha %>%
@@ -3400,19 +4010,20 @@ alpha_mrowki_tsp127 <- alpha %>%
   as.data.frame()
 ```
 
-
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(alpha_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Alpha",
+    title = "Wpływ parametru alfa na długość ścieżki (TSP_48)",
+    x = "Parametr alfa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru alfa (TSP_48)**
 
 ```{r, echo=FALSE}
 alpha_mrowki_tsp48 %>%
@@ -3425,22 +4036,26 @@ alpha_mrowki_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla wartości alpha równej 0 widać znaczną różnicę w medianie i średniej długości ścieżki w porównaniu do pozostałych wartości. Wynika to z faktu, że alpha odpowiada za wpływ intensywności śladu feromonowego na wybory mrówek. Gdy alpha wynosi 0, ślad feromonowy nie ma żadnego wpływu na ich decyzje. W rezultacie, pomimo istnienia informacji o jakości trasy (beta = 2), brak znaczenia intensywności feromonów sprawia, że mrówki nie są w stanie z niej skorzystać.
 
 W przypadku alpha = 1, wyniki są najniższe. Jest to zapewne z wiązane z tym, że stosunek intensywności do widoczności feromonów jest najlepszy. Natomiast wraz ze wzrostem alpha, długość ścieżki rośnie, ponieważ gdy wartość alpha jest za duża w porównaniu do parametru beta, populacja mrówek traci różnorodność. Różnica mediany i średniej między alpha 3 i 4 jest znikoma. Różnica alphy w stosunku do bety jest na tyle wysoka, że zwiększanie alphy nie wpływa na poprawę, badź pogorszenie długości ścieżki.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(alpha_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Alpha",
+    title = "Wpływ parametru alfa na długość ścieżki (TSP_76)",
+    x = "Parametr alfa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru alfa (TSP_76)**
 
 ```{r, echo=FALSE}
 alpha_mrowki_tsp76 %>%
@@ -3453,20 +4068,24 @@ alpha_mrowki_tsp76 %>%
   as.data.frame() 
 ```
 
-Tutaj sytuacja jest praktycznie identyczna. Dla alpha = 0 wyniki są najgorsze. Natomiast wraz ze wzrostem parametru (alpha > beta) wyniki się pogarszają do momentu gdzie nie ma już znaczącej różnicy w wynikach.
+<div style='text-align: justify'>
+Tutaj sytuacja jest praktycznie identyczna. Dla alpha = 0 wyniki są najgorsze. Natomiast wraz ze wzrostem parametru (alpha > beta) wyniki pogarszają się do momentu gdzie nie ma już znaczącej różnicy w wynikach.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(alpha_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Alpha",
+    title = "Wpływ parametru alfa na długość ścieżki (TSP_127)",
+    x = "Parametr alfa",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru alfa (TSP_127)**
 
 ```{r, echo=FALSE}
 alpha_mrowki_tsp127 %>%
@@ -3479,13 +4098,19 @@ alpha_mrowki_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 analogiczna sytuacja.
 
-Wartość parametru alpha istotnie wpływa na długość ścieżki, a tak naprawdę to jego różnica w stosunku do bety. Gdy jest ona odpowiednia, wyniki są najlepsze (średnia i mediana długości ścieżki sa najniższe). W każdym z przypadku najlepsze wyniki uzyskano dla alpha = 1 (beta = 2). Natomiast wyniki nie są lepsze od tych uzsykanych przez Solver. Średnie są porównywalne bądź gorsze.
+Wartość parametru alpha istotnie wpływa na długość ścieżki, a tak naprawdę to jego różnica w stosunku do parametru beta. Gdy jest ona odpowiednia, wyniki są najlepsze (średnia i mediana długości ścieżki sa najniższe). W każdym przypadku najlepsze wyniki uzyskano dla alpha = 1 (beta = 2). Uzyskane wyniki nie są lepsze od tych uzyskanych za pomocą Solvera. Średnie są porównywalne bądź gorsze.
+</div>
 
-## Beta
+***
 
-Poniżej został zbadany wpływ bety na długość ścieżki:
+### Parametr beta
+
+***
+
+Poniżej został zbadany wpływ parametru beta na długość ścieżki:
 
 ```{r, echo=FALSE}
 beta_mrowki_tsp48 <- beta %>%
@@ -3501,18 +4126,20 @@ beta_mrowki_tsp127 <- beta %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(beta_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
-    x = "Beta",
+    title = "Wpływ parametru beta na długość ścieżki (TSP_48)",
+    x = "Parametr beta",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru beta (TSP_48)**
 
 ```{r, echo=FALSE}
 beta_mrowki_tsp48 %>%
@@ -3525,20 +4152,24 @@ beta_mrowki_tsp48 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Największa różnica w wynikach (długościach ścieżek) jest widoczna pomiędzy wartościami beta = 1 i beta = 2. Powodem tego jest fakt, że przy beta = 1 i alpha = 1 wpływ obu parametrów – feromonów (alpha) i heurystyki (beta) – jest równoważny. W takiej sytuacji różnica pomiędzy wpływem tych dwóch czynników jest zerowa, co prowadzi do najgorszych wyników. W przypadku bardziej zróżnicowanych wartości alpha i beta (np. beta = 2), jedna z tych strategii ma większy wpływ, co pozwala mrówkom na bardziej skoncentrowane działania i prowadzi do lepszych wyników. Natomiast gdy wartość bety wzrasta, tylko na początku widać delikatną poprawę w wynikach. Później median i średnia długości ścieżki już są bardzo podobne. Wyniki się nie poprawiają.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(beta_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
-    x = "Beta",
+    title = "Wpływ parametru beta na długość ścieżki (TSP_76)",
+    x = "Parametr beta",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru beta (TSP_76)**
 
 ```{r, echo=FALSE}
 beta_mrowki_tsp76 %>%
@@ -3551,20 +4182,24 @@ beta_mrowki_tsp76 %>%
   as.data.frame() 
 ```
 
-Tutaj mamy analogiczną sytuację do poprzedniej. Dla bety = 0 wyniki są najgorsze. Następnie już tylko nieznacznie się wahają. 
+<div style='text-align: justify'>
+Tutaj mamy analogiczną sytuację do poprzedniej. Dla parametru beta = 0 wyniki są najgorsze. Następnie już tylko nieznacznie się wahają. 
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(beta_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
-    x = "Beta",
+    title = "Wpływ parametru beta na długość ścieżki (TSP_127)",
+    x = "Parametr beta",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wartości parametru beta (TSP_127)**
 
 ```{r, echo=FALSE}
 beta_mrowki_tsp127 %>%
@@ -3577,11 +4212,17 @@ beta_mrowki_tsp127 %>%
   as.data.frame() 
 ```
 
-Dla TSP_127 wzrost wartości paramaetru powoduje poprawę w wynikach. Średnia i mediana długości ścieżki maleją, aż do momentu gdzie już nie uzyskujemy poprawy i wyniki się tylko nieznacznie wahają wokół podobnej wartości. W tym przypadku wzrost wartości bety spowodował największą poprawę.
+<div style='text-align: justify'>
+Dla TSP_127 wzrost wartości parametru powoduje poprawę w wynikach. Średnia i mediana długości ścieżki maleją, aż do momentu gdzie już nie uzyskujemy poprawy i wyniki tylko nieznacznie wahają się wokół podobnej wartości. W tym przypadku wzrost wartości parametru beta spowodował największą poprawę.
 
-Współczynnik bety znacząco wpływa na długość ścieżki. Jednak tak jak było wspomniane przy parametrze alpha, największe znaczenie ma różnica między tymi dwoma parametrami.
+Współczynnik beta znacząco wpływa na długość ścieżki. Jednak tak jak było wspomniane przy parametrze alpha, największe znaczenie ma różnica między tymi dwoma parametrami.
+</div>
 
-## Rho
+***
+
+### Rho
+
+***
 
 Poniżej został zbadany wpływ rho na długość ścieżki:
 
@@ -3599,18 +4240,20 @@ rho_mrowki_tsp127 <- rho %>%
   as.data.frame()
 ```
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(rho_mrowki_tsp48, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_48",
+    title = "Wpływ rho na długość ścieżki (TSP_48)",
     x = "Rho",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_48**
+<br>
+**Statystyki długości ścieżki w zależności od wartości rho (TSP_48)**
 
 ```{r, echo=FALSE}
 rho_mrowki_tsp48 %>%
@@ -3623,20 +4266,24 @@ rho_mrowki_tsp48 %>%
   as.data.frame() 
 ```
 
-Wyniki średniej i mediany długości ścieżki wahają się wokół podobnych wartości niezależnie od wartości rho. Jedynie znacząca różnica jest dla rho = 0.9, Średnia i mediana są zdecydowanie wyższe. Uzyskane średnie są zdecydowanie wyższe niż te otrzyamne przez Solver.
+<div style='text-align: justify'>
+Wyniki średniej i mediany długości ścieżki wahają się wokół podobnych wartości niezależnie od wartości rho. Jedynie znacząca różnica jest dla rho = 0.9, średnia i mediana są zdecydowanie wyższe. Uzyskane średnie są zdecydowanie wyższe niż te otrzymane przez Solver.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(rho_mrowki_tsp76, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_76",
+    title = "Wpływ rho na długość ścieżki (TSP_76)",
     x = "Rho",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_76**
+<br>
+**Statystyki długości ścieżki w zależności od wartości rho (TSP_76)**
 
 ```{r, echo=FALSE}
 rho_mrowki_tsp76 %>%
@@ -3649,20 +4296,24 @@ rho_mrowki_tsp76 %>%
   as.data.frame() 
 ```
 
-Dla TSP_76 widzimy natomiast, że różnice w średniej i medianie długości ścieżki są zdecydowanie największe w przypadku skrajnych wartości rho. Bardzo niskie wartości tego parametru oznaczają długotrwałe utrzymywanie się feromonów (bardzo wolne odparowywanie) co prowadzi do nadmiernej eksploatacji jednej trasy, co ogranicza zdolność algorytmu do eksploracji nowych, potencjalnie lepszych tras. Natomiast zbyt wysokie wartościpowodują bardzo szybkie odparowywanie feromonów co sprawia, że ślady na trasach szybko zanikają. W tej sytuacji algorytm prawie w ogóle nie korzysta z informacji zgromadzonych przez inne mrówki, ponieważ ślady feromonowe znikają zanim inne mrówki zdążą je wykorzystać. W związku z tym dla wartości rho, które oscylują wokół 0.5 wyniki są lepsze, ale jednocześnie zbliżone do siebie.
+<div style='text-align: justify'>
+Dla TSP_76 widzimy natomiast, że różnice w średniej i medianie długości ścieżki są zdecydowanie największe w przypadku skrajnych wartości rho. Bardzo niskie wartości tego parametru oznaczają długotrwałe utrzymywanie się feromonów (bardzo wolne odparowywanie) co prowadzi do nadmiernej eksploatacji jednej trasy i ogranicza zdolność algorytmu do eksploracji nowych, potencjalnie lepszych tras. Natomiast zbyt wysokie wartości powodują bardzo szybkie odparowywanie feromonów co sprawia, że ślady na trasach szybko zanikają. W tej sytuacji algorytm prawie w ogóle nie korzysta z informacji zgromadzonych przez inne mrówki, ponieważ ślady feromonowe znikają zanim inne mrówki zdążą je wykorzystać. W związku z tym dla wartości rho, które oscylują wokół 0.5 wyniki są lepsze, ale jednocześnie zbliżone do siebie.
+</div>
 
-```{r, echo=FALSE}
+<br>
+```{r, echo=FALSE, fig.align="center"}
 ggplot(rho_mrowki_tsp127, aes(x = as.factor(PARAMETR), y = WYNIK_1)) +
   geom_boxplot(fill = "pink") +
   labs(
-    title = "TSP_127",
+    title = "Wpływ rho na długość ścieżki (TSP_127)",
     x = "Rho",
     y = "Długość ścieżki"
   ) +
-  theme_minimal()
+  theme_light()
 ```
 
-**TSP_127**
+<br>
+**Statystyki długości ścieżki w zależności od wartości rho (TSP_127)**
 
 ```{r, echo=FALSE}
 rho_mrowki_tsp127 %>%
@@ -3675,11 +4326,17 @@ rho_mrowki_tsp127 %>%
   as.data.frame() 
 ```
 
+<div style='text-align: justify'>
 Dla TSP_127 jest podobna sytuacja ze skrajnymi wartościami. Jednak lepsze są wyniki dla wartości rho trochę niższych niż.
 
 Najbardziej optymalne wyniki są uzyskiwane gdy rho przyjmuję wartości bliższe 0.5 niż skrajne (0.1 czy 0.9). Jednak wyniki nie są lepsze niż te uzyskane przez Solver. Jedynie w przypadku TSP_127 udało się otrzymać krótsze długości ścieżki.
+</div>
+
+***
 
 ## Podsumowanie
+
+***
 
 Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
 
