@@ -59,8 +59,8 @@ Wyniki uzyskane za pomocą zaimplementowanych algorytmów zostaną porównane z 
 </div>
 
 ```{r, echo=FALSE, include=FALSE}
-solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solver.xlsx")
-#solver <- read_excel("C:/Users/user/Downloads/Solver.xlsx")
+#solver <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/Solver.xlsx")
+solver <- read_excel("C:/Users/user/Downloads/Solver.xlsx")
 ```
 
 ```{r, echo=FALSE}
@@ -115,19 +115,19 @@ W ramach algorytmu nalbliższego sąsiada badaniu poddano wpływ różnych warto
 
 <br>
 ```{r, echo=FALSE, include=FALSE}
-  NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-      sheet = "TSP_48")
-  NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-      sheet = "TSP_76")
-  NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
-      sheet = "TSP_127")
+  # NN_tsp48 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+  #     sheet = "TSP_48")
+  # NN_tsp76 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+  #     sheet = "TSP_76")
+  # NN_tsp127 <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/NN.xlsx", 
+  #     sheet = "TSP_127")
 
- # NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
- #     sheet = "TSP_48")
- # NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
- #     sheet = "TSP_76")
- # NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
- #     sheet = "TSP_127")
+  NN_tsp48 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+      sheet = "TSP_48")
+  NN_tsp76 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+      sheet = "TSP_76")
+  NN_tsp127 <- read_excel("C:/Users/user/Downloads/NN.xlsx", 
+      sheet = "TSP_127")
 ```
 
 <div class="custom-style">
@@ -281,17 +281,30 @@ W ramach algorytmu iteracyjnej wspinaczki badane są następujące parametry:
     </p>
 
 ```{r, echo=FALSE}
- IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ # IHC_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #                               sheet = "Basic")
+ # IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #     sheet = "num_starts")
+ # IHC_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #                                  sheet = "neighborhood_type")
+ # IHC_max_hill_climbing_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #     sheet = "max_hill_climbing_iterations")
+ # IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #     sheet = "max_iterations_without_improvem")
+ # IHC_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ #     sheet = "time_limit")
+ 
+ IHC_clasic <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
                                sheet = "Basic")
- IHC_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ IHC_max_iterations <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
      sheet = "num_starts")
- IHC_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ IHC_move_type <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
                                   sheet = "neighborhood_type")
- IHC_max_hill_climbing_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ IHC_max_hill_climbing_iterations <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
      sheet = "max_hill_climbing_iterations")
- IHC_max_iterations_without_improvement <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ IHC_max_iterations_without_improvement <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
      sheet = "max_iterations_without_improvem")
- IHC_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/IHC.xlsx", 
+ IHC_time_limit <- read_excel("C:/Users/user/Downloads/IHC.xlsx", 
      sheet = "time_limit")
 ```
 
@@ -376,6 +389,7 @@ IHC_clasic_time[,2:4]
 
 <div style='text-align: justify'>
 Średnie czas są dość niskie dla TS_48 i TSP_76. Natomiast dla TSP_127 średni czas wynosi już ok. 2 minut.
+</div>
 
 ***
 
@@ -484,11 +498,12 @@ IHC_max_iterations_tsp127 %>%
   ) %>%
   as.data.frame() 
 ```
+
 <div style='text-align: justify'>
 Dla TSP_127 pojawia się taka sama sytuacja.
 
 W żadnym z przypadków nie widac, żadnej zależności. Jednak różnice w liczbie parametrów są dość małe. Możliwe, że sprawdzenie większej liczby iteracji pokazałoby jakąś zależność.
-<div>
+</div>
 
 ***
 
@@ -602,7 +617,7 @@ IHC_move_type_tsp127 %>%
 Dla TSP_127 jest identyczna sytuacja co w poprzednich TSP.
 
 Długość ścieżki definitywnie zależy od rodzaju ruchu. Dla `two-opt` w każdym z przypadków wyniki są najlepsze. Natomiast dla `swap` najgorsza.
-<div>
+</div>
 
 ***
 
@@ -716,7 +731,7 @@ IHC_time_limit_tsp127 %>%
 Dla TSP_127 widać już jednak zdecydowanie malejącą średnią i mediane wraz ze wzrostem limitu czasowego. 
 
 Jedynie dla TSP_127 pojawiła się zależność, że wraz ze wzrostem limitu czasowego, maleje długość ścieżki. Może być to związane z tym, że tutaj liczba miast jest największa, więc znalezienie lepszych tras wymaga większego limitu czasowego w porównaniu do pozostałych.
-<div>
+</div>
 
 ***
 
@@ -952,51 +967,53 @@ Ciężko stwierdzić czy isteniej tu jakaś zależność. Dla TSP_76 i TSP_127 w
 
 ***
 
-Najlepsze wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla **TSP_48** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	10713.0
+* `Klasyczne` - 10713.0
 
-* Liczba iteracji - 10695 (liczba iteracji - 125)
+* `Liczba iteracji` - 10695 (liczba iteracji - 125)
 
-* Rodzaj sąsiedztwa - 10700 (rodzaj sąsiedztwa - two-opt)
+* `Rodzaj sąsiedztwa` - 10700 (rodzaj sąsiedztwa - two-opt)
 
-* Limit czasowy - 10692	 (limit czasowy - 200)
+* `Limit czasowy` - 10692	(limit czasowy - 200)
 
-* Liczba iteracji bez poprawy  -  10695 (liczba iteracji bez poprawy - 50)
+* `Liczba iteracji bez poprawy` - 10695 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 10690	(liczba iteracji wspinaczki - 1000)
+* `Liczba iteracji wspinaczki` - 10690 (liczba iteracji wspinaczki - 1000)
 
 Dla TSP_48 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem udało się uzyskać zdecydownie lepsze wyniki niż ten uzyskany przez Solver (10868).
 
-Najlepsze wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_76** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	110039.7
+* `Klasyczne` - 	110039.7
 
-* Liczba iteracji - 109207.4 (liczba iteracji - 125)
+* `Liczba iteracji` - 109207.4 (liczba iteracji - 125)
 
-* Rodzaj sąsiedztwa - 109661.0 (rodzaj sąsiedztwa - two-opt)
+* `Rodzaj sąsiedztwa` - 109661.0 (rodzaj sąsiedztwa - two-opt)
 
-* Limit czasowy - 109058.3 (limit czasowy - 1000)
+* `Limit czasowy` - 109058.3 (limit czasowy - 1000)
 
-* Liczba iteracji bez poprawy  - 108942.2 (liczba iteracji bez poprawy - 50)
+* `Liczba iteracji bez poprawy` - 108942.2 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 109036.8	(liczba iteracji wspinaczki - 750)
+* `Liczba iteracji wspinaczki` - 109036.8	(liczba iteracji wspinaczki - 750)
 
-Dla TSP_76 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem również udało się uzyskać również zdecydowanie lepsze wyniki niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem również udało się uzyskać zdecydowanie lepsze wyniki niż ten uzyskany przez Solver (118293.5).
 
-Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_127** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	122191.3
+* `Klasyczne` - 122191.3
 
-* Liczba iteracji - 119515.0 (liczba iteracji - 125)
+* `Liczba iteracji` - 119515.0 (liczba iteracji - 125)
 
-* Rodzaj sąsiedztwa - 121017.9 (rodzaj sąsiedztwa - two-opt) 
+* `Rodzaj sąsiedztwa` - 121017.9 (rodzaj sąsiedztwa - two-opt) 
 
-* Limit czasowy - 119118.3 (limit czasowy - 1400)
+* `Limit czasowy` - 119118.3 (limit czasowy - 1400)
 
-* Liczba iteracji bez poprawy  - 120208.5 (liczba iteracji bez poprawy - 50)
+* `Liczba iteracji bez poprawy` - 120208.5 (liczba iteracji bez poprawy - 50)
 
-* Liczba iteracji wspinaczki - 120273.5	(liczba iteracji wspinaczki - 1000)
+* `Liczba iteracji wspinaczki` - 120273.5	(liczba iteracji wspinaczki - 1000)
 
 Dla TSP_127 przy użyciu algorytmu iteracyjnej wspinaczki z multistartem również są lepsze wyniki niż ten uzyskany przez Solver (140217.6).
 
@@ -1059,31 +1076,31 @@ W ramach algorytmu symulowanego wyżarzania badane są następujące parametry:
     </p>
     
 ```{r echo=FALSE, include=FALSE}
- # SA_clasic <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "Basic")
- # SA_move_type <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "move_type")
- # SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "initial_temperature")
- # SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "cooling_rate")
- # SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "max_iterations")
- # SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
- #     sheet = "min_temperature")
+  SA_clasic <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "Basic")
+  SA_move_type <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "move_type")
+  SA_initial_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "initial_temperature")
+  SA_cooling_rate <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "cooling_rate")
+  SA_max_iterations <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "max_iterations")
+  SA_min_temp <- read_excel("C:/Users/user/Downloads/SA.xlsx", 
+      sheet = "min_temperature")
  
- SA_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "Basic")
- SA_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "move_type")
- SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "initial_temperature")
- SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "cooling_rate")
- SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "max_iterations")
- SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
-     sheet = "min_temperature")
+ # SA_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "Basic")
+ # SA_move_type <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "move_type")
+ # SA_initial_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "initial_temperature")
+ # SA_cooling_rate <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "cooling_rate")
+ # SA_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "max_iterations")
+ # SA_min_temp <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/SA.xlsx", 
+ #     sheet = "min_temperature")
 ```
 
 ***
@@ -1742,53 +1759,55 @@ Widoczna jest zależność, że wraz ze wzrostem wartości minimalnej, median i 
 
 ***
 
-Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla **TSP_48** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 11100.0		
+* `Klasyczne` - 11100.0		
 
-* Rodzaje ruchów - 10928 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 10928 (rodzaj sąsiedztwa - 2-opt)
 
-* Temperatura początkowa - 10866 (temperatura początkowa - 100 tys.)
+* `Temperatura początkowa` - 10866 (temperatura początkowa - 100 tys.)
 
-* Prędkość chłodzenia - 10875 (prędkość chłodzenia - 0.93)
+* `Prędkość chłodzenia` - 10875 (prędkość chłodzenia - 0.93)
 
-* Liczba iteracji  - 10811 (liczba iteracji - 8000)
+* `Liczba iteracji` - 10811 (liczba iteracji - 8000)
 
-* Minimalna temperatura - 10862	(minimalna temperatura - 1e-40)
+* `Minimalna temperatura` - 10862	(minimalna temperatura - 1e-40)
 
-Dla TSP_48 przy użyciu algorytmu symulowanego wyżarzania udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+Dla TSP_48 przy użyciu algorytmu symulowanego wyżarzania udało się uzyskać parę lepszych wyników niż ten uzyskany przez Solver (10868).
 
-Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_76** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 116708.4	
+* `Klasyczne` - 116708.4	
 
-* Rodzaje ruchów - 113460.2 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 113460.2 (rodzaj sąsiedztwa - 2-opt)
 
-* Temperatura początkowa - 113094.6 (temperatura początkowa - 50 tys.)
+* `Temperatura początkowa` - 113094.6 (temperatura początkowa - 50 tys.)
 
-* Prędkość chłodzenia - 114398.9 (prędkość chłodzenia - 0.97)
+* `Prędkość chłodzeni`a - 114398.9 (prędkość chłodzenia - 0.97)
 
-* Liczba iteracji  -  113809.8 (liczba iteracji - 9000)
+* `Liczba iteracji` - 113809.8 (liczba iteracji - 9000)
 
-* Minimalna temperatura - 112768.6	(minimalna temperatura - 1e-60)
+* `Minimalna temperatura` - 112768.6	(minimalna temperatura - 1e-60)
 
-Dla TSP_76 przy użyciu algorytmu symulowanego wyżarzania również udało się uzyskać sporo zdecydowanie lepszych wyników niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu symulowanego wyżarzania również udało się uzyskać sporo zdecydowanie lepszych wyników niż ten uzyskany przez Solver (118293.5).
 
-Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_127** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 147496.4	
+* `Klasyczne` - 147496.4	
 
-* Rodzaje ruchów - 148832.8 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 148832.8 (rodzaj sąsiedztwa - 2-opt)
 
-* Temperatura początkowa - 146215.7 (temperatura początkowa - 10 tys.)
+* `Temperatura początkowa` - 146215.7 (temperatura początkowa - 10 tys.)
 
-* Prędkość chłodzenia - 143162.3 (prędkość chłodzenia - 0.98)
+* `Prędkość chłodzenia` - 143162.3 (prędkość chłodzenia - 0.98)
 
-* Liczba iteracji  - 148956.7 (liczba iteracji - 8000)
+* `Liczba iteracji` - 148956.7 (liczba iteracji - 8000)
 
-* Minimalna temperatura - 147347.1	(minimalna temperatura - 1e-50)
+* `Minimalna temperatura` - 147347.1	(minimalna temperatura - 1e-50)
 
-Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6). 
+Dla TSP_127 przy użyciu algorytmu symulowanego wyżarzania nie udało się uzyskać lepszych wyników niż ten uzyskany przez Solver (140217.6). 
 
 ***
 
@@ -1845,31 +1864,31 @@ W ramach algorytmu przeszukiwania tabu badane są następujące parametry:
     </p>
 
 ```{r echo=FALSE, include=FALSE}
- TS_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "Basic")
- TS_move_generator <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "move_generator")
- TS_list_length <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "tabu_list_length")
- TS_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "max_iterations")
- TS_max_no_improve <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "max_no_improve")
- TS_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
-     sheet = "time_limit")
-
- # TS_clasic <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_clasic <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "Basic")
- # TS_move_generator <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_move_generator <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "move_generator")
- # TS_list_length <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_list_length <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "tabu_list_length")
- # TS_max_iterations <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_max_iterations <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "max_iterations")
- # TS_max_no_improve <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_max_no_improve <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "max_no_improve")
- # TS_time_limit <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+ # TS_time_limit <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/TS.xlsx", 
  #     sheet = "time_limit")
+
+  TS_clasic <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "Basic")
+  TS_move_generator <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "move_generator")
+  TS_list_length <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "tabu_list_length")
+  TS_max_iterations <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "max_iterations")
+  TS_max_no_improve <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "max_no_improve")
+  TS_time_limit <- read_excel("C:/Users/user/Downloads/TS.xlsx", 
+      sheet = "time_limit")
 ```
 
 ***
@@ -2525,53 +2544,55 @@ Nie widać tutaj żadnej zależności długości ścieżki od limitu czasu. Jedy
 
 ***
 
-Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla **TSP_48** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 10851.0	
+* `Klasyczne` - 10851.0	
 
-* Rodzaje ruchów - 10941 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 10941 (rodzaj sąsiedztwa - 2-opt)
 
-* Długość listy tabu - 10837 (długość listy tabu - 10)
+* `Długość listy tabu` - 10837 (długość listy tabu - 10)
 
-* Liczba iteracji - 10788	(liczba iteracji - 2500)
+* `Liczba iteracji` - 10788	(liczba iteracji - 2500)
 
-* Liczba iteracji bez poprawy - 10827	(liczba iteracji bez poprawy - 150)
+* `Liczba iteracji bez poprawy` - 10827	(liczba iteracji bez poprawy - 150)
 
-* Limit czasu - 10854	(limit czasu - 1000)
+* `Limit czasu` - 10854	(limit czasu - 1000)
 
-Dla TSP_48 przy użyciu algorytmu tabu search udało się uzyskać pare lepszych wyników niż ten uzyskany przez Solver (10868).
+Dla TSP_48 przy użyciu algorytmu tabu search udało się uzyskać parę lepszych wyników niż ten uzyskany przez Solver (10868).
 
-Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_76** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 129754.0	
+* `Klasyczne` - 129754.0	
 
-* Rodzaje ruchów - 128558.9 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 128558.9 (rodzaj sąsiedztwa - 2-opt)
 
-* Długość listy tabu - 109983.6 (długość listy tabu - 10)
+* `Długość listy tabu` - 109983.6 (długość listy tabu - 10)
 
-* Liczba iteracji - 110137.5 (liczba iteracji - 1500)
+* `Liczba iteracji` - 110137.5 (liczba iteracji - 1500)
 
-* Liczba iteracji bez poprawy - 109939.4 (liczba iteracji bez poprawy - 150)
+* `Liczba iteracji bez poprawy` - 109939.4 (liczba iteracji bez poprawy - 150)
 
-* Limit czasu - 110041.2	(limit czasu - 240)
+* `Limit czasu` - 110041.2	(limit czasu - 240)
 
-Dla TSP_76 przy użyciu algorytmu tabu search również udało się uzyskać kilka lepszych wyników niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu tabu search również udało się uzyskać kilka lepszych wyników niż ten uzyskany przez Solver (118293.5).
 
-Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_127** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 204850.2	
+* `Klasyczne` - 204850.2	
 
-* Rodzaje ruchów - 200281.5 (rodzaj ruchu - 2-opt)
+* `Rodzaj sąsiedztwa` - 200281.5 (rodzaj sąsiedztwa - 2-opt)
 
-* Długość listy tabu - 121462.2 (długość listy tabu - 20)
+* `Długość listy tabu` - 121462.2 (długość listy tabu - 20)
 
-* Liczba iteracji - 121398.3 (liczba iteracji - 1000)
+* `Liczba iteracji` - 121398.3 (liczba iteracji - 1000)
 
-* Liczba iteracji bez poprawy - 120791.7	(liczba iteracji bez poprawy - 10)
+* `Liczba iteracji bez poprawy` - 120791.7	(liczba iteracji bez poprawy - 10)
 
-* Limit czasu - 121926.2	(limit czasu - 1000)
+* `Limit czasu` - 121926.2	(limit czasu - 1000)
 
-Dla TSP_127 przy użyciu algorytmu tabu search udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6)
+Dla TSP_127 przy użyciu algorytmu tabu search udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6).
 
 ***
 
@@ -2639,39 +2660,39 @@ osobnik o najlepszym wyniku.
     </p>
     
 ```{r echo=FALSE, include=FALSE}
- GA_klasyk <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "Basic")
- GA_population_size <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "population_size")
- GA_mutation_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "mutation_rate")
- GA_crossover_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "crossover_rate")
- GA_generations <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "generations")
- GA_selection_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "selection_method")
- GA_crossover_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "crossover_method")
- GA_mutation_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
-     sheet = "mutation_method")
+ # GA_klasyk <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "Basic")
+ # GA_population_size <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "population_size")
+ # GA_mutation_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "mutation_rate")
+ # GA_crossover_rate <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "crossover_rate")
+ # GA_generations <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "generations")
+ # GA_selection_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "selection_method")
+ # GA_crossover_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "crossover_method")
+ # GA_mutation_method <- read_excel("C:/Users/Justyna/Desktop/GA.xlsx", 
+ #     sheet = "mutation_method")
 
-# GA_klasyk <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "Basic")
-# GA_population_size <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "population_size")
-# GA_mutation_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "mutation_rate")
-# GA_crossover_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "crossover_rate")
-# GA_generations <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "generations")
-# GA_selection_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "selection_method")
-# GA_crossover_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "crossover_method")
-# GA_mutation_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
-#     sheet = "mutation_method")
+ GA_klasyk <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "Basic")
+ GA_population_size <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "population_size")
+ GA_mutation_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "mutation_rate")
+ GA_crossover_rate <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "crossover_rate")
+ GA_generations <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "generations")
+ GA_selection_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "selection_method")
+ GA_crossover_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "crossover_method")
+ GA_mutation_method <- read_excel("C:/Users/user/Downloads/GA.xlsx", 
+     sheet = "mutation_method")
 ```
 
 ***
@@ -3551,65 +3572,67 @@ Naefektywniejsza jest metoda `inversion` we wszystkich przypadkach. Najgorzej na
 
 ***
 
-Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla **TSP_48** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	11048.0
+* `Klasyczne` - 11048.0
 
-* Wielkość populacji - 10795 (wielkość populacji - 15)
+* `Wielkość populacji` - 10795 (wielkość populacji - 15)
 
-* Prawdopodobieństwo mutacji - 11055	(prawd. mutacja - 0.2)
+* `Prawdopodobieństwo mutacji` - 11055	(prawd. mutacja - 0.2)
 
-* Prawdopodobieństwo krzyżowania -  10920 (prawd. krzyżowanie - 0.9)
+* `Prawdopodobieństwo krzyżowania` - 10920 (prawd. krzyżowanie - 0.9)
 
-* Liczba pokoleń -  10975 (liczba pokoleń - 10 tys.)
+* `Liczba pokoleń` - 10975 (liczba pokoleń - 10 tys.)
 
-* Metoda doboru rodziców - 11173	(metoda - tournament)
+* `Metoda doboru rodziców` - 11173	(metoda - tournament)
 
-* Metoda krzyżowania - 10803	(metoda - order)
+* `Metoda krzyżowania` - 10803 (metoda - order)
 
-* Metoda mutacji - 10936	(metoda - inversion)
+* `Metoda mutacji` - 10936	(metoda - inversion)
 
 Dla TSP_48 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (10868).
 
-Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_76** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	116714.4
+* `Klasyczne` - 116714.4
 
-* Wielkość populacji - 112600.5	 (wielkość populacji - 20)
+* `Wielkość populacji` - 112600.5	(wielkość populacji - 20)
 
-* Prawdopodobieństwo mutacji - 115561.1	(prawd. mutacja - 0.2)
+* `Prawdopodobieństwo mutacji` - 115561.1	(prawd. mutacja - 0.2)
 
-* Prawdopodobieństwo krzyżowania - 118452.6	(prawd. krzyżowanie - 0.8)
+* `Prawdopodobieństwo krzyżowania` - 118452.6	(prawd. krzyżowanie - 0.8)
 
-* Liczba pokoleń - 112672.9 (liczba pokoleń - 15 tys.)
+* `Liczba pokoleń` - 112672.9 (liczba pokoleń - 15 tys.)
 
-* Metoda doboru rodziców - 121744.9	(metoda - tournament)
+* `Metoda doboru rodziców` - 121744.9	(metoda - tournament)
 
-* Metoda krzyżowania - 121250.0		(metoda - pmx)
+* `Metoda krzyżowania` - 121250.0	(metoda - pmx)
 
-* Metoda mutacji - 121265.7	(metoda - inversion)
+* `Metoda mutacji` - 121265.7	(metoda - inversion)
 
-Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać lika lepszych wyników niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać kilka lepszych wyników niż ten uzyskany przez Solver (118293.5).
 
-Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_127** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 	165047.0
+* `Klasyczne` - 165047.0
 
-* Wielkość populacji - 141116.7 (wielkość populacji - 20)
+* `Wielkość populacji` - 141116.7 (wielkość populacji - 20)
 
-* Prawdopodobieństwo mutacji - 162368.2	(prawd. mutacja - 0.2)
+* `Prawdopodobieństwo mutacji` - 162368.2	(prawd. mutacja - 0.2)
 
-* Prawdopodobieństwo krzyżowania - 152547.3	(prawd. krzyżowanie - 0.7)
+* `Prawdopodobieństwo krzyżowania` - 152547.3	(prawd. krzyżowanie - 0.7)
 
-* Liczba pokoleń - 133161.4 (liczba pokoleń - 15.tys)
+* `Liczba pokoleń` - 133161.4 (liczba pokoleń - 15.tys)
 
-* Metoda doboru rodziców - 157986.9	(metoda - tournament)
+* `Metoda doboru rodziców` - 157986.9	(metoda - tournament)
 
-* Metoda krzyżowania - 160299.3	(metoda - order)
+* `Metoda krzyżowania` - 160299.3	(metoda - order)
 
-* Metoda mutacji - 169240.5	(metoda - inversion)
+* `Metoda mutacji` - 169240.5	(metoda - inversion)
 
-Dla TSP_127 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (140217.6)
+Dla TSP_127 przy użyciu algorytmu mrówkowego udało się uzyskać lepszy wynik niż ten uzyskany przez Solver (140217.6).
 
 ***
 
@@ -3669,31 +3692,31 @@ Za podstawowe wartości parametrów przyjmujemy:
 * rho = 0.5
 
 ```{r, echo=FALSE, include=FALSE}
- klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "Klasyk_wyniki")
- num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "num_ants")
- max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "max_it")
- alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "alpha")
- beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "beta")
- rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
-     sheet = "rho")
+ # klasyk_wyniki <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "Klasyk_wyniki")
+ # num_ants <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "num_ants")
+ # max_it <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "max_it")
+ # alpha <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "alpha")
+ # beta <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "beta")
+ # rho <- read_excel("C:/Users/Justyna/source/repos/Projekt_IO/TSP-problem/ACO.xlsx", 
+ #     sheet = "rho")
 
-# klasyk_wyniki <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "Klasyk_wyniki")
-# num_ants <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "num_ants")
-# max_it <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "max_it")
-# alpha <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "alpha")
-# beta <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "beta")
-# rho <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
-#     sheet = "rho")
+ klasyk_wyniki <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "Klasyk_wyniki")
+ num_ants <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "num_ants")
+ max_it <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "max_it")
+ alpha <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "alpha")
+ beta <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "beta")
+ rho <- read_excel("C:/Users/user/Downloads/ACO.xlsx", 
+     sheet = "rho")
 ```
 
 ```{r, echo=FALSE}
@@ -3876,7 +3899,7 @@ W 2/3 przypadki wskazały, że wraz ze wzrostem liczby mrówek mediana i średni
 
 ***
 
-## Liczba iteracji
+### Liczba iteracji
 
 ***
 
@@ -4338,51 +4361,108 @@ Najbardziej optymalne wyniki są uzyskiwane gdy rho przyjmuję wartości bliższ
 
 ***
 
-Najlepszy wyniki dla TSP_48 przy zmianie poszczególnych parametrów:
+Najlepsze wyniki dla **TSP_48** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 11540.0	
+* `Klasyczne` - 11540.0	
 
-* Liczba mrówek - 11181 (liczba mrówek - 44)
+* `Liczba mrówek` - 11181 (liczba mrówek - 44)
 
-* Liczba iteracji - 11128	(liczba iteracji - 400)
+* `Liczba iteracji` - 11128	(liczba iteracji - 400)
 
-* Alpha - 11414	(alpha - 1)
+* `Parametr alfa` - 11414	(alpha - 1)
 
-* Beta - 11313 (beta - 6)
+* `Parametr beta` - 11313 (beta - 6)
 
-* Rho - 11246	(rho - 0.7)
+* `Rho` - 11246	(rho - 0.7)
 
-Dla TSP_48 przy użyciu algorytmu mrówkowego nie udało się uzyskać lepszego wyniku niż ten uzyskany przez Solver (10868)
+Dla TSP_48 przy użyciu algorytmu mrówkowego nie udało się uzyskać lepszego wyniku niż ten uzyskany przez Solver (10868).
 
-Najlepszy wyniki dla TSP_76 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_76** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 124560.0		
+* `Klasyczne` - 124560.0		
 
-* Liczba mrówek - 117472.3 (liczba mrówek - 78)
+* `Liczba mrówek` - 117472.3 (liczba mrówek - 78)
 
-* Liczba iteracji - 117711.1	(liczba iteracji - 150)
+* `Liczba iteracji` - 117711.1	(liczba iteracji - 150)
 
-* Alpha - 125278.5	(alpha - 1)
+* `Parametr alfa` - 125278.5	(alpha - 1)
 
-* Beta - 117716.2 (beta - 4)
+* `Parametr beta` - 117716.2 (beta - 4)
 
-* Rho - 122202.6	(rho - 0.2)
+* `Rho` - 122202.6	(rho - 0.2)
 
-Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać dwa lepsze wyniki niż ten uzyskany przez Solver (118293.5)
+Dla TSP_76 przy użyciu algorytmu mrówkowego udało się uzyskać dwa lepsze wyniki niż ten uzyskany przez Solver (118293.5).
 
-Najlepszy wyniki dla TSP_127 przy zmianie poszczególnych parametrów:
+<br>
+Najlepsze wyniki dla **TSP_127** przy zmianie poszczególnych parametrów:
 
-* Klasyk - 134426.3			
+* `Klasyczne` - 134426.3			
 
-* Liczba mrówek - 123471.0 (liczba mrówek - 203)
+* `Liczba mrówek` - 123471.0 (liczba mrówek - 203)
 
-* Liczba iteracji - 128085.5	(liczba iteracji - 450)
+* `Liczba iteracji` - 128085.5	(liczba iteracji - 450)
 
-* Alpha - 136597.7	(alpha - 1)
+* `Parametr alfa` - 136597.7	(alpha - 1)
 
-* Beta - 125936.3 (beta - 7)
+* `Parametr beta` - 125936.3 (beta - 7)
 
-* Rho - 131834.5	(rho - 0.5)
+* `Rho` - 131834.5	(rho - 0.5)
 
-Dla TSP_127 przy użyciu algorytmu mrówkowego  udało się uzyskać lepsze wyniku niż ten uzyskany przez Solver (140217.6)
+Dla TSP_127 przy użyciu algorytmu mrówkowego udało się uzyskać lepsze wyniki niż ten uzyskany przez Solver (140217.6).
 
+***
+
+# Podsumowanie
+
+***
+
+<div style='text-align: justify'>
+W poniższych tabelach dokonano zestawienia najlepszych wyników uzyskanych dla każdego z analizowanych algorytmów.
+</div>
+
+<br>
+**Porównanie najlepszych wyników dla poszczególnych algorytmów (TSP_48)**
+
+```{r, echo=FALSE}
+TSP_48_best_results <- data.frame(
+  Algorytm = c("Iteracyjna wspinaczka", "Symulowane wyżarzanie", "Tabu Search", "Algorytmy Genetyczny", "Algorytm mrówkowy", "NN", "Solver"),
+  best = c(10692,10811,10788,10795,11128,12012,10868))
+
+colnames(TSP_48_best_results) <- c("Algorytm", "Najlepszy wynik")
+
+TSP_48_best_results
+```
+
+<br>
+**Porównanie najlepszych wyników dla poszczególnych algorytmów (TSP_76)**
+
+```{r, echo=FALSE}
+TSP_76_best_results <- data.frame(
+  Algorytm = c("Iteracyjna wspinaczka", "Symulowane wyżarzanie", "Tabu Search", "Algorytmy Genetyczny", "Algorytm mrówkowy", "NN", "Solver"),
+  best = c(108942.2,112768.6,110041.2,112600.5,117472.3,130921,118293.5))
+
+colnames(TSP_76_best_results) <- c("Algorytm", "Najlepszy wynik")
+
+TSP_76_best_results
+```
+
+<br>
+**Porównanie najlepszych wyników dla poszczególnych algorytmów (TSP_127)**
+
+```{r,  echo=FALSE}
+TSP_127_best_results <- data.frame(
+  Algorytm = c("Iteracyjna wspinaczka", "Symulowane wyżarzanie", "Tabu Search", "Algorytmy Genetyczny", "Algorytm mrówkowy", "NN", "Solver"),
+  best = c(119118.3,143162.3,120791.7,133161.4,123471,133970.6,140217.6))
+
+colnames(TSP_127_best_results) <- c("Algorytm", "Najlepszy wynik")
+
+TSP_127_best_results
+```
+
+<br>
+<div style='text-align: justify'>
+Porównując wyniki uzyskane przy zastosowaniu poszczególnych algorytmów w kontekście problemu komiwojażera można zauważyć, że dla każdego z trzech przypadków (TSP_48, TSP_76 oraz TSP_127) osiągane wyniki w przeważającej większości były niższe od wartości uzyskanych za pomocą Solvera. Gorsze rezultaty uzyskano jedynie dla algorytmu mrówkowego i NN w przypadku TSP_48, dla algorytmu NN w przypadku TSP_76 oraz dla algorytmu symulowanego wyżarzania w przypadku TSP_127.
+
+Dla wszystkich trzech przypadków najlepsze rezultaty spośród wszystkich rozważanych algorytmów uzyskano za pomocą algorytmu iteracyjnej wspinaczki. Wspomniany algorytm wykazał się największą skutecznością w kontekście minimalizacji długości trasy. Na drugim miejscu pod względem uzyskanych wyników znalazł się algorytm Tabu Search, którego wyniki również w każdym analizowanym przypadków były lepsze od rezultatów Sovera. Również algorytm genetyczny zwrócił lepsze wyniki w odniesieniu do tych z Solvera. Pozostałe algorytmy osiągały gorsze rezultaty.
+</div>
